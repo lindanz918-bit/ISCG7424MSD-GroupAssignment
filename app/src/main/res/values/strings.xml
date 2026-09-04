@@ -1,10 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Just Eat</string>
+    <string name="login_welcome">Welcome</string>
+    <string name="login_subtitle">Sign in to book a table and order your meal</string>
+    <string name="email_label">Email address</string>
+    <string name="password_label">Password</string>
+    <string name="login_action">Log In</string>
+    <string name="sign_up_prompt">Don’t have an account?</string>
+    <string name="sign_up_action">Sign Up</string>
+    <string name="brand_image_description">Restaurant illustration</string>
     <string name="error_email_required">Email is required</string>
     <string name="error_email_invalid">Enter a valid email address</string>
     <string name="error_password_required">Password is required</string>
     <string name="error_password_too_short">Password must be at least 6 characters</string>
+    <string name="validation_complete_title">Validation complete</string>
     <string name="validation_success_message">Input validated. Firebase login can be connected later.</string>
+    <string name="coming_soon_title">Coming soon</string>
+    <string name="coming_soon_message">The sign-up page has not been implemented yet.</string>
+    <string name="dialog_ok">OK</string>
 </resources>
-

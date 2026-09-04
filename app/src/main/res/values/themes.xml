@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.JustEat" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.JustEat" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimary">@color/just_eat_primary</item>
         <item name="colorPrimaryVariant">@color/just_eat_primary_dark</item>
         <item name="colorSecondary">@color/just_eat_accent</item>
