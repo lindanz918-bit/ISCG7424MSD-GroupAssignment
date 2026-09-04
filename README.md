@@ -30,6 +30,15 @@ ViewModel 状态流，不包含完整业务页面，也不会执行真实 Fireba
 `google-services.json`；加入该文件后的步骤见
 [`docs/FIREBASE_SETUP.md`](docs/FIREBASE_SETUP.md)。
 
+## 项目文档
+
+- [`docs/DEVELOPMENT_GUIDE.md`](docs/DEVELOPMENT_GUIDE.md)：后续功能路线、架构、
+  Firebase 数据设计、页面开发方式、测试与发布流程。
+- [`CONTRIBUTING.md`](CONTRIBUTING.md)：团队编码、Git 协作、安全、审查和完成规则。
+- [`docs/FIREBASE_SETUP.md`](docs/FIREBASE_SETUP.md)：添加 Firebase 项目时的配置步骤。
+- [`docs/JustEat_Development_Guide_and_Rules.pdf`](docs/JustEat_Development_Guide_and_Rules.pdf)：
+  开发指南与团队规则的合并版 PDF。
+
 ## 常用命令
 
 在项目根目录执行：
@@ -70,4 +79,3 @@ com.groupproject.justeat/
 - 实体类保留公开无参构造方法，以支持 Firebase 反序列化。
 - 不记录、不持久化密码；密码只在提交校验时短暂传入 ViewModel。
 - `app/google-services.json` 已加入 `.gitignore`，不要提交到 Git。
-
