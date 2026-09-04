@@ -24,7 +24,7 @@ public final class LoginValidator {
      */
     public LoginUiState validate(String email, String password) {
         String normalizedEmail = email == null ? "" : email.trim();
-        String normalizedPassword = password == null ? "" : password.trim();
+        String rawPassword = password == null ? "" : password;
 
         int emailErrorResId = 0;
         if (normalizedEmail.isEmpty()) {
@@ -34,9 +34,9 @@ public final class LoginValidator {
         }
 
         int passwordErrorResId = 0;
-        if (normalizedPassword.isEmpty()) {
+        if (rawPassword.trim().isEmpty()) {
             passwordErrorResId = R.string.error_password_required;
-        } else if (normalizedPassword.length() < 6) {
+        } else if (rawPassword.length() < 6) {
             passwordErrorResId = R.string.error_password_too_short;
         }
 

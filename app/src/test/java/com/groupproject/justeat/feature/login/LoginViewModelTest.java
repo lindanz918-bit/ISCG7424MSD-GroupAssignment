@@ -65,4 +65,17 @@ public class LoginViewModelTest {
         assertEquals(R.string.validation_success_message, state.getMessageResId());
         viewModel.getLoading().removeObserver(observer);
     }
+
+    @Test
+    public void shownMessageIsConsumedIntoIdleState() {
+        LoginViewModel viewModel = new LoginViewModel(new LoginValidator());
+        viewModel.validateLogin("customer@example.com", "123456");
+
+        viewModel.onMessageShown();
+        LoginUiState state = viewModel.getUiState().getValue();
+
+        assertNotNull(state);
+        assertEquals(0, state.getMessageResId());
+        assertFalse(state.isValidationSuccessful());
+    }
 }

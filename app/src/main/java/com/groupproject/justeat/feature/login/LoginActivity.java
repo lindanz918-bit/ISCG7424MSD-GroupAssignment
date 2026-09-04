@@ -80,10 +80,13 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
             getBinding().etPassword.requestFocus();
         }
         if (state.isValidationSuccessful() && state.getMessageResId() != 0) {
-            MessageDialog.newInstance(
-                    getString(R.string.validation_complete_title),
-                    getString(state.getMessageResId())
-            ).show(getSupportFragmentManager(), MessageDialog.TAG);
+            if (getSupportFragmentManager().findFragmentByTag(MessageDialog.TAG) == null) {
+                MessageDialog.newInstance(
+                        getString(R.string.validation_complete_title),
+                        getString(state.getMessageResId())
+                ).show(getSupportFragmentManager(), MessageDialog.TAG);
+            }
+            viewModel.onMessageShown();
         }
     }
 

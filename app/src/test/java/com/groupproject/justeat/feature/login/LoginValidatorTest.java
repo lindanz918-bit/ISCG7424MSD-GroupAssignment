@@ -48,6 +48,14 @@ public class LoginValidatorTest {
     }
 
     @Test
+    public void passwordLengthIncludesLeadingAndTrailingSpaces() {
+        LoginUiState state = validator.validate("customer@example.com", "12345 ");
+
+        assertEquals(0, state.getPasswordErrorResId());
+        assertTrue(state.isValidationSuccessful());
+    }
+
+    @Test
     public void nullCredentialsReturnBothRequiredErrors() {
         LoginUiState state = validator.validate(null, null);
 

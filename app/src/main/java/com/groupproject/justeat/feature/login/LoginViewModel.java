@@ -48,4 +48,14 @@ public class LoginViewModel extends BaseViewModel {
         setLoading(false);
         uiState.setValue(result);
     }
+
+    /**
+     * 标记一次性提示已经由页面处理，避免 Activity 重建时重复展示。
+     */
+    public void onMessageShown() {
+        LoginUiState currentState = uiState.getValue();
+        if (currentState != null && currentState.getMessageResId() != 0) {
+            uiState.setValue(LoginUiState.idle());
+        }
+    }
 }
