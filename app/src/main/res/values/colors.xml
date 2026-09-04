@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="just_eat_primary">#1976D2</color>
+    <color name="just_eat_primary_dark">#1257A6</color>
+    <color name="just_eat_accent">#FF8A00</color>
+    <color name="just_eat_background">#F8FAFC</color>
+    <color name="just_eat_surface">#FFFFFF</color>
+    <color name="just_eat_text_primary">#172033</color>
+    <color name="just_eat_text_secondary">#637083</color>
+</resources>
+
