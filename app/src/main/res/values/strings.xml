@@ -18,4 +18,10 @@
     <string name="coming_soon_title">Coming soon</string>
     <string name="coming_soon_message">The sign-up page has not been implemented yet.</string>
     <string name="dialog_ok">OK</string>
+    <string name="login_failed_title">Login failed</string>
+    <string name="admin_dashboard">Admin Dashboard</string>
+    <string name="customer_dashboard">Customer Dashboard</string>
+    <string name="staff_dashboard">Staff Dashboard</string>
+    <string name="dashboard_placeholder">You are signed in. More features are coming soon.</string>
+    <string name="logout_action">Log out</string>
 </resources>

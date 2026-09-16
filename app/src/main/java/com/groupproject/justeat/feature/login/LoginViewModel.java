@@ -2,60 +2,59 @@ package com.groupproject.justeat.feature.login;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-
 import com.groupproject.justeat.base.BaseViewModel;
+import com.groupproject.justeat.data.model.User;
+import com.groupproject.justeat.data.repository.*;
+import com.groupproject.justeat.domain.constant.UserRole;
+import com.groupproject.justeat.domain.constant.UserStatus;
 
-/**
- * 登录页面 ViewModel。
- * 当前仅协调本地输入校验，后续可在此调用 AuthRepository。
- */
+/** 校验输入、执行认证，并发布一次性的角色导航事件。 */
 public class LoginViewModel extends BaseViewModel {
-
-    /** 无 Android Context 依赖的输入校验器。 */
     private final LoginValidator validator;
+    private final AuthRepository repository;
+    private final MutableLiveData<LoginUiState> uiState = new MutableLiveData<>(LoginUiState.idle());
+    private final MutableLiveData<String> destinationRole = new MutableLiveData<>();
+    private boolean cleared;
 
-    /** 登录页面的完整渲染状态。 */
-    private final MutableLiveData<LoginUiState> uiState =
-            new MutableLiveData<>(LoginUiState.idle());
-
-    /** Android ViewModelProvider 使用的公开无参构造方法。 */
-    public LoginViewModel() {
-        this(new LoginValidator());
+    public LoginViewModel() { this(new LoginValidator(), new FirebaseAuthRepository()); }
+    LoginViewModel(LoginValidator validator, AuthRepository repository) {
+        this.validator = validator; this.repository = repository;
     }
-
-    /** 测试和未来依赖注入使用的构造方法。 */
-    LoginViewModel(LoginValidator validator) {
-        this.validator = validator;
-    }
-
-    /** @return 供 Activity 观察的只读页面状态 */
-    public LiveData<LoginUiState> getUiState() {
-        return uiState;
-    }
-
-    /**
-     * 校验登录输入并按顺序发布加载与结果状态。
-     *
-     * @param email 用户输入的邮箱
-     * @param password 用户输入的密码；不会被保存或记录
-     */
+    public LiveData<LoginUiState> getUiState() { return uiState; }
+    public LiveData<String> getDestinationRole() { return destinationRole; }
     public void validateLogin(String email, String password) {
+        if (Boolean.TRUE.equals(getLoading().getValue())) return;
+        setErrorMessage(null);
+        LoginUiState validation = validator.validate(email, password);
+        if (!validation.isValidationSuccessful()) { uiState.setValue(validation); return; }
         setLoading(true);
         uiState.setValue(LoginUiState.loading());
-
-        LoginUiState result = validator.validate(email, password);
-
-        setLoading(false);
-        uiState.setValue(result);
+        repository.signIn(email.trim(), password, new RepositoryCallback<User>() {
+            @Override public void onSuccess(User user) {
+                if (cleared) return;
+                String role = user == null ? null : user.getRole();
+                if (user == null || !UserStatus.ACTIVE.equals(user.getStatus()) || !isSupportedRole(role)) {
+                    repository.signOut(new RepositoryCallback<Void>() {
+                        public void onSuccess(Void ignored) { fail("Your account is unavailable or has no valid role. Contact the administrator."); }
+                        public void onError(String ignored) { fail("Unable to verify your account. Please sign in again."); }
+                    });
+                    return;
+                }
+                setLoading(false);
+                uiState.setValue(LoginUiState.idle());
+                destinationRole.setValue(role);
+            }
+            @Override public void onError(String message) { fail(message); }
+        });
     }
-
-    /**
-     * 标记一次性提示已经由页面处理，避免 Activity 重建时重复展示。
-     */
-    public void onMessageShown() {
-        LoginUiState currentState = uiState.getValue();
-        if (currentState != null && currentState.getMessageResId() != 0) {
-            uiState.setValue(LoginUiState.idle());
-        }
+    public static boolean isSupportedRole(String role) {
+        return UserRole.MANAGER.equals(role) || UserRole.CUSTOMER.equals(role) || UserRole.STAFF.equals(role);
     }
+    private void fail(String message) {
+        if (cleared) return;
+        setLoading(false); uiState.setValue(LoginUiState.idle()); setErrorMessage(message);
+    }
+    public void onMessageShown() { setErrorMessage(null); }
+    public void onNavigationHandled() { destinationRole.setValue(null); }
+    @Override protected void onCleared() { cleared = true; }
 }

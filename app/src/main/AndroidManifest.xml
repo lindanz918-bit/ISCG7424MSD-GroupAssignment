@@ -10,6 +10,9 @@
         android:roundIcon="@drawable/ic_restaurant_brand"
         android:supportsRtl="true"
         android:theme="@style/Theme.JustEat">
+        <activity android:name=".feature.dashboard.AdminDashBoardActivity" android:exported="false" />
+        <activity android:name=".feature.dashboard.CustomerDashBoardActivity" android:exported="false" />
+        <activity android:name=".feature.dashboard.StaffDashBoardActivity" android:exported="false" />
         <activity
             android:name=".feature.login.LoginActivity"
             android:exported="true">

@@ -1,6 +1,9 @@
 package com.groupproject.justeat.feature.login;
 
 import android.os.Bundle;
+import android.content.Intent;
+import com.groupproject.justeat.domain.constant.UserRole;
+import com.groupproject.justeat.feature.dashboard.*;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -14,8 +17,7 @@ import com.groupproject.justeat.ui.dialog.MessageDialog;
 import com.groupproject.justeat.util.GlideImageLoader;
 
 /**
- * 应用当前唯一实现的页面：邮箱密码登录表单。
- * 本阶段只做本地校验，不访问 Firebase，也不进行页面跳转。
+ * Firebase 邮箱密码登录页；按数据库角色进入对应 Dashboard。
  */
 public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
 
@@ -50,6 +52,29 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
     private void observeState() {
         viewModel.getLoading().observe(this, this::renderLoading);
         viewModel.getUiState().observe(this, this::renderState);
+        viewModel.getErrorMessage().observe(this, message -> {
+            if (message == null) return;
+            if (getSupportFragmentManager().findFragmentByTag(MessageDialog.TAG) == null) {
+                MessageDialog.newInstance(getString(R.string.login_failed_title), message)
+                        .showNow(getSupportFragmentManager(), MessageDialog.TAG);
+            }
+            viewModel.onMessageShown();
+        });
+        viewModel.getDestinationRole().observe(this, role -> {
+            if (role == null) return;
+            Class<?> target;
+            switch (role) {
+                case UserRole.MANAGER: target = AdminDashBoardActivity.class; break;
+                case UserRole.CUSTOMER: target = CustomerDashBoardActivity.class; break;
+                case UserRole.STAFF: target = StaffDashBoardActivity.class; break;
+                default: return;
+            }
+            viewModel.onNavigationHandled();
+            getBinding().etPassword.setText("");
+            startActivity(new Intent(this, target)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+            finish();
+        });
     }
 
     /** 注册登录和注册提示操作。 */
@@ -78,15 +103,6 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
             getBinding().etEmail.requestFocus();
         } else if (state.getPasswordErrorResId() != 0) {
             getBinding().etPassword.requestFocus();
-        }
-        if (state.isValidationSuccessful() && state.getMessageResId() != 0) {
-            if (getSupportFragmentManager().findFragmentByTag(MessageDialog.TAG) == null) {
-                MessageDialog.newInstance(
-                        getString(R.string.validation_complete_title),
-                        getString(state.getMessageResId())
-                ).show(getSupportFragmentManager(), MessageDialog.TAG);
-            }
-            viewModel.onMessageShown();
         }
     }
 

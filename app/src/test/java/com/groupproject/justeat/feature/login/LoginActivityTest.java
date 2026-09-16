@@ -47,50 +47,52 @@ public class LoginActivityTest {
     }
 
     @Test
-    public void validSubmitShowsMessageDialog() {
-        LoginActivity activity = Robolectric.buildActivity(LoginActivity.class).setup().get();
-        ActivityLoginBinding binding = bindingFor(activity);
-        binding.etEmail.setText("customer@example.com");
-        binding.etPassword.setText("123456");
-
-        binding.btnLogin.performClick();
-        activity.getSupportFragmentManager().executePendingTransactions();
-
-        assertTrue(activity.getSupportFragmentManager()
-                .findFragmentByTag(MessageDialog.TAG) instanceof MessageDialog);
+    public void authenticatedRolesOpenTheirDashboard() {
+        String[] roles = {"MANAGER", "CUSTOMER", "STAFF"};
+        String[] targets = {"AdminDashBoardActivity", "CustomerDashBoardActivity", "StaffDashBoardActivity"};
+        for (int i = 0; i < roles.length; i++) {
+            ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class);
+            LoginActivity activity = controller.get();
+            LoginViewModelTest.FakeAuth auth = new LoginViewModelTest.FakeAuth();
+            LoginViewModel vm = new LoginViewModel(new LoginValidator(), auth);
+            controller.create();
+            activity.getViewModelStore().put("androidx.lifecycle.ViewModelProvider.DefaultKey:" + LoginViewModel.class.getCanonicalName(), vm);
+            controller.recreate().start().resume().visible();
+            activity = controller.get();
+            ActivityLoginBinding binding = bindingFor(activity);
+            binding.etEmail.setText("user@example.com");
+            binding.etPassword.setText("123456");
+            binding.btnLogin.performClick();
+            assertTrue(org.robolectric.Shadows.shadowOf(activity).getNextStartedActivity() == null);
+            com.groupproject.justeat.data.model.User user = new com.groupproject.justeat.data.model.User();
+            user.setRole(roles[i]); user.setStatus("ACTIVE");
+            auth.callback.onSuccess(user);
+            android.content.Intent intent = org.robolectric.Shadows.shadowOf(activity).getNextStartedActivity();
+            assertEquals("com.groupproject.justeat.feature.dashboard." + targets[i], intent.getComponent().getClassName());
+            assertTrue(activity.isFinishing());
+            controller.destroy();
+        }
     }
 
     @Test
-    public void recreationDoesNotDuplicateSuccessDialog() {
-        ActivityController<LoginActivity> controller =
-                Robolectric.buildActivity(LoginActivity.class).setup();
-        LoginActivity activity = controller.get();
-        ActivityLoginBinding binding = bindingFor(activity);
-        binding.etEmail.setText("customer@example.com");
+    public void authenticationFailureShowsOneDialogAfterRecreation() {
+        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create();
+        LoginViewModelTest.FakeAuth auth = new LoginViewModelTest.FakeAuth();
+        LoginViewModel vm = new LoginViewModel(new LoginValidator(), auth);
+        controller.get().getViewModelStore().put("androidx.lifecycle.ViewModelProvider.DefaultKey:" + LoginViewModel.class.getCanonicalName(), vm);
+        controller.recreate().start().resume().visible();
+        ActivityLoginBinding binding = bindingFor(controller.get());
+        binding.etEmail.setText("user@example.com");
         binding.etPassword.setText("123456");
         binding.btnLogin.performClick();
-        activity.getSupportFragmentManager().executePendingTransactions();
-
+        assertTrue(!binding.btnLogin.isEnabled());
+        auth.callback.onError("Invalid email or password");
+        assertTrue(binding.btnLogin.isEnabled());
+        assertEquals(1, countMessageDialogs(controller.get()));
+        assertTrue(org.robolectric.Shadows.shadowOf(controller.get()).getNextStartedActivity() == null);
         controller.recreate();
-        LoginActivity recreated = controller.get();
-        recreated.getSupportFragmentManager().executePendingTransactions();
-
-        assertEquals(1, countMessageDialogs(recreated));
-    }
-
-    @Test
-    public void repeatedValidSubmitWhileDialogIsVisibleKeepsSingleDialog() {
-        LoginActivity activity = Robolectric.buildActivity(LoginActivity.class).setup().get();
-        ActivityLoginBinding binding = bindingFor(activity);
-        binding.etEmail.setText("customer@example.com");
-        binding.etPassword.setText("123456");
-
-        binding.btnLogin.performClick();
-        activity.getSupportFragmentManager().executePendingTransactions();
-        binding.btnLogin.performClick();
-        activity.getSupportFragmentManager().executePendingTransactions();
-
-        assertEquals(1, countMessageDialogs(activity));
+        assertEquals(1, countMessageDialogs(controller.get()));
+        controller.destroy();
     }
 
     @Test

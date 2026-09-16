@@ -52,7 +52,6 @@ dependencies {
     implementation(libs.material)
     implementation(libs.glide)
 
-    implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
     implementation(libs.firebase.database)
 
@@ -60,4 +59,3 @@ dependencies {
     testImplementation(libs.androidx.arch.core.testing)
     testImplementation(libs.robolectric)
 }
-
