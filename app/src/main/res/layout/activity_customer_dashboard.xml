@@ -5,6 +5,6 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".feature.customer.CustomerDashboard">
+    tools:context=".feature.customer.CustomerDashBoardActivity">
 
 </androidx.constraintlayout.widget.ConstraintLayout>
