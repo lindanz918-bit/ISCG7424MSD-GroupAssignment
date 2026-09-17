@@ -3,6 +3,7 @@ package com.groupproject.justeat.feature.login;
 import android.os.Bundle;
 import android.content.Intent;
 import com.groupproject.justeat.domain.constant.UserRole;
+import com.groupproject.justeat.feature.customer.CustomerDashBoardActivity;
 import com.groupproject.justeat.feature.dashboard.*;
 import android.view.LayoutInflater;
 import android.view.View;

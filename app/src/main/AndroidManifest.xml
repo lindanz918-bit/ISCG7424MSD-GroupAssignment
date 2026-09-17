@@ -10,9 +10,15 @@
         android:roundIcon="@drawable/ic_restaurant_brand"
         android:supportsRtl="true"
         android:theme="@style/Theme.JustEat">
-        <activity android:name=".feature.dashboard.AdminDashBoardActivity" android:exported="false" />
-        <activity android:name=".feature.dashboard.CustomerDashBoardActivity" android:exported="false" />
-        <activity android:name=".feature.dashboard.StaffDashBoardActivity" android:exported="false" />
+        <activity
+            android:name=".feature.dashboard.AdminDashBoardActivity"
+            android:exported="false" />
+        <activity
+            android:name=".feature.customer.CustomerDashBoardActivity"
+            android:exported="false" />
+        <activity
+            android:name=".feature.dashboard.StaffDashBoardActivity"
+            android:exported="false" />
         <activity
             android:name=".feature.login.LoginActivity"
             android:exported="true">
@@ -22,7 +28,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".feature.customer.CustomerDashboard"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>
-
