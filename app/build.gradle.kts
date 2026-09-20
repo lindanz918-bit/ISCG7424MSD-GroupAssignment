@@ -9,7 +9,7 @@ if (file("google-services.json").exists()) {
 
 android {
     namespace = "com.groupproject.justeat"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.groupproject.justeat"

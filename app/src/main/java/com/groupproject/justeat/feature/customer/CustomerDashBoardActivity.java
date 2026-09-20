@@ -7,4 +7,5 @@ import com.groupproject.justeat.feature.dashboard.BaseDashboardActivity;
 public class CustomerDashBoardActivity extends BaseDashboardActivity {
     @Override protected String requiredRole() { return UserRole.CUSTOMER; }
     @Override protected int titleResource() { return R.string.customer_dashboard; }
+
 }

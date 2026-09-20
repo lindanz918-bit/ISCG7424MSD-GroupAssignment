@@ -3,6 +3,7 @@ package com.groupproject.justeat.feature.login;
 import android.os.Bundle;
 import android.content.Intent;
 import com.groupproject.justeat.domain.constant.UserRole;
+import com.groupproject.justeat.feature.dashboard.AdminDashBoardActivity;
 import com.groupproject.justeat.feature.customer.CustomerDashBoardActivity;
 import com.groupproject.justeat.feature.dashboard.*;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.groupproject.justeat.R;
 import com.groupproject.justeat.base.BaseActivity;
 import com.groupproject.justeat.databinding.ActivityLoginBinding;
+import com.groupproject.justeat.feature.manager.ManagerDashboardActivity;
 import com.groupproject.justeat.ui.dialog.MessageDialog;
 import com.groupproject.justeat.util.GlideImageLoader;
 
@@ -65,7 +67,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
             if (role == null) return;
             Class<?> target;
             switch (role) {
-                case UserRole.MANAGER: target = AdminDashBoardActivity.class; break;
+                case UserRole.MANAGER: target = ManagerDashboardActivity.class; break;
                 case UserRole.CUSTOMER: target = CustomerDashBoardActivity.class; break;
                 case UserRole.STAFF: target = StaffDashBoardActivity.class; break;
                 default: return;
