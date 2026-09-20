@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    android:padding="16dp"
+    tools:context=".feature.manager.ManageMenuActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add Meal"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:textSize="28sp"
+        android:layout_marginBottom="25dp"
+        />
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Image URL:"
+        android:textSize="18sp"
+        android:layout_marginTop="10dp" />
+
+    <EditText
+        android:id="@+id/txt_imageUrl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter image URL"
+        android:inputType="textUri" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Meal Name:"
+        android:textSize="18sp"
+        android:layout_marginTop="10dp" />
+
+    <EditText
+        android:id="@+id/txt_mealname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Meal Name" />
+
+
+
+
+    <!--    <EditText-->
+    <!--        android:id="@+id/txt_eventcategory"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:hint="Category"-->
+    <!--        android:layout_marginTop="10dp" />-->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Price:"
+        android:textSize="18sp"
+        android:layout_marginTop="10dp" />
+
+    <EditText
+        android:id="@+id/txt_price"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Price" />
+
+
+
+
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Spiciness:"
+        android:textSize="18sp"
+        android:layout_marginTop="10dp" />
+
+    <EditText
+        android:id="@+id/txt_Spiciness"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Spiciness Level" />
+
+
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Description:"
+        android:textSize="18sp"
+        android:layout_marginTop="10dp" />
+
+    <EditText
+        android:id="@+id/txt_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Description" />
+
+
+
+
+
+    <Button
+        android:id="@+id/btn_addMeal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add Event"
+        android:layout_marginTop="25dp" />
+</LinearLayout>
