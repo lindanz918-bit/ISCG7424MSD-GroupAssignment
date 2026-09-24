@@ -59,4 +59,6 @@ dependencies {
     testImplementation(libs.junit)
     testImplementation(libs.androidx.arch.core.testing)
     testImplementation(libs.robolectric)
+
+    implementation("com.github.bumptech.glide:glide:4.16.0")
 }

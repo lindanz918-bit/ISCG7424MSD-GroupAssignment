@@ -4,7 +4,7 @@ public class Meal {
     private String imageUrl;
     private String mealName;
     private String price;
-    private String spiciness;
+    private Object spiciness;
     private String description;
 
     public String getImageUrl() {
@@ -31,11 +31,11 @@ public class Meal {
         this.price = price;
     }
 
-    public String getSpiciness() {
+    public Object getSpiciness() {
         return spiciness;
     }
 
-    public void setSpiciness(String spiciness) {
+    public void setSpiciness(Object spiciness) {
         this.spiciness = spiciness;
     }
 
@@ -46,8 +46,8 @@ public class Meal {
     public void setDescription(String description) {
         this.description = description;
     }
-
-    public Meal(String imageUrl, String mealName, String price, String spiciness, String description) {
+    public Meal() {}
+    public Meal(String imageUrl, String mealName, String price, Object spiciness, String description) {
         this.imageUrl = imageUrl;
         this.mealName = mealName;
         this.price = price;
