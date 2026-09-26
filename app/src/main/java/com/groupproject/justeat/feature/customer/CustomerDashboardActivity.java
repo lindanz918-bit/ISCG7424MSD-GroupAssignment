@@ -1,11 +1,9 @@
 package com.groupproject.justeat.feature.customer;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -16,6 +14,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -24,9 +23,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.groupproject.justeat.R;
 import com.groupproject.justeat.base.BaseActivity;
 import com.groupproject.justeat.databinding.ActivityCustomerDashboardBinding;
+import com.groupproject.justeat.feature.login.LoginActivity;
 import com.groupproject.justeat.feature.manager.Meal;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,14 +58,6 @@ public class CustomerDashboardActivity extends BaseActivity<ActivityCustomerDash
 
     private void initView() {
         // Initialize your views here
-        getBinding().btnAccount.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-
         getBinding().svSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -88,6 +79,35 @@ public class CustomerDashboardActivity extends BaseActivity<ActivityCustomerDash
                 Meal selectedMeal = mealList.get(position);
                 Toast.makeText(CustomerDashboardActivity.this, "Selected: " + selectedMeal.getMealName(), Toast.LENGTH_SHORT).show();
             }
+        });
+
+        getBinding().bottomNavigation.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+
+            if (itemId == R.id.nav_search) {
+                return true;
+            } else if (itemId == R.id.nav_my_menu) {
+                Toast.makeText(this, "My Menu Selected", Toast.LENGTH_SHORT).show();
+                // startActivity(new Intent(this, MyMenuActivity.class));
+                return true;
+            } else if (itemId == R.id.nav_orders) {
+                Toast.makeText(this, "Orders Selected", Toast.LENGTH_SHORT).show();
+                // startActivity(new Intent(this, OrdersActivity.class));
+                return true;
+            } else if (itemId == R.id.nav_account) {
+                Toast.makeText(this, "Account Selected", Toast.LENGTH_SHORT).show();
+                // startActivity(new Intent(this, AccountActivity.class));
+                return true;
+            }
+            return false;
+        });
+
+        getBinding().bottomNavigation.setSelectedItemId(R.id.nav_search);
+
+        getBinding().fabBookTable.setOnClickListener(v -> {
+            Toast.makeText(this, "Book Table Clicked", Toast.LENGTH_SHORT).show();
+            // Intent intent = new Intent(CustomerDashboardActivity.this, BookTableActivity.class);
+            // startActivity(intent);
         });
 
         getBinding().rvSearchResults.setLayoutManager(new LinearLayoutManager(this));
@@ -119,5 +139,13 @@ public class CustomerDashboardActivity extends BaseActivity<ActivityCustomerDash
                 Log.e("FirebaseError", "Read data from Firebase Error: " + error.getMessage());
             }
         });
+    }
+    private void performLogout() {
+        FirebaseAuth.getInstance().signOut();
+        Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 }
