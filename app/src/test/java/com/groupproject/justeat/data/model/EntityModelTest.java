@@ -78,40 +78,42 @@ public class EntityModelTest {
 
     @Test
     public void menuItemSupportsFirebaseConstructionAndPropertyUpdates() {
-        assertNotNull(new MenuItem());
-        MenuItem item = new MenuItem("m1", "c1", "Noodles", "Spicy noodles",
-                "image-a", 3599L, 2, true, 10L, 20L);
+        assertNotNull(new MenuItem("m1", "Noodles", "Spicy noodles", "image-a"));
+//        MenuItem item = new MenuItem("m1", "c1", "Noodles", "Spicy noodles",
+//                "image-a", 3599L, 2, true, 10L, 20L);
+        MenuItem item = new MenuItem("m1", "Noodles", "Spicy noodles",
+                "image-a");
         assertEquals("m1", item.getMenuItemId());
-        assertEquals("c1", item.getCategoryId());
+        //assertEquals("c1", item.getCategoryId());
         assertEquals("Noodles", item.getName());
         assertEquals("Spicy noodles", item.getDescription());
         assertEquals("image-a", item.getImageUrl());
-        assertEquals(3599L, item.getPriceInCents());
-        assertEquals(2, item.getSpicinessLevel());
-        assertTrue(item.isAvailable());
-        assertEquals(10L, item.getCreatedAt());
-        assertEquals(20L, item.getUpdatedAt());
+        //assertEquals(3599L, item.getPriceInCents());
+        //assertEquals(2, item.getSpicinessLevel());
+        //assertTrue(item.isAvailable());
+        //assertEquals(10L, item.getCreatedAt());
+        //assertEquals(20L, item.getUpdatedAt());
 
         item.setMenuItemId("m2");
-        item.setCategoryId("c2");
+        //item.setCategoryId("c2");
         item.setName("Cake");
         item.setDescription("Chocolate cake");
         item.setImageUrl("image-b");
-        item.setPriceInCents(1299L);
-        item.setSpicinessLevel(0);
-        item.setAvailable(false);
-        item.setCreatedAt(30L);
-        item.setUpdatedAt(40L);
+        //item.setPriceInCents(1299L);
+        //item.setSpicinessLevel(0);
+        //item.setAvailable(false);
+        //item.setCreatedAt(30L);
+        //item.setUpdatedAt(40L);
         assertEquals("m2", item.getMenuItemId());
-        assertEquals("c2", item.getCategoryId());
+        //assertEquals("c2", item.getCategoryId());
         assertEquals("Cake", item.getName());
         assertEquals("Chocolate cake", item.getDescription());
         assertEquals("image-b", item.getImageUrl());
-        assertEquals(1299L, item.getPriceInCents());
-        assertEquals(0, item.getSpicinessLevel());
-        assertFalse(item.isAvailable());
-        assertEquals(30L, item.getCreatedAt());
-        assertEquals(40L, item.getUpdatedAt());
+        //assertEquals(1299L, item.getPriceInCents());
+        //assertEquals(0, item.getSpicinessLevel());
+        //assertFalse(item.isAvailable());
+        //assertEquals(30L, item.getCreatedAt());
+        //assertEquals(40L, item.getUpdatedAt());
     }
 
     @Test

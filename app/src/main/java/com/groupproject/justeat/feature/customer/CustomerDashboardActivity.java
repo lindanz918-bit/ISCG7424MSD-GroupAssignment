@@ -24,14 +24,15 @@ import com.groupproject.justeat.R;
 import com.groupproject.justeat.base.BaseActivity;
 import com.groupproject.justeat.databinding.ActivityCustomerDashboardBinding;
 import com.groupproject.justeat.feature.login.LoginActivity;
-import com.groupproject.justeat.feature.manager.Meal;
+import com.groupproject.justeat.data.model.MenuItem;
+
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CustomerDashboardActivity extends BaseActivity<ActivityCustomerDashboardBinding> {
     private MainAdapter adapter;
-    private List<Meal> mealList;
+    private List<MenuItem> mealList;
     private DatabaseReference mealsRef;
 
     @Override
@@ -76,8 +77,17 @@ public class CustomerDashboardActivity extends BaseActivity<ActivityCustomerDash
         adapter = new MainAdapter(mealList, new MainAdapter.onItemClickListener() {
             @Override
             public void onItemClick(int position) {
-                Meal selectedMeal = mealList.get(position);
-                Toast.makeText(CustomerDashboardActivity.this, "Selected: " + selectedMeal.getMealName(), Toast.LENGTH_SHORT).show();
+                MenuItem selectedMeal = mealList.get(position);
+                Toast.makeText(CustomerDashboardActivity.this, "Selected: " + selectedMeal.getName(), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(CustomerDashboardActivity.this, CustomerMenuItemDetailsActivity.class);
+                intent.putExtra("MENU_ITEM_IMAGE", selectedMeal.getImageUrl());
+                intent.putExtra("MENU_ITEM_NAME", selectedMeal.getName());
+                intent.putExtra("MENU_ITEM_SPICINESS", selectedMeal.getSpiciness().toString());
+                intent.putExtra("MENU_ITEM_PRICE", selectedMeal.getPrice());
+                intent.putExtra("MENU_ITEM_DESCRIPTION", selectedMeal.getDescription());
+//                intent.putExtra("MENU_ITEM_CATEGORY", selectedMeal.getCategory());
+//                intent.putExtra("MENU_ITEM_DISCOUNT", selectedMeal.getDiscount());
+                startActivity(intent);
             }
         });
 
@@ -88,7 +98,7 @@ public class CustomerDashboardActivity extends BaseActivity<ActivityCustomerDash
                 return true;
             } else if (itemId == R.id.nav_my_menu) {
                 Toast.makeText(this, "My Menu Selected", Toast.LENGTH_SHORT).show();
-                // startActivity(new Intent(this, MyMenuActivity.class));
+                startActivity(new Intent(this, CustomerMyMenuActivity.class));
                 return true;
             } else if (itemId == R.id.nav_orders) {
                 Toast.makeText(this, "Orders Selected", Toast.LENGTH_SHORT).show();
@@ -118,14 +128,14 @@ public class CustomerDashboardActivity extends BaseActivity<ActivityCustomerDash
         Log.d("FirebaseDebug", "Listening on path: " + mealsRef.toString());
         mealsRef.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Log.d("FirebaseDebug", "onDataChange called. Exists: " + dataSnapshot.exists() + ", Children count: " + dataSnapshot.getChildrenCount());
                 mealList.clear();
                 for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
-                    Meal meal = childSnapshot.getValue(Meal.class);
+                    MenuItem meal = childSnapshot.getValue(MenuItem.class);
                     if (meal != null) {
                         mealList.add(meal);
-                        Log.d("FirebaseDebug", "Parsed Meal: " + meal.getMealName());
+                        Log.d("FirebaseDebug", "Parsed Meal: " + meal.getName());
                     } else {
                         Log.e("FirebaseDebug", "Failed to parse snapshot: " + childSnapshot.toString());
                     }

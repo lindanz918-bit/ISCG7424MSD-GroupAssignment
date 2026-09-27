@@ -1,48 +1,60 @@
 package com.groupproject.justeat.data.model;
 
+import com.google.firebase.database.PropertyName;
+
 /** 菜品实体，保存顾客浏览和经理维护菜单所需的数据。 */
 public class MenuItem {
     /** 菜品唯一 ID。 */
     private String menuItemId;
     /** 所属菜单分类 ID。 */
-    private String categoryId;
+    //private String categoryId;
     /** 菜品名称。 */
+    @PropertyName("mealName")
     private String name;
     /** 菜品描述和主要配料。 */
     private String description;
     /** 菜品图片地址。 */
     private String imageUrl;
     /** 价格，单位为分，避免浮点金额误差。 */
-    private long priceInCents;
+    //private long priceInCents;
+    private String price;
     /** 辣度等级，建议取值 0 至 5。 */
-    private int spicinessLevel;
+    //private int spicinessLevel;
+    private Object spiciness;
     /** 当前是否可以下单。 */
-    private boolean available;
+    //private boolean available;
     /** 创建时间，Unix 毫秒时间戳。 */
-    private long createdAt;
+    //private long createdAt;
     /** 最后更新时间，Unix 毫秒时间戳。 */
-    private long updatedAt;
+    //private long updatedAt;
 
     /** Firebase 反序列化需要的公开无参构造方法。 */
     public MenuItem() {
     }
 
     /** 创建包含全部菜品字段的实体。 */
-    public MenuItem(String menuItemId, String categoryId, String name,
-                    String description, String imageUrl, long priceInCents,
-                    int spicinessLevel, boolean available, long createdAt, long updatedAt) {
-        this.menuItemId = menuItemId;
-        this.categoryId = categoryId;
+//    public MenuItem(String menuItemId, String categoryId, String name,
+//                    String description, String imageUrl, long priceInCents,
+//                    int spicinessLevel, boolean available, long createdAt, long updatedAt) {
+//        this.menuItemId = menuItemId;
+//        this.categoryId = categoryId;
+//        this.name = name;
+//        this.description = description;
+//        this.imageUrl = imageUrl;
+//        this.priceInCents = priceInCents;
+//        this.spicinessLevel = spicinessLevel;
+//        this.available = available;
+//        this.createdAt = createdAt;
+//        this.updatedAt = updatedAt;
+//    }
+    public MenuItem(String id, String name, String imageUrl, String spiciness, String price, String description) {
+        this.menuItemId = id;
         this.name = name;
-        this.description = description;
         this.imageUrl = imageUrl;
-        this.priceInCents = priceInCents;
-        this.spicinessLevel = spicinessLevel;
-        this.available = available;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+        this.spiciness = spiciness;
+        this.price = price;
+        this.description = description;
     }
-
     public String getMenuItemId() {
         return menuItemId;
     }
@@ -51,18 +63,18 @@ public class MenuItem {
         this.menuItemId = menuItemId;
     }
 
-    public String getCategoryId() {
-        return categoryId;
-    }
+//    public String getCategoryId() {
+//        return categoryId;
+//    }
 
-    public void setCategoryId(String categoryId) {
-        this.categoryId = categoryId;
-    }
-
+//    public void setCategoryId(String categoryId) {
+//        this.categoryId = categoryId;
+//    }
+    @PropertyName("mealName")
     public String getName() {
         return name;
     }
-
+    @PropertyName("mealName")
     public void setName(String name) {
         this.name = name;
     }
@@ -83,43 +95,59 @@ public class MenuItem {
         this.imageUrl = imageUrl;
     }
 
-    public long getPriceInCents() {
-        return priceInCents;
+    public String getPrice() {
+        return price;
     }
 
-    public void setPriceInCents(long priceInCents) {
-        this.priceInCents = priceInCents;
+    public void setPrice(String price) {
+        this.price = price;
     }
 
-    public int getSpicinessLevel() {
-        return spicinessLevel;
+    public Object getSpiciness() {
+        return spiciness;
     }
 
-    public void setSpicinessLevel(int spicinessLevel) {
-        this.spicinessLevel = spicinessLevel;
+    public Object setSpiciness(Object spiciness) {
+        return this.spiciness = spiciness;
     }
 
-    public boolean isAvailable() {
-        return available;
-    }
+    //    public long getPriceInCents() {
+//        return priceInCents;
+//    }
 
-    public void setAvailable(boolean available) {
-        this.available = available;
-    }
+//    public void setPriceInCents(long priceInCents) {
+//        this.priceInCents = priceInCents;
+//    }
 
-    public long getCreatedAt() {
-        return createdAt;
-    }
+//    public int getSpicinessLevel() {
+//        return spicinessLevel;
+//    }
 
-    public void setCreatedAt(long createdAt) {
-        this.createdAt = createdAt;
-    }
+//    public void setSpicinessLevel(int spicinessLevel) {
+//        this.spicinessLevel = spicinessLevel;
+//    }
 
-    public long getUpdatedAt() {
-        return updatedAt;
-    }
+//    public boolean isAvailable() {
+//        return available;
+//    }
 
-    public void setUpdatedAt(long updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+//    public void setAvailable(boolean available) {
+//        this.available = available;
+//    }
+
+//    public long getCreatedAt() {
+//        return createdAt;
+//    }
+
+//    public void setCreatedAt(long createdAt) {
+//        this.createdAt = createdAt;
+//    }
+
+//    public long getUpdatedAt() {
+//        return updatedAt;
+//    }
+
+//    public void setUpdatedAt(long updatedAt) {
+//        this.updatedAt = updatedAt;
+//    }
 }

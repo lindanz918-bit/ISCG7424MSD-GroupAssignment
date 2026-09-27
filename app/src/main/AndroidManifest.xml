@@ -41,7 +41,11 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".feature.customer.CustomerMemuItemDetailsActivity"
+            android:name=".feature.customer.CustomerMenuItemDetailsActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".feature.customer.CustomerMyMenuActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
     </application>
