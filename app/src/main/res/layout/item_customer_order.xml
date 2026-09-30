@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    app:cardBackgroundColor="#FFFFFF"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp"
+    app:strokeColor="#E0E0E0"
+    app:strokeWidth="1dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <!-- 订单号标签与内容 -->
+        <TextView
+            android:id="@+id/tv_order_id_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Order ID: "
+            android:textColor="#1A1A1A"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_order_id"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textColor="#555555"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@id/tv_order_id_title"
+            app:layout_constraintEnd_toStartOf="@id/tv_order_status"
+            app:layout_constraintStart_toEndOf="@id/tv_order_id_title"
+            app:layout_constraintTop_toTopOf="@id/tv_order_id_title"
+            tools:text="#ORD-102938" />
+
+        <!-- 订单状态 (如: PENDING / CONFIRMED) -->
+        <TextView
+            android:id="@+id/tv_order_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_rounded_border"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="4dp"
+            android:textColor="#50A2DF"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="PENDING" />
+
+        <!-- 分隔线 -->
+        <View
+            android:id="@+id/divider"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="12dp"
+            android:background="#F0F0F0"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_order_id_title" />
+
+        <!-- 预订日期信息 -->
+        <TextView
+            android:id="@+id/tv_date_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Date: "
+            android:textColor="#757575"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/divider" />
+
+        <TextView
+            android:id="@+id/tv_order_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#1A1A1A"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@id/tv_date_label"
+            app:layout_constraintStart_toEndOf="@id/tv_date_label"
+            app:layout_constraintTop_toTopOf="@id/tv_date_label"
+            tools:text="18/10/2026" />
+
+        <TextView
+            android:id="@+id/tv_guest_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="Guests: "
+            android:textColor="#757575"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_date_label" />
+
+        <TextView
+            android:id="@+id/tv_order_guests"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#1A1A1A"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@id/tv_guest_label"
+            app:layout_constraintStart_toEndOf="@id/tv_guest_label"
+            app:layout_constraintTop_toTopOf="@id/tv_guest_label"
+            tools:text="2 Guests (Table 001)" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_view_menu"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="38dp"
+            android:layout_marginTop="16dp"
+            android:text="View Menu"
+            android:textAllCaps="false"
+            android:textColor="#50A2DF"
+            android:textSize="12sp"
+            app:cornerRadius="6dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_guest_label"
+            app:strokeColor="#50A2DF" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_delete_order"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="38dp"
+            android:text="Delete"
+            android:textAllCaps="false"
+            android:textColor="#E53935"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@id/btn_view_menu"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/btn_view_menu" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

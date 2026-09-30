@@ -78,10 +78,10 @@ public class CustomerDashboardActivity extends BaseActivity<ActivityCustomerDash
             @Override
             public void onItemClick(int position) {
                 MenuItem selectedMeal = mealList.get(position);
-                Toast.makeText(CustomerDashboardActivity.this, "Selected: " + selectedMeal.getName(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(CustomerDashboardActivity.this, "Selected: " + selectedMeal.getmealName(), Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(CustomerDashboardActivity.this, CustomerMenuItemDetailsActivity.class);
                 intent.putExtra("MENU_ITEM_IMAGE", selectedMeal.getImageUrl());
-                intent.putExtra("MENU_ITEM_NAME", selectedMeal.getName());
+                intent.putExtra("MENU_ITEM_NAME", selectedMeal.getmealName());
                 intent.putExtra("MENU_ITEM_SPICINESS", selectedMeal.getSpiciness().toString());
                 intent.putExtra("MENU_ITEM_PRICE", selectedMeal.getPrice());
                 intent.putExtra("MENU_ITEM_DESCRIPTION", selectedMeal.getDescription());
@@ -97,12 +97,11 @@ public class CustomerDashboardActivity extends BaseActivity<ActivityCustomerDash
             if (itemId == R.id.nav_search) {
                 return true;
             } else if (itemId == R.id.nav_my_menu) {
-                Toast.makeText(this, "My Menu Selected", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(this, CustomerMyMenuActivity.class));
                 return true;
             } else if (itemId == R.id.nav_orders) {
                 Toast.makeText(this, "Orders Selected", Toast.LENGTH_SHORT).show();
-                // startActivity(new Intent(this, OrdersActivity.class));
+                startActivity(new Intent(this, CustomerOrdersActivity.class));
                 return true;
             } else if (itemId == R.id.nav_account) {
                 Toast.makeText(this, "Account Selected", Toast.LENGTH_SHORT).show();
@@ -116,8 +115,8 @@ public class CustomerDashboardActivity extends BaseActivity<ActivityCustomerDash
 
         getBinding().fabBookTable.setOnClickListener(v -> {
             Toast.makeText(this, "Book Table Clicked", Toast.LENGTH_SHORT).show();
-            // Intent intent = new Intent(CustomerDashboardActivity.this, BookTableActivity.class);
-            // startActivity(intent);
+            //Intent intent = new Intent(CustomerDashboardActivity.this, BookTableActivity.class);
+            //startActivity(intent);
         });
 
         getBinding().rvSearchResults.setLayoutManager(new LinearLayoutManager(this));
@@ -135,7 +134,7 @@ public class CustomerDashboardActivity extends BaseActivity<ActivityCustomerDash
                     MenuItem meal = childSnapshot.getValue(MenuItem.class);
                     if (meal != null) {
                         mealList.add(meal);
-                        Log.d("FirebaseDebug", "Parsed Meal: " + meal.getName());
+                        Log.d("FirebaseDebug", "Parsed Meal: " + meal.getmealName());
                     } else {
                         Log.e("FirebaseDebug", "Failed to parse snapshot: " + childSnapshot.toString());
                     }

@@ -36,7 +36,7 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@id/btn_delete"
             app:layout_constraintStart_toEndOf="@id/img_item"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="@id/img_item" />
 
         <TextView
             android:id="@+id/tv_item_price"

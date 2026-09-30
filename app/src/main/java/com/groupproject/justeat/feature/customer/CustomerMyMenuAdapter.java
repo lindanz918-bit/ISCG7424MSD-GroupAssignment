@@ -1,7 +1,9 @@
 package com.groupproject.justeat.feature.customer;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -10,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.groupproject.justeat.R;
 import com.groupproject.justeat.data.model.MenuItem;
+import com.groupproject.justeat.data.model.Order;
 import com.groupproject.justeat.databinding.ItemMyMenuBinding;
 
 
@@ -22,7 +25,7 @@ public class CustomerMyMenuAdapter extends RecyclerView.Adapter<CustomerMyMenuAd
     private final OnItemDeleteListener deleteListener;
 
     public interface OnItemDeleteListener {
-        void onDelete(MenuItem item);
+        void onDeleteClick(MenuItem item, int position);
     }
 
     public CustomerMyMenuAdapter(Context context, List<MenuItem> menuList, OnItemDeleteListener deleteListener) {
@@ -41,8 +44,8 @@ public class CustomerMyMenuAdapter extends RecyclerView.Adapter<CustomerMyMenuAd
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         MenuItem item = menuList.get(position);
-
-        holder.binding.tvItemName.setText(item.getName());
+        Log.d("AdapterCheck", "Item Name Value: " + item.getmealName());
+        holder.binding.tvItemName.setText(item.getmealName());
         holder.binding.tvItemPrice.setText(item.getPrice());
         holder.binding.tvItemSpiciness.setText("Spiciness: " + item.getSpiciness());
 
@@ -52,11 +55,15 @@ public class CustomerMyMenuAdapter extends RecyclerView.Adapter<CustomerMyMenuAd
                 .error(R.drawable.ic_image_placeholder)
                 .into(holder.binding.imgItem);
 
-        holder.binding.btnDelete.setOnClickListener(v -> {
-            if (deleteListener != null) {
-                deleteListener.onDelete(item);
-            }
-        });
+        if (deleteListener == null) {
+            holder.binding.btnDelete.setVisibility(View.GONE); // Hides the trash can
+        } else {
+            // 2. Normal Mode for "My Menu" page
+            holder.binding.btnDelete.setVisibility(View.VISIBLE);
+            holder.binding.btnDelete.setOnClickListener(v -> {
+                deleteListener.onDeleteClick(item, position);
+            });
+        }
     }
 
     @Override

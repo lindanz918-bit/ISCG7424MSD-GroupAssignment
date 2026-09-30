@@ -22,7 +22,7 @@ import com.groupproject.justeat.databinding.ActivityCustomerMenuItemDetailsBindi
 
 public class CustomerMenuItemDetailsActivity extends BaseActivity<ActivityCustomerMenuItemDetailsBinding> {
 
-    private String name, imageUrl, spiciness, price, description;
+    private String mealName, imageUrl, spiciness, price, description;
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
     @Override
@@ -73,8 +73,8 @@ public class CustomerMenuItemDetailsActivity extends BaseActivity<ActivityCustom
                 finish();
                 return true;
             } else if (itemId == R.id.nav_orders) {
-                Toast.makeText(this, "Orders Selected", Toast.LENGTH_SHORT).show();
-                // startActivity(new Intent(this, OrdersActivity.class));
+                startActivity(new Intent(this, CustomerOrdersActivity.class));
+                finish();
                 return true;
             } else if (itemId == R.id.nav_account) {
                 Toast.makeText(this, "Account Selected", Toast.LENGTH_SHORT).show();
@@ -91,7 +91,7 @@ public class CustomerMenuItemDetailsActivity extends BaseActivity<ActivityCustom
         Intent intent = getIntent();
         if (intent != null)
         {
-            name = intent.getStringExtra("MENU_ITEM_NAME");
+            mealName = intent.getStringExtra("MENU_ITEM_NAME");
             imageUrl = intent.getStringExtra("MENU_ITEM_IMAGE");
             spiciness = intent.getStringExtra("MENU_ITEM_SPICINESS");
             price = intent.getStringExtra("MENU_ITEM_PRICE");
@@ -105,7 +105,7 @@ public class CustomerMenuItemDetailsActivity extends BaseActivity<ActivityCustom
                     .placeholder(R.drawable.ic_image_placeholder) // optional placeholder
                     .error(R.drawable.ic_image_placeholder)      // optional error image
                     .into(getBinding().imgBanner);
-            getBinding().tvName.setText(name);
+            getBinding().tvName.setText(mealName);
             getBinding().tvSpiciness.setText(spiciness);
             getBinding().tvPrice.setText(price);
             getBinding().tvDescription.setText(description);
@@ -125,7 +125,7 @@ public class CustomerMenuItemDetailsActivity extends BaseActivity<ActivityCustom
             return;
         }
 
-        MenuItem item = new MenuItem(menuItemId, name, imageUrl, spiciness, price, description);
+        MenuItem item = new MenuItem(menuItemId, mealName, imageUrl, spiciness, price, description);
         getBinding().btnBook.setEnabled(false);
         userMenuRef.child(menuItemId).setValue(item).addOnSuccessListener(aVoid -> {
                     Toast.makeText(this, "Menu item saved successfully", Toast.LENGTH_SHORT).show();

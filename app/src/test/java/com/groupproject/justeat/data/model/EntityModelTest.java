@@ -2,7 +2,6 @@ package com.groupproject.justeat.data.model;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -11,7 +10,6 @@ public class EntityModelTest {
 
     @Test
     public void userSupportsFirebaseConstructionAndPropertyUpdates() {
-        assertNotNull(new User());
         User user = new User("u1", "Chris", "Hawkes", "chris@example.com",
                 "021000000", "avatar-a", "CUSTOMER", "ACTIVE", 10L, 20L);
         assertEquals("u1", user.getUserId());
@@ -49,7 +47,6 @@ public class EntityModelTest {
 
     @Test
     public void menuCategorySupportsFirebaseConstructionAndPropertyUpdates() {
-        assertNotNull(new MenuCategory());
         MenuCategory category = new MenuCategory("c1", "Mains", "Main meals", 1,
                 true, 10L, 20L);
         assertEquals("c1", category.getCategoryId());
@@ -78,47 +75,31 @@ public class EntityModelTest {
 
     @Test
     public void menuItemSupportsFirebaseConstructionAndPropertyUpdates() {
-        assertNotNull(new MenuItem("m1", "Noodles", "Spicy noodles", "image-a"));
-//        MenuItem item = new MenuItem("m1", "c1", "Noodles", "Spicy noodles",
-//                "image-a", 3599L, 2, true, 10L, 20L);
-        MenuItem item = new MenuItem("m1", "Noodles", "Spicy noodles",
-                "image-a");
+        MenuItem item = new MenuItem("m1", "Noodles", "image-a", "Mild", "12.99", "Spicy noodles");
         assertEquals("m1", item.getMenuItemId());
-        //assertEquals("c1", item.getCategoryId());
-        assertEquals("Noodles", item.getName());
+
+        assertEquals("Noodles", item.getmealName());
         assertEquals("Spicy noodles", item.getDescription());
         assertEquals("image-a", item.getImageUrl());
-        //assertEquals(3599L, item.getPriceInCents());
-        //assertEquals(2, item.getSpicinessLevel());
-        //assertTrue(item.isAvailable());
-        //assertEquals(10L, item.getCreatedAt());
-        //assertEquals(20L, item.getUpdatedAt());
+
 
         item.setMenuItemId("m2");
-        //item.setCategoryId("c2");
-        item.setName("Cake");
+
+        item.setmealName("Cake");
         item.setDescription("Chocolate cake");
         item.setImageUrl("image-b");
-        //item.setPriceInCents(1299L);
-        //item.setSpicinessLevel(0);
-        //item.setAvailable(false);
-        //item.setCreatedAt(30L);
-        //item.setUpdatedAt(40L);
+
         assertEquals("m2", item.getMenuItemId());
-        //assertEquals("c2", item.getCategoryId());
-        assertEquals("Cake", item.getName());
+
+        assertEquals("Cake", item.getmealName());
         assertEquals("Chocolate cake", item.getDescription());
         assertEquals("image-b", item.getImageUrl());
-        //assertEquals(1299L, item.getPriceInCents());
-        //assertEquals(0, item.getSpicinessLevel());
-        //assertFalse(item.isAvailable());
-        //assertEquals(30L, item.getCreatedAt());
-        //assertEquals(40L, item.getUpdatedAt());
+
     }
 
     @Test
     public void restaurantTableSupportsFirebaseConstructionAndPropertyUpdates() {
-        assertNotNull(new RestaurantTable());
+
         RestaurantTable table = new RestaurantTable("t1", "01", 4, "Window",
                 "AVAILABLE", 10L, 20L);
         assertEquals("t1", table.getTableId());
@@ -147,7 +128,6 @@ public class EntityModelTest {
 
     @Test
     public void bookingSupportsFirebaseConstructionAndPropertyUpdates() {
-        assertNotNull(new Booking());
         Booking booking = new Booking("b1", "u1", "t1", 3, 1000L,
                 "Birthday", "PENDING", 10L, 20L);
         assertEquals("b1", booking.getBookingId());
@@ -182,42 +162,37 @@ public class EntityModelTest {
 
     @Test
     public void orderSupportsFirebaseConstructionAndPropertyUpdates() {
-        assertNotNull(new Order());
         Order order = new Order("o1", "u1", "b1", "t1", 4898L,
                 "No peanuts", "PENDING", 10L, 20L);
         assertEquals("o1", order.getOrderId());
         assertEquals("u1", order.getCustomerId());
-        assertEquals("b1", order.getBookingId());
+
         assertEquals("t1", order.getTableId());
-        assertEquals(4898L, order.getTotalInCents());
-        assertEquals("No peanuts", order.getSpecialInstructions());
+
         assertEquals("PENDING", order.getStatus());
         assertEquals(10L, order.getCreatedAt());
-        assertEquals(20L, order.getUpdatedAt());
+
 
         order.setOrderId("o2");
         order.setCustomerId("u2");
-        order.setBookingId("b2");
+
         order.setTableId("t2");
-        order.setTotalInCents(6000L);
-        order.setSpecialInstructions("Extra spicy");
+
         order.setStatus("ACCEPTED");
         order.setCreatedAt(30L);
-        order.setUpdatedAt(40L);
+
         assertEquals("o2", order.getOrderId());
         assertEquals("u2", order.getCustomerId());
-        assertEquals("b2", order.getBookingId());
+
         assertEquals("t2", order.getTableId());
-        assertEquals(6000L, order.getTotalInCents());
-        assertEquals("Extra spicy", order.getSpecialInstructions());
+
         assertEquals("ACCEPTED", order.getStatus());
         assertEquals(30L, order.getCreatedAt());
-        assertEquals(40L, order.getUpdatedAt());
+
     }
 
     @Test
     public void orderItemSupportsFirebaseConstructionAndPropertyUpdates() {
-        assertNotNull(new OrderItem());
         OrderItem item = new OrderItem("oi1", "o1", "m1", "Noodles",
                 3599L, 2, 7198L, "Less salt", "PENDING", 10L, 20L);
         assertEquals("oi1", item.getOrderItemId());

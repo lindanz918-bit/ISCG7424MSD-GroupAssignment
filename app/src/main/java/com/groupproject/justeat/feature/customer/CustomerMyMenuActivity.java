@@ -23,6 +23,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.groupproject.justeat.R;
 import com.groupproject.justeat.base.BaseActivity;
 import com.groupproject.justeat.data.model.MenuItem;
+import com.groupproject.justeat.data.model.Order;
 import com.groupproject.justeat.databinding.ActivityCustomerMyMenuBinding;
 
 import java.util.ArrayList;
@@ -56,9 +57,27 @@ public class CustomerMyMenuActivity extends BaseActivity<ActivityCustomerMyMenuB
     }
 
     private void initView() {
-        adapter = new CustomerMyMenuAdapter(this, menuList, item -> {
-            menuList.remove(item);
-            adapter.notifyDataSetChanged();
+        getBinding().btnBookTable.setOnClickListener(view -> {
+//            if (menuList.isEmpty()) {
+//                Toast.makeText(this, "Your saved menu is empty. Please add items first.", Toast.LENGTH_SHORT).show();
+//                return;
+//            }
+
+            Intent intent = new Intent(this, CustomerBookTableActivity.class);
+            startActivity(intent);
+
+        });
+
+        adapter = new CustomerMyMenuAdapter(this, menuList, (item, position) ->  {
+            new com.google.android.material.dialog.MaterialAlertDialogBuilder(CustomerMyMenuActivity.this)
+                    .setTitle("Delete Meal")
+                    .setMessage("Are you sure you want to delete \"" + item.getmealName() + "\"?")
+                    .setPositiveButton("Delete", (dialog, which) -> {
+                        menuList.remove(item);
+                        adapter.notifyDataSetChanged();
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
         });
         getBinding().rvMyMenu.setLayoutManager(new LinearLayoutManager(this));
         getBinding().rvMyMenu.setAdapter(adapter);
@@ -66,14 +85,12 @@ public class CustomerMyMenuActivity extends BaseActivity<ActivityCustomerMyMenuB
             int itemId = item.getItemId();
 
             if (itemId == R.id.nav_search) {
-                Toast.makeText(this, "Dashboard Selected", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(this, CustomerDashboardActivity.class));
                 return true;
             } else if (itemId == R.id.nav_my_menu) {
                 return true;
             } else if (itemId == R.id.nav_orders) {
-                Toast.makeText(this, "Orders Selected", Toast.LENGTH_SHORT).show();
-                // startActivity(new Intent(this, OrdersActivity.class));
+                startActivity(new Intent(this, CustomerOrdersActivity.class));
                 return true;
             } else if (itemId == R.id.nav_account) {
                 Toast.makeText(this, "Account Selected", Toast.LENGTH_SHORT).show();
@@ -82,6 +99,7 @@ public class CustomerMyMenuActivity extends BaseActivity<ActivityCustomerMyMenuB
             }
             return false;
         });
+        getBinding().bottomNavigation.setSelectedItemId(R.id.nav_my_menu);
     }
     private void init_data() {
         setupFirebase();
@@ -89,7 +107,7 @@ public class CustomerMyMenuActivity extends BaseActivity<ActivityCustomerMyMenuB
     }
     private void setupFirebase() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        String userId = (currentUser != null) ? currentUser.getUid() : null;
+        String userId = (currentUser != null) ? currentUser.getUid() : "Guest";
         mDatabase = FirebaseDatabase.getInstance().getReference("MyMenu").child(userId);
     }
 
@@ -118,6 +136,7 @@ public class CustomerMyMenuActivity extends BaseActivity<ActivityCustomerMyMenuB
                     .addOnSuccessListener(aVoid -> Toast.makeText(CustomerMyMenuActivity.this, "Menu item deleted successfully", Toast.LENGTH_SHORT).show())
                     .addOnFailureListener(e -> Toast.makeText(CustomerMyMenuActivity.this, "Failed to delete menu item", Toast.LENGTH_SHORT).show());
         }
+
     }
 
 }

@@ -9,8 +9,7 @@ public class MenuItem {
     /** 所属菜单分类 ID。 */
     //private String categoryId;
     /** 菜品名称。 */
-    @PropertyName("mealName")
-    private String name;
+    private String mealName;
     /** 菜品描述和主要配料。 */
     private String description;
     /** 菜品图片地址。 */
@@ -47,9 +46,9 @@ public class MenuItem {
 //        this.createdAt = createdAt;
 //        this.updatedAt = updatedAt;
 //    }
-    public MenuItem(String id, String name, String imageUrl, String spiciness, String price, String description) {
+    public MenuItem(String id, String mealName, String imageUrl, String spiciness, String price, String description) {
         this.menuItemId = id;
-        this.name = name;
+        this.mealName = mealName;
         this.imageUrl = imageUrl;
         this.spiciness = spiciness;
         this.price = price;
@@ -70,13 +69,13 @@ public class MenuItem {
 //    public void setCategoryId(String categoryId) {
 //        this.categoryId = categoryId;
 //    }
-    @PropertyName("mealName")
-    public String getName() {
-        return name;
+
+    public String getmealName() {
+        return mealName;
     }
-    @PropertyName("mealName")
-    public void setName(String name) {
-        this.name = name;
+
+    public void setmealName(String mealName) {
+        this.mealName = mealName;
     }
 
     public String getDescription() {
@@ -107,8 +106,8 @@ public class MenuItem {
         return spiciness;
     }
 
-    public Object setSpiciness(Object spiciness) {
-        return this.spiciness = spiciness;
+    public void setSpiciness(Object spiciness) {
+        this.spiciness = spiciness;
     }
 
     //    public long getPriceInCents() {

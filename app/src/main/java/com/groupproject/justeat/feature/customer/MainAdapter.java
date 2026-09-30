@@ -37,7 +37,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder>{
         }else{
             query = query.toLowerCase().trim();
             for(MenuItem meal : fulllist) {
-                if (meal.getName().toLowerCase().contains(query)) {
+                if (meal.getmealName().toLowerCase().contains(query)) {
                     mealList.add(meal);
                 }
             }
@@ -64,8 +64,8 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder>{
                 .placeholder(R.drawable.ic_image_placeholder) // optional placeholder
                 .error(R.drawable.ic_image_placeholder)      // optional error image
                 .into(holder.imageView);
-        if (meal.getName() != null && !meal.getName().isEmpty()) {
-            holder.tvName.setText(meal.getName());
+        if (meal.getmealName() != null && !meal.getmealName().isEmpty()) {
+            holder.tvName.setText(meal.getmealName());
         } else {
             holder.tvName.setText("Name Null");
         }
