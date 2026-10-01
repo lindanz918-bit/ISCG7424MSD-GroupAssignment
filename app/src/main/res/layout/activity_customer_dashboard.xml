@@ -6,7 +6,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@color/just_eat_surface"
     android:padding="16dp"
     tools:context=".feature.customer.CustomerDashboardActivity">
 
@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:text="JustEat"
-            android:textColor="#2B394A"
+            android:textColor="@color/just_eat_text_primary"
             android:textSize="22sp"
             android:textStyle="bold" />
     </RelativeLayout>
@@ -68,11 +68,12 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="12dp"
-        android:text="Book Table"
-        android:textColor="#FFFFFF"
-        app:backgroundTint="#2B394A"
+        android:text="BOOK TABLE"
+        android:textStyle="bold"
+        android:textColor="@color/just_eat_surface"
+        app:backgroundTint="@color/just_eat_primary"
         app:icon="@android:drawable/ic_menu_today"
-        app:iconTint="#FFFFFF"
+        app:iconTint="@color/just_eat_surface"
         app:layout_constraintBottom_toTopOf="@id/bottomNavigation"
         app:layout_constraintEnd_toEndOf="parent" />
 

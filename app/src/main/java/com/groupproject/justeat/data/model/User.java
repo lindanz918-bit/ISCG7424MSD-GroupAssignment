@@ -13,7 +13,7 @@ public class User {
     /** 登录邮箱。 */
     private String email;
     /** 联系电话。 */
-    private String phone;
+    private Object phone;
     /** 头像图片地址。 */
     private String avatarUrl;
     /** 用户角色，值来自 UserRole。 */
@@ -31,7 +31,7 @@ public class User {
 
     /** 创建包含全部用户字段的实体。 */
     public User(String userId, String firstName, String lastName, String email,
-                String phone, String avatarUrl, String role, String status,
+                Object phone, String avatarUrl, String role, String status,
                 long createdAt, long updatedAt) {
         this.userId = userId;
         this.firstName = firstName;
@@ -77,11 +77,11 @@ public class User {
         this.email = email;
     }
 
-    public String getPhone() {
+    public Object getPhone() {
         return phone;
     }
 
-    public void setPhone(String phone) {
+    public void setPhone(Object phone) {
         this.phone = phone;
     }
 

@@ -17,8 +17,6 @@ import java.util.List;
 public class CustomerOrderAdapter extends RecyclerView.Adapter<CustomerOrderAdapter.ViewHolder> {
     private List<Order> orderList;
     private onItemClickListener listener;
-
-
     public interface onItemClickListener {
         void onViewMenuClick(Order order, int position);
         void onDeleteClick(Order order, int position);
@@ -50,7 +48,6 @@ public class CustomerOrderAdapter extends RecyclerView.Adapter<CustomerOrderAdap
         holder.binding.tvOrderDate.setText(order.getBookingDate());
         holder.binding.tvOrderGuests.setText(order.getGuestCount() + " Guests (Table " + order.getTableId() + ")");
 
-
         holder.binding.btnViewMenu.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onViewMenuClick(order, position);
@@ -71,7 +68,6 @@ public class CustomerOrderAdapter extends RecyclerView.Adapter<CustomerOrderAdap
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public final ItemCustomerOrderBinding binding;
-
         public ViewHolder(@NonNull ItemCustomerOrderBinding binding) {
             super(binding.getRoot());
             this.binding = binding;

@@ -7,5 +7,9 @@
     <color name="just_eat_surface">#FFFFFF</color>
     <color name="just_eat_text_primary">#172033</color>
     <color name="just_eat_text_secondary">#637083</color>
+    <color name="just_eat_divider">#E0E0E0</color>
+    <color name="just_eat_error">#E53935</color>
+    <color name="just_eat_spiciness_background">#FFF3E0</color>
+    <color name="just_eat_spiciness_text">#E65100</color>
 </resources>
 

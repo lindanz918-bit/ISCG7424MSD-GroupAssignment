@@ -16,16 +16,14 @@ import com.groupproject.justeat.data.model.MenuItem;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder>{
-
+public class CustomerMealAdapter extends RecyclerView.Adapter<CustomerMealAdapter.ViewHolder>{
     private List<MenuItem> mealList;
     private List<MenuItem> fulllist;
-
     private onItemClickListener listener;
     public interface onItemClickListener{
         void onItemClick(int position);
     }
-    public MainAdapter(List<MenuItem> mealList, onItemClickListener listener){
+    public CustomerMealAdapter(List<MenuItem> mealList, onItemClickListener listener){
         this.mealList = mealList;
         this.listener = listener;
         this.fulllist = List.copyOf(mealList);
@@ -51,13 +49,13 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder>{
     }
     @NonNull
     @Override
-    public MainAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public CustomerMealAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_meal_card, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MainAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull CustomerMealAdapter.ViewHolder holder, int position) {
         MenuItem meal = mealList.get(position);
         Glide.with(holder.itemView.getContext())
                 .load(meal.getImageUrl())
@@ -98,7 +96,6 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder>{
             //tvDescription = itemView.findViewById(R.id.tv_item_description);
         }
     }
-
 }
 
 

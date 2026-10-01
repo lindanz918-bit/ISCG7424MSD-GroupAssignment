@@ -24,4 +24,13 @@
     <string name="staff_dashboard">Staff Dashboard</string>
     <string name="dashboard_placeholder">You are signed in. More features are coming soon.</string>
     <string name="logout_action">Log out</string>
+
+    <string name="profile_title">Profile</string>
+    <string name="change_avatar">Change Avatar</string>
+    <string name="label_first_name">FIRST NAME</string>
+    <string name="label_last_name">LAST NAME</string>
+    <string name="label_email">EMAIL ADDRESS</string>
+    <string name="label_phone">PHONE</string>
+    <string name="reset_password_action">RESET PASSWORD</string>
+    <string name="save_action">SAVE</string>
 </resources>

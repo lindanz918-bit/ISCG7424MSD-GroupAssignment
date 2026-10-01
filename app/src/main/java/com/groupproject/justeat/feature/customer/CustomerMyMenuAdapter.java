@@ -27,7 +27,6 @@ public class CustomerMyMenuAdapter extends RecyclerView.Adapter<CustomerMyMenuAd
     public interface OnItemDeleteListener {
         void onDeleteClick(MenuItem item, int position);
     }
-
     public CustomerMyMenuAdapter(Context context, List<MenuItem> menuList, OnItemDeleteListener deleteListener) {
         this.context = context;
         this.menuList = menuList;

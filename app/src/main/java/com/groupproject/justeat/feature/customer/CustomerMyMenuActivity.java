@@ -40,7 +40,6 @@ public class CustomerMyMenuActivity extends BaseActivity<ActivityCustomerMyMenuB
         return ActivityCustomerMyMenuBinding.inflate(inflater);
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,21 +50,17 @@ public class CustomerMyMenuActivity extends BaseActivity<ActivityCustomerMyMenuB
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
         initView();
         init_data();
     }
-
     private void initView() {
         getBinding().btnBookTable.setOnClickListener(view -> {
-//            if (menuList.isEmpty()) {
-//                Toast.makeText(this, "Your saved menu is empty. Please add items first.", Toast.LENGTH_SHORT).show();
-//                return;
-//            }
-
+            if (menuList.isEmpty()) {
+                Toast.makeText(this, "Your saved menu is empty. Please add items first.", Toast.LENGTH_SHORT).show();
+                return;
+            }
             Intent intent = new Intent(this, CustomerBookTableActivity.class);
             startActivity(intent);
-
         });
 
         adapter = new CustomerMyMenuAdapter(this, menuList, (item, position) ->  {
@@ -79,22 +74,25 @@ public class CustomerMyMenuActivity extends BaseActivity<ActivityCustomerMyMenuB
                     .setNegativeButton("Cancel", null)
                     .show();
         });
+
         getBinding().rvMyMenu.setLayoutManager(new LinearLayoutManager(this));
         getBinding().rvMyMenu.setAdapter(adapter);
+
         getBinding().bottomNavigation.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
-
             if (itemId == R.id.nav_search) {
                 startActivity(new Intent(this, CustomerDashboardActivity.class));
+                overridePendingTransition(0, 0);
                 return true;
             } else if (itemId == R.id.nav_my_menu) {
                 return true;
             } else if (itemId == R.id.nav_orders) {
                 startActivity(new Intent(this, CustomerOrdersActivity.class));
+                overridePendingTransition(0, 0);
                 return true;
             } else if (itemId == R.id.nav_account) {
-                Toast.makeText(this, "Account Selected", Toast.LENGTH_SHORT).show();
-                // startActivity(new Intent(this, AccountActivity.class));
+                startActivity(new Intent(this, CustomerAccountActivity.class));
+                overridePendingTransition(0, 0);
                 return true;
             }
             return false;
@@ -130,13 +128,4 @@ public class CustomerMyMenuActivity extends BaseActivity<ActivityCustomerMyMenuB
             }
         });
     }
-    private void deleteMenuItem(MenuItem item) {
-        if (item.getMenuItemId() != null) {
-            mDatabase.child(item.getMenuItemId()).removeValue()
-                    .addOnSuccessListener(aVoid -> Toast.makeText(CustomerMyMenuActivity.this, "Menu item deleted successfully", Toast.LENGTH_SHORT).show())
-                    .addOnFailureListener(e -> Toast.makeText(CustomerMyMenuActivity.this, "Failed to delete menu item", Toast.LENGTH_SHORT).show());
-        }
-
-    }
-
 }

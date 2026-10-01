@@ -162,8 +162,7 @@ public class EntityModelTest {
 
     @Test
     public void orderSupportsFirebaseConstructionAndPropertyUpdates() {
-        Order order = new Order("o1", "u1", "b1", "t1", 4898L,
-                "No peanuts", "PENDING", 10L, 20L);
+        Order order = new Order("o1", "u1", "b1", "t1", "status", "notes", 4898L);
         assertEquals("o1", order.getOrderId());
         assertEquals("u1", order.getCustomerId());
 

@@ -34,8 +34,6 @@ import java.util.Locale;
 
 public class CustomerBookTableActivity extends BaseActivity<ActivityCustomerBookTableBinding> {
     String selectedGuestCount, selectedDate, selectedTableId;
-    private DatabaseReference mDatabase;
-    private FirebaseAuth mAuth;
 
     @Override
     protected ActivityCustomerBookTableBinding inflateBinding(LayoutInflater inflater) {
@@ -77,27 +75,28 @@ public class CustomerBookTableActivity extends BaseActivity<ActivityCustomerBook
 
             if (itemId == R.id.nav_search) {
                 startActivity(new Intent(this, CustomerDashboardActivity.class));
+                overridePendingTransition(0, 0);
                 finish();
                 return true;
             } else if (itemId == R.id.nav_my_menu) {
                 startActivity(new Intent(this, CustomerMyMenuActivity.class));
+                overridePendingTransition(0, 0);
                 finish();
                 return true;
             } else if (itemId == R.id.nav_orders) {
                 startActivity(new Intent(this, CustomerOrdersActivity.class));
+                overridePendingTransition(0, 0);
                 finish();
                 return true;
             } else if (itemId == R.id.nav_account) {
-                Toast.makeText(this, "Account Selected", Toast.LENGTH_SHORT).show();
-                // startActivity(new Intent(this, AccountActivity.class));
+                startActivity(new Intent(this, CustomerAccountActivity.class));
+                overridePendingTransition(0, 0);
                 return true;
             }
             return false;
         });
     }
-
     private void initData() {
-
         getBinding().btnBookConfirm.setOnClickListener(v -> {
             confirmBooking();
         });
@@ -119,7 +118,6 @@ public class CustomerBookTableActivity extends BaseActivity<ActivityCustomerBook
         datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
         datePickerDialog.show();
     }
-
     private void confirmBooking() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) return;
@@ -167,8 +165,7 @@ public class CustomerBookTableActivity extends BaseActivity<ActivityCustomerBook
                                 orderItemRef.child(orderId).setValue(orderedItems)
                                         .addOnSuccessListener(Unsed -> {
                                             Toast.makeText(CustomerBookTableActivity.this, "Booking Successful!", Toast.LENGTH_SHORT).show();
-
-                                            // myMenuRef.removeValue();
+                                            myMenuRef.removeValue();
                                             Intent intent = new Intent(CustomerBookTableActivity.this, CustomerDashboardActivity.class);
                                             startActivity(intent);
                                             finish();

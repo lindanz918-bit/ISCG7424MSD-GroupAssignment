@@ -14,7 +14,6 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -23,7 +22,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.groupproject.justeat.R;
 import com.groupproject.justeat.base.BaseActivity;
 import com.groupproject.justeat.databinding.ActivityCustomerDashboardBinding;
-import com.groupproject.justeat.feature.login.LoginActivity;
 import com.groupproject.justeat.data.model.MenuItem;
 
 
@@ -31,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CustomerDashboardActivity extends BaseActivity<ActivityCustomerDashboardBinding> {
-    private MainAdapter adapter;
+    private CustomerMealAdapter adapter;
     private List<MenuItem> mealList;
     private DatabaseReference mealsRef;
 
@@ -56,9 +54,7 @@ public class CustomerDashboardActivity extends BaseActivity<ActivityCustomerDash
         initView();
         initData();
     }
-
     private void initView() {
-        // Initialize your views here
         getBinding().svSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -66,7 +62,6 @@ public class CustomerDashboardActivity extends BaseActivity<ActivityCustomerDash
             }
             @Override
             public boolean onQueryTextChange(String newText) {
-
                 if (adapter != null) {
                     adapter.filter(newText);
                 }
@@ -74,7 +69,7 @@ public class CustomerDashboardActivity extends BaseActivity<ActivityCustomerDash
             }
         });
 
-        adapter = new MainAdapter(mealList, new MainAdapter.onItemClickListener() {
+        adapter = new CustomerMealAdapter(mealList, new CustomerMealAdapter.onItemClickListener() {
             @Override
             public void onItemClick(int position) {
                 MenuItem selectedMeal = mealList.get(position);
@@ -93,36 +88,33 @@ public class CustomerDashboardActivity extends BaseActivity<ActivityCustomerDash
 
         getBinding().bottomNavigation.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
-
             if (itemId == R.id.nav_search) {
                 return true;
             } else if (itemId == R.id.nav_my_menu) {
                 startActivity(new Intent(this, CustomerMyMenuActivity.class));
+                overridePendingTransition(0, 0);
                 return true;
             } else if (itemId == R.id.nav_orders) {
-                Toast.makeText(this, "Orders Selected", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(this, CustomerOrdersActivity.class));
+                overridePendingTransition(0, 0);
                 return true;
             } else if (itemId == R.id.nav_account) {
-                Toast.makeText(this, "Account Selected", Toast.LENGTH_SHORT).show();
-                // startActivity(new Intent(this, AccountActivity.class));
+                startActivity(new Intent(this, CustomerAccountActivity.class));
+                overridePendingTransition(0, 0);
                 return true;
             }
             return false;
         });
 
         getBinding().bottomNavigation.setSelectedItemId(R.id.nav_search);
-
         getBinding().fabBookTable.setOnClickListener(v -> {
-            Toast.makeText(this, "Book Table Clicked", Toast.LENGTH_SHORT).show();
-            //Intent intent = new Intent(CustomerDashboardActivity.this, BookTableActivity.class);
-            //startActivity(intent);
+            Intent intent = new Intent(CustomerDashboardActivity.this, CustomerBookTableActivity.class);
+            startActivity(intent);
         });
 
         getBinding().rvSearchResults.setLayoutManager(new LinearLayoutManager(this));
         getBinding().rvSearchResults.setAdapter(adapter);
     }
-
     private void initData() {
         Log.d("FirebaseDebug", "Listening on path: " + mealsRef.toString());
         mealsRef.addValueEventListener(new ValueEventListener() {
@@ -148,13 +140,5 @@ public class CustomerDashboardActivity extends BaseActivity<ActivityCustomerDash
                 Log.e("FirebaseError", "Read data from Firebase Error: " + error.getMessage());
             }
         });
-    }
-    private void performLogout() {
-        FirebaseAuth.getInstance().signOut();
-        Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(this, LoginActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
     }
 }

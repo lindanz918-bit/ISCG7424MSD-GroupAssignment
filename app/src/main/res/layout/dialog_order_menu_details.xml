@@ -19,7 +19,8 @@
             android:layout_centerVertical="true"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Close dialog"
-            android:src="@android:drawable/ic_menu_close_clear_cancel" />
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            app:tint="@color/just_eat_text_primary" />
 
         <TextView
             android:id="@+id/tvDialogTitle"
@@ -32,6 +33,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:text="Order Details"
+            android:textColor="@color/just_eat_text_primary"
             android:textSize="16sp"
             android:textStyle="bold" />
     </RelativeLayout>

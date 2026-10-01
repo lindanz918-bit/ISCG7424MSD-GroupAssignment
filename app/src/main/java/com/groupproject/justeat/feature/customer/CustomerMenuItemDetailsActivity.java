@@ -21,7 +21,6 @@ import com.groupproject.justeat.data.model.MenuItem;
 import com.groupproject.justeat.databinding.ActivityCustomerMenuItemDetailsBinding;
 
 public class CustomerMenuItemDetailsActivity extends BaseActivity<ActivityCustomerMenuItemDetailsBinding> {
-
     private String mealName, imageUrl, spiciness, price, description;
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
@@ -63,28 +62,27 @@ public class CustomerMenuItemDetailsActivity extends BaseActivity<ActivityCustom
             int itemId = item.getItemId();
 
             if (itemId == R.id.nav_search) {
-                Toast.makeText(this, "Dashboard Selected", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(this, CustomerDashboardActivity.class));
+                overridePendingTransition(0, 0);
                 finish();
                 return true;
             } else if (itemId == R.id.nav_my_menu) {
-                Toast.makeText(this, "My Menu Selected", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(this, CustomerMyMenuActivity.class));
+                overridePendingTransition(0, 0);
                 finish();
                 return true;
             } else if (itemId == R.id.nav_orders) {
                 startActivity(new Intent(this, CustomerOrdersActivity.class));
+                overridePendingTransition(0, 0);
                 finish();
                 return true;
             } else if (itemId == R.id.nav_account) {
-                Toast.makeText(this, "Account Selected", Toast.LENGTH_SHORT).show();
-                // startActivity(new Intent(this, AccountActivity.class));
+                startActivity(new Intent(this, CustomerAccountActivity.class));
+                overridePendingTransition(0, 0);
                 return true;
             }
             return false;
         });
-
-
     }
 
     private void init_data() {
@@ -113,7 +111,6 @@ public class CustomerMenuItemDetailsActivity extends BaseActivity<ActivityCustom
             // getBinding().tvDiscount.setText(discount);
         }
     }
-
     private void saveMenuItemToFirebase(){
         FirebaseUser currentUser = mAuth.getCurrentUser();
         String userId = (currentUser != null) ? currentUser.getUid() : null;
@@ -131,8 +128,6 @@ public class CustomerMenuItemDetailsActivity extends BaseActivity<ActivityCustom
                     Toast.makeText(this, "Menu item saved successfully", Toast.LENGTH_SHORT).show();
                     getBinding().btnBook.setEnabled(true);
                     finish();
-                    //Intent intent = new Intent(this, CustomerDashboardActivity.class, CustomerMyMenuActivity.class);
-                   // StartActivity(intent);
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Failed to save menu item", Toast.LENGTH_SHORT).show();

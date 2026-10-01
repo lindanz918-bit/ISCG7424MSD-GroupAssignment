@@ -22,7 +22,7 @@ import com.groupproject.justeat.feature.customer.CustomerMyMenuAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OrderMenuDetailsDialog extends BottomSheetDialogFragment {
+public class CustomerOrderMenuDetailsDialog extends BottomSheetDialogFragment {
 
     public static final String TAG = "OrderMenuDetailsDialog";
     private static final String ARG_ORDER_ID = "arg_order_id";
@@ -32,8 +32,8 @@ public class OrderMenuDetailsDialog extends BottomSheetDialogFragment {
     private CustomerMyMenuAdapter adapter;
     private DatabaseReference orderItemsRef;
 
-    public static OrderMenuDetailsDialog newInstance(String orderId) {
-        OrderMenuDetailsDialog dialog = new OrderMenuDetailsDialog();
+    public static CustomerOrderMenuDetailsDialog newInstance(String orderId) {
+        CustomerOrderMenuDetailsDialog dialog = new CustomerOrderMenuDetailsDialog();
         Bundle args = new Bundle();
         args.putString(ARG_ORDER_ID, orderId);
         dialog.setArguments(args);

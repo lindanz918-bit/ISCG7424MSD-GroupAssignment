@@ -13,7 +13,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -23,7 +22,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.groupproject.justeat.R;
 import com.groupproject.justeat.feature.customer.CustomerOrderAdapter.onItemClickListener;
-import com.groupproject.justeat.ui.dialog.OrderMenuDetailsDialog;
+import com.groupproject.justeat.ui.dialog.CustomerOrderMenuDetailsDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,12 +52,11 @@ public class CustomerOrdersActivity extends BaseActivity<ActivityCustomerOrdersB
         initData();
     }
     private void initView() {
-
         adapter = new CustomerOrderAdapter(orderList, new onItemClickListener() {
             @Override
             public void onViewMenuClick(Order order, int position) {
-                OrderMenuDetailsDialog dialog = OrderMenuDetailsDialog.newInstance(order.getOrderId());
-                dialog.show(getSupportFragmentManager(), OrderMenuDetailsDialog.TAG);
+                CustomerOrderMenuDetailsDialog dialog = CustomerOrderMenuDetailsDialog.newInstance(order.getOrderId());
+                dialog.show(getSupportFragmentManager(), CustomerOrderMenuDetailsDialog.TAG);
             }
 
             @Override
@@ -74,9 +72,7 @@ public class CustomerOrdersActivity extends BaseActivity<ActivityCustomerOrdersB
                         })
                         .setNegativeButton("Cancel", null)
                         .show();
-
             }
-
         });
 
         getBinding().rvOrders.setAdapter(adapter);
@@ -86,15 +82,17 @@ public class CustomerOrdersActivity extends BaseActivity<ActivityCustomerOrdersB
 
             if (itemId == R.id.nav_search) {
                 startActivity(new Intent(this, CustomerDashboardActivity.class));
+                overridePendingTransition(0, 0);
                 return true;
             } else if (itemId == R.id.nav_my_menu) {
                 startActivity(new Intent(this, CustomerMyMenuActivity.class));
+                overridePendingTransition(0, 0);
                 return true;
             } else if (itemId == R.id.nav_orders) {
                 return true;
             } else if (itemId == R.id.nav_account) {
-                Toast.makeText(this, "Account Selected", Toast.LENGTH_SHORT).show();
-                // startActivity(new Intent(this, AccountActivity.class));
+                startActivity(new Intent(this, CustomerAccountActivity.class));
+                overridePendingTransition(0, 0);
                 return true;
             }
             return false;
@@ -104,7 +102,6 @@ public class CustomerOrdersActivity extends BaseActivity<ActivityCustomerOrdersB
 
     }
     private void initData() {
-
         ordersRef.addValueEventListener(new ValueEventListener() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
@@ -123,7 +120,6 @@ public class CustomerOrdersActivity extends BaseActivity<ActivityCustomerOrdersB
                 getBinding().layoutEmptyState.setVisibility(orderList.isEmpty() ? android.view.View.VISIBLE : android.view.View.GONE);
                 adapter.notifyDataSetChanged();
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.e("FirebaseError", "Read data from Firebase Error: " + error.getMessage());

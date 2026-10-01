@@ -41,7 +41,6 @@ public class Order {
      */
     public Order() {
     }
-
     /**
      * 创建包含全部订单字段的实体。
      */
@@ -66,6 +65,7 @@ public class Order {
         this.bookingDate = bookingDate;
         this.tableId = tableId;
         this.status = status;
+        this.createdAt = createdAt;
     }
 
     public String getOrderId() {
