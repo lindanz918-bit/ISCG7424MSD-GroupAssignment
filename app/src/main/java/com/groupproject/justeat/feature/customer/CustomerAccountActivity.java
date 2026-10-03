@@ -125,6 +125,7 @@ public class CustomerAccountActivity extends BaseActivity<ActivityCustomerAccoun
                                 .load(avatarUrl)
                                 .placeholder(R.drawable.ic_restaurant_brand)
                                 .error(R.drawable.ic_restaurant_brand)
+                                .circleCrop()
                                 .into(getBinding().imgAvatar);
                     } else {
                         getBinding().imgAvatar.setImageResource(R.drawable.ic_restaurant_brand);
