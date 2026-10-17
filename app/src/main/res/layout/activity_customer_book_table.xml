@@ -78,14 +78,13 @@
                 android:id="@+id/tv_label_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="28dp"
                 android:text="Date"
                 android:textColor="@color/just_eat_text_primary"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@id/et_date"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/et_date" />
+                app:layout_constraintTop_toTopOf="@id/et_date"
+                app:layout_constraintBottom_toBottomOf="@id/et_date"/>
 
             <EditText
                 android:id="@+id/et_date"
@@ -96,7 +95,6 @@
                 android:drawableEnd="@android:drawable/ic_menu_my_calendar"
                 android:drawablePadding="8dp"
                 android:focusable="false"
-                android:hint="18/10/2026"
                 android:paddingHorizontal="12dp"
                 android:textColor="@color/just_eat_text_primary"
                 android:textColorHint="@color/just_eat_text_secondary"

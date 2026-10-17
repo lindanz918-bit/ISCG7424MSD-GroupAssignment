@@ -73,6 +73,21 @@ public class CustomerOrdersActivity extends BaseActivity<ActivityCustomerOrdersB
                         .setNegativeButton("Cancel", null)
                         .show();
             }
+
+            @Override
+            public void onCancelClick(Order order, int position) {
+                new com.google.android.material.dialog.MaterialAlertDialogBuilder(CustomerOrdersActivity.this)
+                        .setTitle("Cancel Order")
+                        .setMessage("Are you sure you want to cancel order #" + order.getOrderId() + "?")
+                        .setPositiveButton("Yes", (dialog, which) -> {
+                            Order selectedOrder = orderList.get(position);
+                            selectedOrder.setStatus("CANCELLED");
+                            ordersRef.child(selectedOrder.getOrderId()).setValue(selectedOrder);
+                            adapter.notifyItemRemoved(position);
+                        })
+                        .setNegativeButton("No", null)
+                        .show();
+            }
         });
 
         getBinding().rvOrders.setAdapter(adapter);

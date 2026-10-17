@@ -3,6 +3,7 @@ package com.groupproject.justeat.feature.customer;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -35,6 +36,7 @@ import java.util.Locale;
 public class CustomerBookTableActivity extends BaseActivity<ActivityCustomerBookTableBinding> {
     String selectedGuestCount, selectedDate, selectedTableId;
 
+
     @Override
     protected ActivityCustomerBookTableBinding inflateBinding(LayoutInflater inflater) {
         return ActivityCustomerBookTableBinding.inflate(inflater);
@@ -59,16 +61,27 @@ public class CustomerBookTableActivity extends BaseActivity<ActivityCustomerBook
             finish();
         });
 
-        String[] guestOptions = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
+        String[] guestOptions = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"};
         ArrayAdapter<String> guestAdapter = new ArrayAdapter<>(
                 this,
                 android.R.layout.simple_spinner_item,
                 guestOptions
         );
+        setDefaultDate();
+
         guestAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         getBinding().spinnerGuest.setAdapter(guestAdapter);
 
         getBinding().etDate.setOnClickListener(v -> showDatePickerDialog());
+
+        getBinding().btnSelectTable.setOnClickListener(view -> {
+            CustomerTableSelectorDialog tableSelectorDialog = new CustomerTableSelectorDialog();
+            tableSelectorDialog.setOnTableSelectedListener(tableNumber -> {
+                getBinding().btnSelectTable.setText(tableNumber);
+                selectedTableId = tableNumber;
+            });
+            tableSelectorDialog.show(getSupportFragmentManager(), "tableSelectorDialog");
+        });
 
         getBinding().bottomNavigation.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
@@ -96,11 +109,13 @@ public class CustomerBookTableActivity extends BaseActivity<ActivityCustomerBook
             return false;
         });
     }
+
     private void initData() {
         getBinding().btnBookConfirm.setOnClickListener(v -> {
             confirmBooking();
         });
     }
+
     private void showDatePickerDialog() {
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
@@ -118,9 +133,26 @@ public class CustomerBookTableActivity extends BaseActivity<ActivityCustomerBook
         datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
         datePickerDialog.show();
     }
+
     private void confirmBooking() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) return;
+
+        selectedDate = getBinding().etDate.getText().toString().trim();
+        selectedGuestCount = getBinding().spinnerGuest.getSelectedItem() != null
+                ? getBinding().spinnerGuest.getSelectedItem().toString() : "1";
+
+        if (selectedDate.isEmpty()) {
+            Toast.makeText(this, "Please select a booking date!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (selectedTableId == null || selectedTableId.isEmpty()) {
+            Toast.makeText(this, "Please select a table!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Log.d("BookingDebug", "selectedDate: " + selectedDate + ", tableId: " + selectedTableId);
 
         String userId = currentUser.getUid();
         DatabaseReference myMenuRef = FirebaseDatabase.getInstance().getReference("MyMenu").child(userId);
@@ -147,7 +179,7 @@ public class CustomerBookTableActivity extends BaseActivity<ActivityCustomerBook
                 selectedGuestCount = getBinding().spinnerGuest.getSelectedItem() != null
                         ? getBinding().spinnerGuest.getSelectedItem().toString() : "1";
                 selectedDate = getBinding().etDate.getText().toString();
-                selectedTableId = "001";
+                Log.d("BookingDebug", "selectedDate: " + selectedDate);
 
                 Order bookingOrder = new Order(
                         orderId,
@@ -178,9 +210,19 @@ public class CustomerBookTableActivity extends BaseActivity<ActivityCustomerBook
             }
 
             @Override
-            public void onCancelled (@NonNull DatabaseError error) {
+            public void onCancelled(@NonNull DatabaseError error) {
                 Toast.makeText(CustomerBookTableActivity.this, "Error fetching menu data", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void setDefaultDate() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_MONTH, 1);
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH) + 1;
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        String defaultDate = String.format(Locale.getDefault(), "%02d/%02d/%d", day, month, year);
+        getBinding().etDate.setText(defaultDate);
     }
 }
