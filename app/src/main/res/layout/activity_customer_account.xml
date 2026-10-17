@@ -220,14 +220,15 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_reset_password"
+                android:id="@+id/btn_change_password"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="0dp"
                 android:layout_height="52dp"
                 android:layout_marginTop="16dp"
                 android:gravity="start|center_vertical"
                 android:paddingHorizontal="16dp"
-                android:text="@string/reset_password_action"
+                android:text="@string/change_password_action"
+                android:textStyle="bold"
                 android:textAllCaps="false"
                 android:textColor="@color/just_eat_text_secondary"
                 android:textSize="15sp"
