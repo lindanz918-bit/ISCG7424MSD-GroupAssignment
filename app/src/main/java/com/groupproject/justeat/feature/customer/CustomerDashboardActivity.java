@@ -83,6 +83,7 @@ public class CustomerDashboardActivity extends BaseActivity<ActivityCustomerDash
 //                intent.putExtra("MENU_ITEM_CATEGORY", selectedMeal.getCategory());
 //                intent.putExtra("MENU_ITEM_DISCOUNT", selectedMeal.getDiscount());
                 startActivity(intent);
+                overridePendingTransition(0, 0);
             }
         });
 
@@ -110,6 +111,7 @@ public class CustomerDashboardActivity extends BaseActivity<ActivityCustomerDash
         getBinding().fabBookTable.setOnClickListener(v -> {
             Intent intent = new Intent(CustomerDashboardActivity.this, CustomerBookTableActivity.class);
             startActivity(intent);
+            overridePendingTransition(0, 0);
         });
 
         getBinding().rvSearchResults.setLayoutManager(new LinearLayoutManager(this));

@@ -61,6 +61,7 @@ public class CustomerMyMenuActivity extends BaseActivity<ActivityCustomerMyMenuB
             }
             Intent intent = new Intent(this, CustomerBookTableActivity.class);
             startActivity(intent);
+            overridePendingTransition(0, 0);
         });
 
         adapter = new CustomerMyMenuAdapter(this, menuList, (item, position) ->  {
