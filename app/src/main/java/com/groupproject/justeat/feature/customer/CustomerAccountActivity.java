@@ -27,6 +27,7 @@ import com.groupproject.justeat.data.model.Order;
 import com.groupproject.justeat.data.model.User;
 import com.groupproject.justeat.databinding.ActivityCustomerAccountBinding;
 import com.groupproject.justeat.feature.login.LoginActivity;
+import com.groupproject.justeat.ui.dialog.ChangePasswordDialog;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,11 +61,11 @@ public class CustomerAccountActivity extends BaseActivity<ActivityCustomerAccoun
 
     private void initView() {
         // Initialize your views here
-//        getBinding().btnResetPassword.setOnClickListener(v -> {
-//         方式 A：弹出密码重置 Dialog
-//         方式 B：跳转到 ChangePasswordActivity
-//         方式 C：通过 Firebase 触发密码重置邮件 (sendPasswordResetEmail)
-//        });
+
+        getBinding().btnChangePassword.setOnClickListener(v -> {
+            ChangePasswordDialog dialog = ChangePasswordDialog.newInstance();
+            dialog.show(getSupportFragmentManager(), ChangePasswordDialog.TAG);
+        });
 
         getBinding().btnSave.setOnClickListener(v -> {
             saveProfile();
