@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".feature.manager.AddTableActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add New Table"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        android:textColor="#000000"
+        android:gravity="center"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="35dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Table Number"
+        android:textSize="16sp"
+        android:textColor="#000000"/>
+
+    <EditText
+        android:id="@+id/txtTableNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter table number"
+        android:inputType="text"
+        android:layout_marginBottom="25dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Capacity"
+        android:textSize="16sp"
+        android:textColor="#000000"/>
+
+    <EditText
+        android:id="@+id/txtCapacity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter capacity"
+        android:inputType="number"
+        android:layout_marginBottom="35dp"/>
+
+    <Button
+        android:id="@+id/btnSaveTable"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Save Table"
+        android:textAllCaps="false"/>
+</LinearLayout>

@@ -42,7 +42,6 @@ public class CustomerAccountActivity extends BaseActivity<ActivityCustomerAccoun
         return ActivityCustomerAccountBinding.inflate(inflater);
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

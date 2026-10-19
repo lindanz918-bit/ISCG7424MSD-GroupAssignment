@@ -45,7 +45,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="Search concerts, matches, artists..." />
+            android:hint="Search meals..." />
 
         <Button
             android:id="@+id/btn_search"
@@ -109,7 +109,7 @@
 
         <!--manage table -->
         <androidx.cardview.widget.CardView
-            android:id="@+id/tableCard"
+            android:id="@+id/manageTableCard"
             android:layout_width="0dp"
             android:layout_height="100dp"
             android:layout_weight="1"
@@ -138,7 +138,7 @@
 
         <!-- manage staff -->
         <androidx.cardview.widget.CardView
-            android:id="@+id/staffCard"
+            android:id="@+id/manageStaffCard"
             android:layout_width="0dp"
             android:layout_height="100dp"
             android:layout_weight="1"
@@ -171,15 +171,15 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Upcoming"
+        android:text="Meals"
         android:textSize="22sp"
         android:textStyle="bold"
         android:layout_marginBottom="10dp" />
 
 
-    <!-- Event List -->
+    <!-- Meal List -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/eventRV"
+        android:id="@+id/mealRV"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -189,7 +189,42 @@
 
 
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_search_results"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="12dp"
+        android:paddingBottom="60dp"
+        android:clipToPadding="false"
+        app:layout_constraintTop_toBottomOf="@id/searchContainer"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigation"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
+<!--    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton-->
+<!--        android:id="@+id/fab_book_table"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginEnd="8dp"-->
+<!--        android:layout_marginBottom="12dp"-->
+<!--        android:text="BOOK TABLE"-->
+<!--        android:textStyle="bold"-->
+<!--        android:textColor="@color/just_eat_surface"-->
+<!--        app:backgroundTint="@color/just_eat_primary"-->
+<!--        app:icon="@android:drawable/ic_menu_today"-->
+<!--        app:iconTint="@color/just_eat_surface"-->
+<!--        app:layout_constraintBottom_toTopOf="@id/bottomNavigation"-->
+<!--        app:layout_constraintEnd_toEndOf="parent" />-->
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/windowBackground"
+        app:menu="@menu/nav_manager_menu"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 
 </LinearLayout>

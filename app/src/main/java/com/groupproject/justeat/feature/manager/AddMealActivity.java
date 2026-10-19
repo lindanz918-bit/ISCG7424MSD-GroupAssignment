@@ -1,6 +1,7 @@
 package com.groupproject.justeat.feature.manager;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,70 +17,62 @@ import androidx.core.view.WindowInsetsCompat;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.groupproject.justeat.R;
+import com.groupproject.justeat.base.BaseActivity;
+import com.groupproject.justeat.data.model.MenuItem;
+import com.groupproject.justeat.databinding.ActivityAddMealBinding;
+import com.groupproject.justeat.databinding.ActivityCustomerBookTableBinding;
 
-public class AddMealActivity extends AppCompatActivity {
-    EditText txtImageUrl, txtMealName;
-    EditText txtPrice, txtSpiciness, txtDescription;
-
-    Button btnAdd;
+public class AddMealActivity extends BaseActivity<ActivityAddMealBinding> {
 
     FirebaseDatabase firebaseDatabase;
     DatabaseReference reference;
+
+    @Override
+    protected ActivityAddMealBinding inflateBinding(LayoutInflater inflater) {
+        return ActivityAddMealBinding.inflate(inflater);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_add_meal);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+
+        ViewCompat.setOnApplyWindowInsetsListener(
+                getBinding().getRoot(),
+                (v, insets) -> {
+                    Insets systemBars =
+                            insets.getInsets(WindowInsetsCompat.Type.systemBars());
+
+                    v.setPadding(
+                            systemBars.left,
+                            systemBars.top,
+                            systemBars.right,
+                            systemBars.bottom
+                    );
+
+                    return insets;
+                }
+        );
+
         // Firebase
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        reference = firebaseDatabase.getReference();
 
-        firebaseDatabase =  FirebaseDatabase.getInstance();
-
-        reference =    firebaseDatabase.getReference();
-
-
-        // EditTexts
-
-        txtImageUrl =   findViewById(R.id.txt_imageUrl);
-
-        txtMealName =    findViewById(R.id.txt_mealname);
-
-        txtPrice =    findViewById(R.id.txt_price);
-
-        txtSpiciness =  findViewById(R.id.txt_Spiciness);
-
-        txtDescription =     findViewById(R.id.txt_description);
-
-
-        // Button
-
-        btnAdd =       findViewById(R.id.btn_addMeal);
-
-
-        btnAdd.setOnClickListener(new View.OnClickListener() {
-
+        // Add Meal Button
+        getBinding().btnAddMeal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                String imageUrl =
-                        txtImageUrl.getText().toString();
+                String imageUrl =  getBinding().txtImageUrl.getText().toString();
 
-                String mealName =
-                        txtMealName.getText().toString();
+                String mealName =      getBinding().txtMealname.getText().toString();
 
-                String price =
-                        txtPrice.getText().toString();
+                String price =    getBinding().txtPrice.getText().toString();
 
-                String spiciness =
-                        txtSpiciness.getText().toString();
+                String spiciness =  getBinding().txtSpiciness.getText().toString();
 
-                String description =
-                        txtDescription.getText().toString();
-
+                String description =       getBinding().txtDescription.getText().toString();
 
                 if (imageUrl.isEmpty()
                         || mealName.isEmpty()
@@ -96,31 +89,24 @@ public class AddMealActivity extends AppCompatActivity {
                     return;
                 }
 
-
                 // Generate ID
+                String id = reference.push().getKey();
 
-                String id =
-                        reference.push().getKey();
-
-
-                // Create Meal
-
-                Meal meal = new Meal(
+                // Create MenuItem
+                MenuItem menuItem = new MenuItem(
+                        id,
                         mealName,
-                        price,
+                        imageUrl,
                         spiciness,
-                        description,
-                        imageUrl
+                        price,
+                        description
                 );
 
-
-                // Save to Firebase
-
+                //Save to Firebase
                 reference
                         .child("meals")
                         .child(id)
-                        .setValue(meal);
-
+                        .setValue(menuItem);
 
                 Toast.makeText(
                         AddMealActivity.this,
@@ -128,14 +114,12 @@ public class AddMealActivity extends AppCompatActivity {
                         Toast.LENGTH_LONG
                 ).show();
 
-
-                // Clear fields
-
-                txtImageUrl.setText("");
-                txtMealName.setText("");
-                txtPrice.setText("");
-                txtSpiciness.setText("");
-                txtDescription.setText("");
+                //Clear fields
+                getBinding().txtImageUrl.setText("");
+                getBinding().txtMealname.setText("");
+                getBinding().txtPrice.setText("");
+                getBinding().txtSpiciness.setText("");
+                getBinding().txtDescription.setText("");
             }
         });
     }
