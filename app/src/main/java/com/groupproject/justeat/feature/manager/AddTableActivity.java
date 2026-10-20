@@ -52,7 +52,9 @@ public class AddTableActivity extends BaseActivity<ActivityAddTableBinding> {
                     return insets;
                 }
         );
-
+        getBinding().numberPickerCapacity.setMinValue(1);
+        getBinding().numberPickerCapacity.setMaxValue(20);
+        getBinding().numberPickerCapacity.setValue(4);
         // Firebase
         firebaseDatabase = FirebaseDatabase.getInstance();
         reference = firebaseDatabase.getReference();
@@ -64,11 +66,17 @@ public class AddTableActivity extends BaseActivity<ActivityAddTableBinding> {
 
                 String tableNumber = getBinding().txtTableNumber.getText().toString();
 
-                String capacityText = getBinding().txtCapacity.getText().toString();
-                int capacity = Integer.parseInt(capacityText);
+                int capacity = getBinding().numberPickerCapacity.getValue();
+                String statusText;
 
-                if (tableNumber.isEmpty()
-                        || capacityText.isEmpty()) {
+                if (getBinding().radioAvailable.isChecked()) {
+                    statusText = "Available";
+                } else {
+                    statusText = "Occupied";
+                }
+//                int capacity = Integer.parseInt(capacityText);
+
+                if (tableNumber.isEmpty()) {
 
                     Toast.makeText(
                             AddTableActivity.this,
@@ -87,7 +95,8 @@ public class AddTableActivity extends BaseActivity<ActivityAddTableBinding> {
 
             RestaurantTable table = new RestaurantTable(
                     tableNumber,
-                    capacity
+                    capacity,
+                    statusText
             );
 
             //Save to Firebase
@@ -100,7 +109,8 @@ public class AddTableActivity extends BaseActivity<ActivityAddTableBinding> {
 
             //Clear fields
             getBinding().txtTableNumber.setText("");
-            getBinding().txtCapacity.setText("");
+            getBinding().numberPickerCapacity.setValue(1);
+                getBinding().radioAvailable.setChecked(true);
             }
 
 

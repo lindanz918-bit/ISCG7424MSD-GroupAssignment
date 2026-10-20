@@ -72,20 +72,40 @@
             android:name=".feature.manager.AddTableActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".feature.customer.ManagerAccountActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".feature.manager.ManageAccountActitivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
+        <!-- <activity -->
+        <!-- android:name=".feature.customer.ManagerAccountActivity" -->
+        <!-- android:exported="false" -->
+        <!-- android:windowSoftInputMode="adjustResize" /> -->
+        <!-- <activity -->
+        <!-- android:name=".feature.manager.ManageAccountActitivity" -->
+        <!-- android:exported="false" -->
+        <!-- android:windowSoftInputMode="adjustResize" /> -->
         <activity
             android:name=".feature.manager.ManagerProfileActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".feature.manager.AddStaffActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <!-- <activity -->
+        <!-- android:name=".feature.customer.EditMealActivity" -->
+        <!-- android:exported="false" -->
+        <!-- android:windowSoftInputMode="adjustResize" /> -->
+        <!-- <activity -->
+        <!-- android:name=".feature.manager.EdiitMealActivity" -->
+        <!-- android:exported="false" -->
+        <!-- android:windowSoftInputMode="adjustResize" /> -->
+        <activity
+            android:name=".feature.manager.EditMealActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".feature.manager.EditMenuItemActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".feature.manager.ManageStaffActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
     </application>

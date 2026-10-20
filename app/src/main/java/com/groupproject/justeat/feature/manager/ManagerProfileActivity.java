@@ -51,6 +51,22 @@ public class ManagerProfileActivity extends BaseActivity<ActivityManagerProfileA
 
         initView();
         initData();
+
+        getBinding().bottomNavigation.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+
+            if (itemId == R.id.nav_home) {
+                startActivity(new Intent(this, ManagerDashboardActivity.class));
+                overridePendingTransition(0, 0);
+                return true;
+            } else if (itemId == R.id.nav_profile) {
+                return true;
+            }
+
+            return false;
+        });
+
+        getBinding().bottomNavigation.setSelectedItemId(R.id.nav_profile);
     }
     private void initView() {
         // Initialize your views here
@@ -116,7 +132,7 @@ public class ManagerProfileActivity extends BaseActivity<ActivityManagerProfileA
                     getBinding().etFirstName.setText(currentuser.getFirstName());
                     getBinding().etLastName.setText(currentuser.getLastName());
                     getBinding().etEmail.setText(currentuser.getEmail());
-                    getBinding().etPhone.setText(currentuser.getPhone().toString());
+//                    getBinding().etPhone.setText(currentuser.getPhone().toString());
                     String avatarUrl = currentuser.getAvatarUrl();
                     if (avatarUrl != null && !avatarUrl.isEmpty()) {
                         Glide.with(ManagerProfileActivity.this)
@@ -166,5 +182,7 @@ public class ManagerProfileActivity extends BaseActivity<ActivityManagerProfileA
                 .addOnFailureListener(e -> {
                     Toast.makeText(ManagerProfileActivity.this, "Failed to save: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
+
     }
+
 }

@@ -24,13 +24,15 @@
             android:textSize="28sp"
             android:textStyle="bold" />
 
-        <ImageButton
-            android:id="@+id/btn_profile"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+<!--        <ImageButton-->
+<!--            android:id="@+id/btn_profile"-->
+<!--            android:layout_width="50dp"-->
+<!--            android:layout_height="50dp"-->
 
-            android:background="@android:color/transparent"
-            android:contentDescription="Profile" />
+<!--            android:background="@android:color/transparent"-->
+<!--            android:src="@android:drawable/ic_menu_myplaces"-->
+<!--            android:contentDescription="Profile"-->
+            />
     </LinearLayout>
     <LinearLayout
 
@@ -135,8 +137,13 @@
 
         </androidx.cardview.widget.CardView>
 
+<!--        <androidx.recyclerview.widget.RecyclerView-->
+<!--            android:id="@+id/rvMeals"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="325dp"-->
+<!--            android:layout_marginTop="16dp" />-->
 
-        <!-- manage staff -->
+
         <androidx.cardview.widget.CardView
             android:id="@+id/manageStaffCard"
             android:layout_width="0dp"
@@ -176,30 +183,35 @@
         android:textStyle="bold"
         android:layout_marginBottom="10dp" />
 
-
-    <!-- Meal List -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/mealRV"
+        android:id="@+id/rvMeals"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:scrollbars="vertical" />
+<!--    &lt;!&ndash; Meal List &ndash;&gt;-->
+<!--    <androidx.recyclerview.widget.RecyclerView-->
+<!--        android:id="@+id/mealRV"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:layout_weight="1"-->
+<!--        android:scrollbars="vertical" />-->
 
 
 
 
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_search_results"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="12dp"
-        android:paddingBottom="60dp"
-        android:clipToPadding="false"
-        app:layout_constraintTop_toBottomOf="@id/searchContainer"
-        app:layout_constraintBottom_toTopOf="@id/bottomNavigation"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+<!--    <androidx.recyclerview.widget.RecyclerView-->
+<!--        android:id="@+id/rv_search_results"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:layout_marginTop="12dp"-->
+<!--        android:paddingBottom="60dp"-->
+<!--        android:clipToPadding="false"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/searchContainer"-->
+<!--        app:layout_constraintBottom_toTopOf="@id/bottomNavigation"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent" />-->
 
 <!--    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton-->
 <!--        android:id="@+id/fab_book_table"-->
@@ -221,10 +233,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:attr/windowBackground"
-        app:menu="@menu/nav_manager_menu"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:menu="@menu/nav_manager_menu" />
 
 
 </LinearLayout>
