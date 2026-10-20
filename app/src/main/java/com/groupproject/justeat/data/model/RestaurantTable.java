@@ -10,8 +10,8 @@ public class RestaurantTable {
     private int capacity;
     /** 餐桌所在区域，例如 Window 或 Patio。 */
 //    private String location;
-//    /** 餐桌状态，值来自 TableStatus。 */
-//    private String status;
+    /** 餐桌状态，值来自 TableStatus。 */
+    private String status;
 //    /** 创建时间，Unix 毫秒时间戳。 */
 //    private long createdAt;
 //    /** 最后更新时间，Unix 毫秒时间戳。 */
@@ -26,9 +26,9 @@ public class RestaurantTable {
 //                            String tableId,
 
                            String tableNumber,
-                           int capacity
+                           int capacity,
 //                           String location,
-//                           String status,
+                           String status
 //                           long createdAt,
 //                           long updatedAt
     ) {
@@ -36,7 +36,7 @@ public class RestaurantTable {
         this.tableNumber = tableNumber;
         this.capacity = capacity;
 //        this.location = location;
-//        this.status = status;
+        this.status = status;
 //        this.createdAt = createdAt;
 //        this.updatedAt = updatedAt;
     }
@@ -73,13 +73,13 @@ public class RestaurantTable {
 //        this.location = location;
 //    }
 //
-//    public String getStatus() {
-//        return status;
-//    }
-//
-//    public void setStatus(String status) {
-//        this.status = status;
-//    }
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 //
 //    public long getCreatedAt() {
 //        return createdAt;

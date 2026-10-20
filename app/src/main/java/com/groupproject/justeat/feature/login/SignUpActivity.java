@@ -36,6 +36,7 @@ public class SignUpActivity extends BaseActivity<ActivitySignUpBinding> {
 
     private void observeState() {
         viewModel.getLoading().observe(this, this::renderLoading);
+        viewModel.getUiState().observe(this, this::renderState);
         viewModel.getErrorMessage().observe(this, message -> {
             if (message == null) return;
             if (getSupportFragmentManager().findFragmentByTag(MessageDialog.TAG) == null) {
@@ -62,6 +63,7 @@ public class SignUpActivity extends BaseActivity<ActivitySignUpBinding> {
     }
 
     private void bindActions() {
+        getBinding().btnBack.setOnClickListener(ignored -> finish());
         getBinding().btnSignUp.setOnClickListener(ignored -> submitSignUp());
     }
 
@@ -91,5 +93,27 @@ public class SignUpActivity extends BaseActivity<ActivitySignUpBinding> {
         boolean active = Boolean.TRUE.equals(loading);
         getBinding().progressSignUp.setVisibility(active ? View.VISIBLE : View.GONE);
         getBinding().btnSignUp.setEnabled(!active);
+    }
+
+    private void renderState(SignUpUiState state) {
+        getBinding().tilFirstName.setError(state.getFirstNameErrorResId() == 0
+                ? null : getString(state.getFirstNameErrorResId()));
+        getBinding().tilLastName.setError(state.getLastNameErrorResId() == 0
+                ? null : getString(state.getLastNameErrorResId()));
+        getBinding().tilEmail.setError(state.getEmailErrorResId() == 0
+                ? null : getString(state.getEmailErrorResId()));
+        getBinding().tilPassword.setError(state.getPasswordErrorResId() == 0
+                ? null : getString(state.getPasswordErrorResId()));
+
+        // 自动聚焦到第一个出错的输入框
+        if (state.getFirstNameErrorResId() != 0) {
+            getBinding().etFirstName.requestFocus();
+        } else if (state.getLastNameErrorResId() != 0) {
+            getBinding().etLastName.requestFocus();
+        } else if (state.getEmailErrorResId() != 0) {
+            getBinding().etEmail.requestFocus();
+        } else if (state.getPasswordErrorResId() != 0) {
+            getBinding().etPassword.requestFocus();
+        }
     }
 }

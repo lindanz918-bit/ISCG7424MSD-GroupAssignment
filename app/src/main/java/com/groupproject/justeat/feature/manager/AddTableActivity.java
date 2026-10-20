@@ -66,6 +66,7 @@ public class AddTableActivity extends BaseActivity<ActivityAddTableBinding> {
 
                 String capacityText = getBinding().txtCapacity.getText().toString();
                 int capacity = Integer.parseInt(capacityText);
+                String status = "Available";
 
                 if (tableNumber.isEmpty()
                         || capacityText.isEmpty()) {
@@ -87,7 +88,8 @@ public class AddTableActivity extends BaseActivity<ActivityAddTableBinding> {
 
             RestaurantTable table = new RestaurantTable(
                     tableNumber,
-                    capacity
+                    capacity,
+                    status
             );
 
             //Save to Firebase
