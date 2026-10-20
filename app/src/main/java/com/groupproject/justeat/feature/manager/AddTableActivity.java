@@ -67,7 +67,7 @@ public class AddTableActivity extends BaseActivity<ActivityAddTableBinding> {
                 String tableNumber = getBinding().txtTableNumber.getText().toString();
 
                 int capacity = getBinding().numberPickerCapacity.getValue();
-                String statusText;
+                String statusText = "Available";
 
                 if (getBinding().radioAvailable.isChecked()) {
                     statusText = "Available";

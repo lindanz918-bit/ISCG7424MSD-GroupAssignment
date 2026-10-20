@@ -51,7 +51,6 @@ public class CustomerTableAdapter extends RecyclerView.Adapter<CustomerTableAdap
             holder.itemView.setEnabled(false);
             holder.itemView.setAlpha(0.6f);
         }
-
         holder.itemView.setOnClickListener(v -> {
             if (listener != null && "Available".equalsIgnoreCase(table.getStatus())) {
                 listener.onTableClick(table);
@@ -63,8 +62,10 @@ public class CustomerTableAdapter extends RecyclerView.Adapter<CustomerTableAdap
     public int getItemCount() {
         return tableList != null ? tableList.size() : 0;
     }
+
     public static class TableViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvTableNumber, tvCapacity, tvStatus ;
+        private TextView tvTableNumber, tvCapacity, tvStatus;
+
         public TableViewHolder(@NonNull View itemView) {
             super(itemView);
             tvTableNumber = itemView.findViewById(R.id.tvTableNumber);
