@@ -44,5 +44,7 @@
     <string name="role_manager">Manager</string>
     <string name="signup_failed_title">Registration Failed</string>
     <string name="error_empty_fields">Please fill in all required fields</string>
+    <string name="error_first_name_required">Please enter your first name</string>
+    <string name="error_last_name_required">Please enter your last name</string>
     <string name="error_password_length">Password must be at least 6 characters</string>
 </resources>
