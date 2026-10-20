@@ -50,12 +50,14 @@ public class CustomerMenuItemDetailsActivity extends BaseActivity<ActivityCustom
     private void initView() {
         getBinding().btnBack.setOnClickListener(v -> {
             finish();
+            overridePendingTransition(0, 0);
         });
 
         getBinding().btnBook.setOnClickListener(v -> {
             saveMenuItemToFirebase();
             Intent intent = new Intent(this, CustomerMyMenuActivity.class);
             startActivity(intent);
+            overridePendingTransition(0, 0);
         });
 
         getBinding().bottomNavigation.setOnItemSelectedListener(item -> {

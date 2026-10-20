@@ -10,6 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.groupproject.justeat.R;
 import com.groupproject.justeat.data.model.MenuItem;
 import com.groupproject.justeat.data.model.Order;
@@ -52,6 +54,7 @@ public class CustomerMyMenuAdapter extends RecyclerView.Adapter<CustomerMyMenuAd
                 .load(item.getImageUrl())
                 .placeholder(R.drawable.ic_image_placeholder)
                 .error(R.drawable.ic_image_placeholder)
+                .transform(new CenterCrop(), new RoundedCorners(16))
                 .into(holder.binding.imgItem);
 
         if (deleteListener == null) {

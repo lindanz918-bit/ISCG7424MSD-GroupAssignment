@@ -3,7 +3,7 @@
     <string name="app_name">Just Eat</string>
     <string name="login_welcome">Welcome</string>
     <string name="login_subtitle">Sign in to book a table and order your meal</string>
-    <string name="email_label">Email address</string>
+    <string name="email_label">Email Address</string>
     <string name="password_label">Password</string>
     <string name="login_action">Log In</string>
     <string name="sign_up_prompt">Don’t have an account?</string>
@@ -23,14 +23,26 @@
     <string name="customer_dashboard">Customer Dashboard</string>
     <string name="staff_dashboard">Staff Dashboard</string>
     <string name="dashboard_placeholder">You are signed in. More features are coming soon.</string>
-    <string name="logout_action">Log out</string>
+    <string name="logout_action">Log Out</string>
 
     <string name="profile_title">Profile</string>
     <string name="change_avatar">Change Avatar</string>
-    <string name="label_first_name">FIRST NAME</string>
-    <string name="label_last_name">LAST NAME</string>
-    <string name="label_email">EMAIL ADDRESS</string>
-    <string name="label_phone">PHONE</string>
-    <string name="reset_password_action">RESET PASSWORD</string>
-    <string name="save_action">SAVE</string>
+    <string name="label_first_name">First Name</string>
+    <string name="label_last_name">Last Name</string>
+    <string name="label_email">Email Address</string>
+    <string name="label_phone">Phone</string>
+    <string name="reset_password_action">Reset Password</string>
+    <string name="change_password_action">Change Password</string>
+    <string name="save_action">Save</string>
+
+    <!-- Sign Up Screen -->
+    <string name="signup_title">Create Account</string>
+    <string name="signup_subtitle">Please fill in the details to sign up</string>
+    <string name="role_selection_label">Select Account Type</string>
+    <string name="role_customer">Customer</string>
+    <string name="role_staff">Staff</string>
+    <string name="role_manager">Manager</string>
+    <string name="signup_failed_title">Registration Failed</string>
+    <string name="error_empty_fields">Please fill in all required fields</string>
+    <string name="error_password_length">Password must be at least 6 characters</string>
 </resources>

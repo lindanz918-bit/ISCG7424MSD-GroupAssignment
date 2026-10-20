@@ -55,12 +55,13 @@ public class CustomerMyMenuActivity extends BaseActivity<ActivityCustomerMyMenuB
     }
     private void initView() {
         getBinding().btnBookTable.setOnClickListener(view -> {
-            if (menuList.isEmpty()) {
-                Toast.makeText(this, "Your saved menu is empty. Please add items first.", Toast.LENGTH_SHORT).show();
-                return;
-            }
+//            if (menuList.isEmpty()) {
+//                Toast.makeText(this, "Your saved menu is empty. Please add items first.", Toast.LENGTH_SHORT).show();
+//                return;
+//            }
             Intent intent = new Intent(this, CustomerBookTableActivity.class);
             startActivity(intent);
+            overridePendingTransition(0, 0);
         });
 
         adapter = new CustomerMyMenuAdapter(this, menuList, (item, position) ->  {
@@ -120,7 +121,7 @@ public class CustomerMyMenuActivity extends BaseActivity<ActivityCustomerMyMenuB
                          menuList.add(item);
                      }
                  }
-                adapter.notifyDataSetChanged();
+                 adapter.notifyDataSetChanged();
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
