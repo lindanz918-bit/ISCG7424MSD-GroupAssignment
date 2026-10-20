@@ -169,10 +169,10 @@ public class CustomerBookTableActivity extends BaseActivity<ActivityCustomerBook
                         orderedItems.add(item);
                     }
                 }
-                if (orderedItems.isEmpty()) {
-                    Toast.makeText(CustomerBookTableActivity.this, "Your saved menu is empty!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+//                if (orderedItems.isEmpty()) {
+//                    Toast.makeText(CustomerBookTableActivity.this, "Your saved menu is empty!", Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
                 String orderId = ordersRef.push().getKey();
                 if (orderId == null) return;
 
