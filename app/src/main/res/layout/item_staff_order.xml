@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="12dp"
+    app:cardCornerRadius="12dp" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="vertical" android:padding="16dp">
+        <TextView android:id="@+id/tv_staff_order_id" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:textColor="@color/just_eat_text_primary" android:textSize="17sp" android:textStyle="bold" />
+        <TextView android:id="@+id/tv_staff_order_customer" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" android:textColor="@color/just_eat_text_secondary" />
+        <TextView android:id="@+id/tv_staff_order_table" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:textColor="@color/just_eat_text_secondary" />
+        <TextView android:id="@+id/tv_staff_order_status" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="4dp" android:textColor="@color/just_eat_primary" android:textStyle="bold" />
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="12dp" android:gravity="end">
+            <com.google.android.material.button.MaterialButton android:id="@+id/btn_staff_reject"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton" android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:text="@string/staff_reject" android:textAllCaps="false" />
+            <com.google.android.material.button.MaterialButton android:id="@+id/btn_staff_accept"
+                android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="8dp"
+                android:text="@string/staff_accept" android:textAllCaps="false" />
+            <com.google.android.material.button.MaterialButton android:id="@+id/btn_staff_cancel"
+                style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:text="@string/staff_cancel" android:textAllCaps="false"
+                android:textColor="@color/just_eat_error" />
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

@@ -20,6 +20,15 @@
             android:name=".feature.dashboard.StaffDashBoardActivity"
             android:exported="false" />
         <activity
+            android:name=".feature.staff.StaffOrderActivity"
+            android:exported="false" />
+        <activity
+            android:name=".feature.staff.StaffTableActivity"
+            android:exported="false" />
+        <activity
+            android:name=".feature.staff.StaffProfileActivity"
+            android:exported="false" />
+        <activity
             android:name=".feature.login.LoginActivity"
             android:exported="true">
             <intent-filter>

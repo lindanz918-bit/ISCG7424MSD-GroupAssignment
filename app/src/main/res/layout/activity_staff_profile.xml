@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@color/just_eat_background" android:fitsSystemWindows="true">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="24dp">
+        <ImageButton android:id="@+id/btn_staff_profile_back" android:layout_width="48dp" android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless" android:contentDescription="@string/back_action" android:src="@drawable/ic_back" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp"
+            android:text="@string/staff_profile_action" android:textColor="@color/just_eat_text_primary" android:textSize="28sp" android:textStyle="bold" />
+        <com.google.android.material.textfield.TextInputLayout android:id="@+id/til_staff_first_name" style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="24dp">
+            <com.google.android.material.textfield.TextInputEditText android:id="@+id/et_staff_first_name" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="@string/staff_profile_first_name" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout android:id="@+id/til_staff_last_name" style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp">
+            <com.google.android.material.textfield.TextInputEditText android:id="@+id/et_staff_last_name" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="@string/staff_profile_last_name" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout android:id="@+id/til_staff_email" style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp">
+            <com.google.android.material.textfield.TextInputEditText android:id="@+id/et_staff_email" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="@string/staff_profile_email" android:inputType="textEmailAddress" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout android:id="@+id/til_staff_phone" style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp">
+            <com.google.android.material.textfield.TextInputEditText android:id="@+id/et_staff_phone" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="@string/staff_profile_phone" android:inputType="phone" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp"
+            android:text="@string/staff_profile_pending_note" android:textColor="@color/just_eat_text_secondary" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/btn_staff_profile_save" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="20dp" android:text="@string/save_action" android:textAllCaps="false" />
+    </LinearLayout>
+</ScrollView>
