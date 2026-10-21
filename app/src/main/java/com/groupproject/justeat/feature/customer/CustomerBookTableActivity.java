@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -198,7 +197,7 @@ public class CustomerBookTableActivity extends BaseActivity<ActivityCustomerBook
                                         .addOnSuccessListener(Unsed -> {
                                             Toast.makeText(CustomerBookTableActivity.this, "Booking Successful!", Toast.LENGTH_SHORT).show();
                                             myMenuRef.removeValue();
-                                            Intent intent = new Intent(CustomerBookTableActivity.this, CustomerDashboardActivity.class);
+                                            Intent intent = new Intent(CustomerBookTableActivity.this, CustomerOrdersActivity.class);
                                             startActivity(intent);
                                             finish();
                                         });

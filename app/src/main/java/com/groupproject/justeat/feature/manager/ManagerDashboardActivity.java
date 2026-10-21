@@ -1,15 +1,11 @@
 package com.groupproject.justeat.feature.manager;
 
-import static androidx.core.content.ContextCompat.startActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -17,11 +13,6 @@ import androidx.core.view.WindowInsetsCompat;
 import com.groupproject.justeat.R;
 import com.groupproject.justeat.base.BaseActivity;
 import com.groupproject.justeat.databinding.ActivityManagerDashboardBinding;
-import com.groupproject.justeat.feature.customer.CustomerAccountActivity;
-import com.groupproject.justeat.feature.customer.CustomerBookTableActivity;
-import com.groupproject.justeat.feature.customer.CustomerDashboardActivity;
-import com.groupproject.justeat.feature.customer.CustomerMyMenuActivity;
-import com.groupproject.justeat.feature.customer.CustomerOrdersActivity;
 
 public class ManagerDashboardActivity
         extends BaseActivity<ActivityManagerDashboardBinding> {

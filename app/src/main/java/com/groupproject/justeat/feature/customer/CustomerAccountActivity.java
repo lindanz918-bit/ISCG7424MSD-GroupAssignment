@@ -7,7 +7,6 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -22,16 +21,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.groupproject.justeat.R;
 import com.groupproject.justeat.base.BaseActivity;
-import com.groupproject.justeat.data.model.MenuItem;
-import com.groupproject.justeat.data.model.Order;
 import com.groupproject.justeat.data.model.User;
 import com.groupproject.justeat.databinding.ActivityCustomerAccountBinding;
 import com.groupproject.justeat.feature.login.LoginActivity;
 import com.groupproject.justeat.ui.dialog.ChangePasswordDialog;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class CustomerAccountActivity extends BaseActivity<ActivityCustomerAccountBinding> {

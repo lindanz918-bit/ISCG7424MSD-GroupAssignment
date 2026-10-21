@@ -7,7 +7,6 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -23,7 +22,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.groupproject.justeat.R;
 import com.groupproject.justeat.base.BaseActivity;
 import com.groupproject.justeat.data.model.MenuItem;
-import com.groupproject.justeat.data.model.Order;
 import com.groupproject.justeat.databinding.ActivityCustomerMyMenuBinding;
 
 import java.util.ArrayList;
@@ -69,8 +67,18 @@ public class CustomerMyMenuActivity extends BaseActivity<ActivityCustomerMyMenuB
                     .setTitle("Delete Meal")
                     .setMessage("Are you sure you want to delete \"" + item.getmealName() + "\"?")
                     .setPositiveButton("Delete", (dialog, which) -> {
-                        menuList.remove(item);
-                        adapter.notifyDataSetChanged();
+                        String itemId = item.getMenuItemId();
+                        if (itemId != null && !itemId.isEmpty()) {
+                            mDatabase.child(itemId).removeValue()
+                                    .addOnSuccessListener(aVoid -> {
+                                        Toast.makeText(CustomerMyMenuActivity.this, "Meal removed successfully", Toast.LENGTH_SHORT).show();
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Toast.makeText(CustomerMyMenuActivity.this, "Failed to delete: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    });
+                        } else {
+                            Toast.makeText(CustomerMyMenuActivity.this, "Error: Item ID is missing", Toast.LENGTH_SHORT).show();
+                        }
                     })
                     .setNegativeButton("Cancel", null)
                     .show();
