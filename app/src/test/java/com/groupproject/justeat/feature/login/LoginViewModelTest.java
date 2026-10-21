@@ -3,8 +3,7 @@ package com.groupproject.justeat.feature.login;
 import static org.junit.Assert.*;
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import com.groupproject.justeat.data.model.User;
-import com.groupproject.justeat.data.repository.AuthRepository;
-import com.groupproject.justeat.data.repository.RepositoryCallback;
+import com.groupproject.justeat.util.FirebaseAuthClient;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -59,13 +58,13 @@ public class LoginViewModelTest {
     private static User user(String role, String status) {
         User user = new User(); user.setRole(role); user.setStatus(status); return user;
     }
-    static class FakeAuth implements AuthRepository {
-        RepositoryCallback<User> callback; int calls; int signOuts; String email;
-        public void signIn(String email, String password, RepositoryCallback<User> callback) {
+    static class FakeAuth extends FirebaseAuthClient {
+        Callback<User> callback; int calls; int signOuts; String email;
+        @Override public void signIn(String email, String password, Callback<User> callback) {
             calls++; this.email = email; this.callback = callback;
         }
-        public void signOut(RepositoryCallback<Void> callback) { signOuts++; callback.onSuccess(null); }
-        public String getCurrentUserId() { return null; }
-        public boolean isSignedIn() { return false; }
+        @Override public void signOut(Callback<Void> callback) { signOuts++; callback.onSuccess(null); }
+        @Override public String getCurrentUserId() { return null; }
+        @Override public boolean isSignedIn() { return false; }
     }
 }

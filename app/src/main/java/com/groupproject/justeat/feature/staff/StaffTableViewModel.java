@@ -44,12 +44,9 @@ public class StaffTableViewModel extends BaseViewModel {
 
     private static List<RestaurantTable> sampleTables() {
         List<RestaurantTable> sample = new java.util.ArrayList<>();
-        sample.add(new RestaurantTable("T01", "01", 4, "Main dining", TableStatus.AVAILABLE,
-                System.currentTimeMillis(), System.currentTimeMillis()));
-        sample.add(new RestaurantTable("T02", "02", 2, "Window", TableStatus.UNAVAILABLE,
-                System.currentTimeMillis(), System.currentTimeMillis()));
-        sample.add(new RestaurantTable("T03", "03", 6, "Patio", TableStatus.RESERVED,
-                System.currentTimeMillis(), System.currentTimeMillis()));
+        sample.add(new RestaurantTable("01", 4, TableStatus.AVAILABLE));
+        sample.add(new RestaurantTable("02", 2, TableStatus.UNAVAILABLE));
+        sample.add(new RestaurantTable("03", 6, TableStatus.RESERVED));
         return sample;
     }
 }

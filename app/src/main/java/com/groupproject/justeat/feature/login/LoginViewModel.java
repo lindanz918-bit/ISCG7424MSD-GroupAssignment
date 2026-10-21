@@ -4,21 +4,21 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import com.groupproject.justeat.base.BaseViewModel;
 import com.groupproject.justeat.data.model.User;
-import com.groupproject.justeat.data.repository.*;
 import com.groupproject.justeat.domain.constant.UserRole;
 import com.groupproject.justeat.domain.constant.UserStatus;
+import com.groupproject.justeat.util.FirebaseAuthClient;
 
 /** 校验输入、执行认证，并发布一次性的角色导航事件。 */
 public class LoginViewModel extends BaseViewModel {
     private final LoginValidator validator;
-    private final AuthRepository repository;
+    private final FirebaseAuthClient authClient;
     private final MutableLiveData<LoginUiState> uiState = new MutableLiveData<>(LoginUiState.idle());
     private final MutableLiveData<String> destinationRole = new MutableLiveData<>();
     private boolean cleared;
 
-    public LoginViewModel() { this(new LoginValidator(), new FirebaseAuthRepository()); }
-    LoginViewModel(LoginValidator validator, AuthRepository repository) {
-        this.validator = validator; this.repository = repository;
+    public LoginViewModel() { this(new LoginValidator(), new FirebaseAuthClient()); }
+    LoginViewModel(LoginValidator validator, FirebaseAuthClient authClient) {
+        this.validator = validator; this.authClient = authClient;
     }
     public LiveData<LoginUiState> getUiState() { return uiState; }
     public LiveData<String> getDestinationRole() { return destinationRole; }
@@ -29,12 +29,12 @@ public class LoginViewModel extends BaseViewModel {
         if (!validation.isValidationSuccessful()) { uiState.setValue(validation); return; }
         setLoading(true);
         uiState.setValue(LoginUiState.loading());
-        repository.signIn(email.trim(), password, new RepositoryCallback<User>() {
+        authClient.signIn(email.trim(), password, new FirebaseAuthClient.Callback<User>() {
             @Override public void onSuccess(User user) {
                 if (cleared) return;
                 String role = user == null ? null : user.getRole();
                 if (user == null || !UserStatus.ACTIVE.equals(user.getStatus()) || !isSupportedRole(role)) {
-                    repository.signOut(new RepositoryCallback<Void>() {
+                    authClient.signOut(new FirebaseAuthClient.Callback<Void>() {
                         public void onSuccess(Void ignored) { fail("Your account is unavailable or has no valid role. Contact the administrator."); }
                         public void onError(String ignored) { fail("Unable to verify your account. Please sign in again."); }
                     });

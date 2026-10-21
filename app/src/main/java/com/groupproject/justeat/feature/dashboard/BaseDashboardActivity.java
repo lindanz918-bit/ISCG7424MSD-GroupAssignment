@@ -6,14 +6,13 @@ import android.view.View;
 import com.groupproject.justeat.base.BaseActivity;
 import com.groupproject.justeat.databinding.ActivityDashboardBinding;
 import com.groupproject.justeat.data.model.User;
-import com.groupproject.justeat.data.repository.FirebaseAuthRepository;
-import com.groupproject.justeat.data.repository.RepositoryCallback;
 import com.groupproject.justeat.domain.constant.UserStatus;
 import com.groupproject.justeat.feature.login.LoginActivity;
+import com.groupproject.justeat.util.FirebaseAuthClient;
 
 /** 简单 Dashboard：每次进入前重新检查会话与角色，业务权限仍由数据库规则控制。 */
 public abstract class BaseDashboardActivity extends BaseActivity<ActivityDashboardBinding> {
-    private final FirebaseAuthRepository repository = new FirebaseAuthRepository();
+    private final FirebaseAuthClient authClient = new FirebaseAuthClient();
     private int request;
     protected abstract String requiredRole();
     protected abstract int titleResource();
@@ -25,7 +24,7 @@ public abstract class BaseDashboardActivity extends BaseActivity<ActivityDashboa
         int current = ++request;
         getBinding().dashboardContent.setVisibility(View.GONE);
         getBinding().progressDashboard.setVisibility(View.VISIBLE);
-        repository.loadCurrentUser(new RepositoryCallback<User>() {
+        authClient.loadCurrentUser(new FirebaseAuthClient.Callback<User>() {
             public void onSuccess(User user) {
                 if (current != request || isFinishing() || isDestroyed()) return;
                 if (!requiredRole().equals(user.getRole()) || !UserStatus.ACTIVE.equals(user.getStatus())) {
@@ -45,7 +44,7 @@ public abstract class BaseDashboardActivity extends BaseActivity<ActivityDashboa
     @Override protected void onStop() { request++; super.onStop(); }
     private void logout() {
         request++;
-        repository.signOut(new RepositoryCallback<Void>() {
+        authClient.signOut(new FirebaseAuthClient.Callback<Void>() {
             public void onSuccess(Void ignored) { returnToLogin(); }
             public void onError(String ignored) { returnToLogin(); }
         });

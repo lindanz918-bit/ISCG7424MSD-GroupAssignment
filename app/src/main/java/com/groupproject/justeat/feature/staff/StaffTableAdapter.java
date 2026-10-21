@@ -40,7 +40,7 @@ public class StaffTableAdapter extends RecyclerView.Adapter<StaffTableAdapter.Vi
     @Override public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         RestaurantTable table = tables.get(position);
         String number = table.getTableNumber() == null ? "-" : table.getTableNumber();
-        String location = table.getLocation() == null ? "-" : table.getLocation();
+        String location = locationFor(number);
         String status = table.getStatus() == null ? "-" : table.getStatus();
         holder.binding.tvStaffTableNumber.setText(holder.binding.getRoot().getContext()
                 .getString(R.string.staff_table_number, number));
@@ -57,6 +57,13 @@ public class StaffTableAdapter extends RecyclerView.Adapter<StaffTableAdapter.Vi
     }
 
     @Override public int getItemCount() { return tables.size(); }
+
+    private String locationFor(String number) {
+        if ("01".equals(number)) return "Main dining";
+        if ("02".equals(number)) return "Window";
+        if ("03".equals(number)) return "Patio";
+        return "-";
+    }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         final ItemStaffTableBinding binding;
