@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.widget.Toast;
-
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
@@ -73,7 +71,6 @@ public class CustomerDashboardActivity extends BaseActivity<ActivityCustomerDash
             @Override
             public void onItemClick(int position) {
                 MenuItem selectedMeal = mealList.get(position);
-                Toast.makeText(CustomerDashboardActivity.this, "Selected: " + selectedMeal.getmealName(), Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(CustomerDashboardActivity.this, CustomerMenuItemDetailsActivity.class);
                 intent.putExtra("MENU_ITEM_IMAGE", selectedMeal.getImageUrl());
                 intent.putExtra("MENU_ITEM_NAME", selectedMeal.getmealName());
