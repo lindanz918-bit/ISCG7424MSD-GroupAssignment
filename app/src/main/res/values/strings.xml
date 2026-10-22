@@ -56,7 +56,7 @@
     <string name="staff_orders_title">Order Management</string>
     <string name="staff_tables_title">Table Availability</string>
     <string name="staff_profile_pending_note">Demo mode: profile changes are kept in this page state only.</string>
-    <string name="staff_no_orders">No pending orders</string>
+    <string name="staff_no_orders">No orders found</string>
     <string name="staff_no_tables">No restaurant tables found</string>
     <string name="staff_order_id">Order #%1$s</string>
     <string name="staff_order_customer">Customer: %1$s</string>

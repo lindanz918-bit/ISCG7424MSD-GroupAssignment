@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:fitsSystemWindows="true" android:fillViewport="true" android:background="@color/staff_background">
+  <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:paddingStart="20dp" android:paddingEnd="20dp" android:paddingTop="8dp">
+      <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical">
+        <ImageButton android:id="@+id/btn_staff_details_back" android:layout_width="48dp" android:layout_height="48dp" android:background="?attr/selectableItemBackgroundBorderless" android:contentDescription="@string/back_action" android:src="@drawable/ic_back"/>
+        <TextView style="@style/StaffBody" android:layout_width="0dp" android:layout_weight="1" android:text="@string/staff_dashboard_title" android:textSize="14sp"/>
+      </LinearLayout>
+      <TextView style="@style/StaffTitle" android:text="@string/staff_ui_details"/>
+      <TextView style="@style/StaffBody" android:layout_marginTop="8dp" android:layout_marginBottom="16dp" android:text="@string/staff_ui_details_hint"/>
+    </LinearLayout>
+    <LinearLayout android:id="@+id/content" android:orientation="vertical" android:paddingStart="20dp" android:paddingEnd="20dp" android:paddingBottom="24dp" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+  </LinearLayout>
+</ScrollView>

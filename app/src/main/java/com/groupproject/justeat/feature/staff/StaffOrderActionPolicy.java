@@ -11,6 +11,15 @@ public final class StaffOrderActionPolicy {
     private StaffOrderActionPolicy() {
     }
 
+    public static boolean isActive(String status) {
+        return OrderStatus.ACCEPTED.equals(status) || OrderStatus.PREPARING.equals(status)
+                || OrderStatus.READY.equals(status);
+    }
+
+    public static boolean canComplete(String status, boolean allServed) {
+        return isActive(status) && allServed;
+    }
+
     public static boolean canApply(String currentStatus, String targetStatus) {
         if (OrderStatus.PENDING.equals(currentStatus)) {
             return OrderStatus.ACCEPTED.equals(targetStatus)

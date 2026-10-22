@@ -9,6 +9,21 @@ import com.groupproject.justeat.domain.constant.OrderStatus;
 import org.junit.Test;
 
 public class StaffOrderActionPolicyTest {
+    @Test public void completionRequiresAllMealsServed() {
+        assertTrue(StaffOrderActionPolicy.canComplete("ACCEPTED",true));
+        assertTrue(StaffOrderActionPolicy.canComplete("PREPARING",true));
+        assertTrue(StaffOrderActionPolicy.canComplete("READY",true));
+        assertFalse(StaffOrderActionPolicy.canComplete("ACCEPTED",false));
+        assertFalse(StaffOrderActionPolicy.canComplete("PENDING",true));
+        assertFalse(StaffOrderActionPolicy.canComplete("CANCELLED",true));
+        assertFalse(StaffOrderActionPolicy.canComplete("COMPLETED",true));
+    }
+    @Test public void unknownAndNullStatusesFailClosed() {
+        assertFalse(StaffOrderActionPolicy.isActive(null));
+        assertFalse(StaffOrderActionPolicy.canApply(null,"ACCEPTED"));
+        assertFalse(StaffOrderActionPolicy.canApply("PENDING",null));
+        assertFalse(StaffOrderActionPolicy.canApply("REJECTED","ACCEPTED"));
+    }
 
     @Test
     public void pendingOrderCanBeAcceptedOrRejected() {

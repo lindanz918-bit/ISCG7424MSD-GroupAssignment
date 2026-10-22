@@ -22,6 +22,7 @@
         <activity
             android:name=".feature.staff.StaffOrderActivity"
             android:exported="false" />
+        <activity android:name=".feature.staff.StaffOrderDetailsActivity" android:exported="false" />
         <activity
             android:name=".feature.staff.StaffTableActivity"
             android:exported="false" />
