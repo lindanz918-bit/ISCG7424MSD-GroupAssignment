@@ -36,10 +36,13 @@ public class AddTableActivity extends BaseActivity<ActivityAddTableBinding> {
 
         EdgeToEdge.enable(this);
 
+
         ViewCompat.setOnApplyWindowInsetsListener(
                 getBinding().getRoot(), (v, insets) -> {
+
                     Insets systemBars = insets.getInsets(
                             WindowInsetsCompat.Type.systemBars()
+                                    | WindowInsetsCompat.Type.displayCutout()
                     );
 
                     v.setPadding(
@@ -52,12 +55,21 @@ public class AddTableActivity extends BaseActivity<ActivityAddTableBinding> {
                     return insets;
                 }
         );
+
         getBinding().numberPickerCapacity.setMinValue(1);
         getBinding().numberPickerCapacity.setMaxValue(20);
         getBinding().numberPickerCapacity.setValue(4);
         // Firebase
         firebaseDatabase = FirebaseDatabase.getInstance();
         reference = firebaseDatabase.getReference();
+
+        // Back Button
+        getBinding().btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
 
         getBinding().btnSaveTable.setOnClickListener(new View.OnClickListener() {
             @Override

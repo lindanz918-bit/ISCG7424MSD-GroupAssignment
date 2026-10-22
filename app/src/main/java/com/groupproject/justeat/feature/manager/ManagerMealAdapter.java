@@ -17,6 +17,7 @@ import com.groupproject.justeat.R;
 import com.groupproject.justeat.data.model.MenuItem;
 import com.groupproject.justeat.feature.customer.CustomerMealAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ManagerMealAdapter
@@ -24,6 +25,7 @@ public class ManagerMealAdapter
 
     private List<MenuItem> mealList;
     private onItemClickListener listener;
+    private List<MenuItem> fulllist;
 
     public interface onItemClickListener {
         void onItemClick(int position);
@@ -33,8 +35,33 @@ public class ManagerMealAdapter
             List<MenuItem> mealList,
             onItemClickListener listener) {
 
-        this.mealList = mealList;
+        this.mealList = new ArrayList<>(mealList);
         this.listener = listener;
+        this.fulllist = new ArrayList<>(mealList);
+    }
+    private String currentQuery = "";
+
+    public void filter(String query) {
+
+        currentQuery = query == null
+                ? ""
+                : query.toLowerCase().trim();
+
+        mealList.clear();
+
+        for (MenuItem meal : fulllist) {
+
+            if (currentQuery.isEmpty()) {
+                mealList.add(meal);
+            } else if (meal.getmealName() != null
+                    && meal.getmealName().toLowerCase()
+                    .contains(currentQuery)) {
+
+                mealList.add(meal);
+            }
+        }
+
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -104,11 +131,16 @@ public class ManagerMealAdapter
         return mealList.size();
     }
 
-    public void updateData(List<MenuItem> newMealList) {
-        this.mealList = newMealList;
-        notifyDataSetChanged();
-    }
+//    public void updateData(List<MenuItem> newMealList) {
+//        this.mealList = newMealList;
+//        notifyDataSetChanged();
+//    }
+public void updateData(List<MenuItem> newMealList) {
 
+    fulllist = new ArrayList<>(newMealList);
+
+    filter(currentQuery);
+}
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         ImageView imgEdit, imgMeal;

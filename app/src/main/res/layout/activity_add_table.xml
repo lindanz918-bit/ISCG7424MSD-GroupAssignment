@@ -6,33 +6,76 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+
     tools:context=".feature.manager.AddTableActivity">
 
-    <TextView
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Add New Table"
-        android:textSize="26sp"
-        android:textStyle="bold"
-        android:textColor="#000000"
-        android:gravity="center"
-        android:layout_marginTop="30dp"
-        android:layout_marginBottom="35dp"/>
+        android:layout_height="56dp">
+
+        <ImageView
+            android:id="@+id/btn_back"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="start|center_vertical"
+            android:layout_marginStart="12dp"
+            android:padding="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Back"
+            android:src="@drawable/outline_arrow_back_24" />
+
+        <TextView
+            android:id="@+id/tv_header_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Add Table"
+            android:textColor="@color/just_eat_text_primary"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+    </FrameLayout>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Table Number"
         android:textSize="16sp"
+        android:layout_marginStart="2dp"
         android:textColor="#000000"/>
 
-    <EditText
-        android:id="@+id/txtTableNumber"
+<!--    <EditText-->
+<!--        android:id="@+id/txtTableNumber"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:hint="Enter table number"-->
+<!--        android:inputType="text"-->
+<!--        android:layout_marginBottom="25dp"/>-->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilFirstName"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter table number"
-        android:inputType="text"
-        android:layout_marginBottom="25dp"/>
+        android:layout_marginTop="6dp"
+        app:boxCornerRadiusBottomEnd="12dp"
+        app:boxCornerRadiusBottomStart="12dp"
+        app:boxCornerRadiusTopEnd="12dp"
+        app:boxCornerRadiusTopStart="12dp"
+        app:hintEnabled="false">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/txtTableNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints="personGivenName"
+            android:hint="Please enter table number"
+            android:imeOptions="actionNext"
+            android:inputType="textPersonName"
+            android:paddingVertical="12dp"
+            android:textColor="@color/just_eat_text_primary"
+            android:textSize="15sp" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
         android:layout_width="match_parent"

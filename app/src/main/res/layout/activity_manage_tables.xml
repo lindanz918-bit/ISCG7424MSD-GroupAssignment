@@ -7,19 +7,35 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:layout_gravity="center"
+    android:fitsSystemWindows="true"
     tools:context=".feature.manager.ManageTablesActivity">
 
-    <TextView
-        android:id="@+id/txtTitle"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Manage Tables"
-        android:textSize="26sp"
-        android:textStyle="bold"
-        android:textColor="#000000"
-        android:gravity="center"
-        android:layout_marginTop="60dp"
-        android:layout_marginBottom="25dp"/>
+        android:layout_height="56dp">
+
+        <ImageView
+            android:id="@+id/btn_back"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="start|center_vertical"
+            android:layout_marginStart="12dp"
+            android:padding="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Back"
+            android:src="@drawable/outline_arrow_back_24" />
+
+        <TextView
+            android:id="@+id/tv_header_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text=" Manage Table"
+            android:textColor="@color/just_eat_text_primary"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+    </FrameLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvTables"
