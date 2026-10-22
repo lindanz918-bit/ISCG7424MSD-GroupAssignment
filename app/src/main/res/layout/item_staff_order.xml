@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="16dp" app:cardCornerRadius="18dp" app:cardElevation="1dp" app:strokeColor="@color/staff_border" app:strokeWidth="1dp" app:cardBackgroundColor="@color/staff_surface">
+  <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical">
+      <TextView android:id="@+id/tv_staff_order_id" style="@style/StaffCardTitle" android:layout_width="0dp" android:layout_weight="1" android:layout_marginEnd="8dp"/>
+      <TextView android:id="@+id/tv_staff_order_status" style="@style/StaffBadge"/>
+    </LinearLayout>
+    <TextView android:id="@+id/tv_staff_order_customer" style="@style/StaffCardTitle" android:layout_marginTop="16dp" android:textSize="16sp"/>
+    <TextView android:id="@+id/tv_staff_order_table" style="@style/StaffBody" android:layout_marginTop="8dp"/>
+    <com.google.android.material.button.MaterialButton android:id="@+id/btn_staff_order_details" style="@style/StaffButton.Text" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="@string/staff_ui_view_details"/>
+    <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="8dp" android:background="@color/staff_border"/>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="end">
+      <com.google.android.material.button.MaterialButton android:id="@+id/btn_staff_reject" style="@style/StaffButton.Outline" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="@string/staff_reject"/>
+      <Space android:layout_width="8dp" android:layout_height="1dp"/>
+      <com.google.android.material.button.MaterialButton android:id="@+id/btn_staff_accept" style="@style/StaffButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="@string/staff_accept"/>
+      <com.google.android.material.button.MaterialButton android:id="@+id/btn_staff_cancel" style="@style/StaffButton.Text" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="@string/staff_cancel"/>
+    </LinearLayout>
+  </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

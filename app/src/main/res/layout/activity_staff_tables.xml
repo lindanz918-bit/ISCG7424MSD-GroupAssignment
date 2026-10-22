@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:fitsSystemWindows="true" android:background="@color/staff_background">
+  <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:paddingStart="20dp" android:paddingEnd="20dp" android:paddingTop="8dp">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical">
+      <ImageButton android:id="@+id/btn_staff_tables_back" android:layout_width="48dp" android:layout_height="48dp" android:background="?attr/selectableItemBackgroundBorderless" android:contentDescription="@string/back_action" android:src="@drawable/ic_back"/>
+      <TextView style="@style/StaffBody" android:layout_width="0dp" android:layout_weight="1" android:text="@string/staff_dashboard_title" android:textSize="14sp"/>
+    </LinearLayout>
+    <TextView style="@style/StaffTitle" android:text="@string/staff_ui_tables"/>
+    <TextView style="@style/StaffBody" android:layout_marginTop="8dp" android:layout_marginBottom="16dp" android:text="@string/staff_ui_tables_hint"/>
+  </LinearLayout>
+  <TextView android:id="@+id/tv_staff_table_summary" style="@style/StaffBody" android:layout_marginStart="20dp" android:layout_marginEnd="20dp" android:padding="16dp" android:background="@drawable/staff_soft_panel" android:textColor="@color/staff_primary"/>
+  <FrameLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1">
+    <androidx.recyclerview.widget.RecyclerView android:id="@+id/rv_staff_tables" android:layout_width="match_parent" android:layout_height="match_parent" android:padding="20dp" android:clipToPadding="false"/>
+    <LinearLayout android:id="@+id/layout_staff_tables_empty" android:layout_width="match_parent" android:layout_height="match_parent" android:gravity="center" android:padding="24dp">
+      <TextView style="@style/StaffBody" android:gravity="center" android:text="@string/staff_no_tables"/>
+    </LinearLayout>
+    <ProgressBar android:id="@+id/progress_staff_tables" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:visibility="gone"/>
+  </FrameLayout>
+</LinearLayout>

@@ -1,7 +1,5 @@
 package com.groupproject.justeat.feature.manager;
 
-import static androidx.core.content.ContextCompat.startActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -27,11 +25,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.groupproject.justeat.R;
 import com.groupproject.justeat.base.BaseActivity;
 import com.groupproject.justeat.databinding.ActivityManagerDashboardBinding;
-import com.groupproject.justeat.feature.customer.CustomerAccountActivity;
-import com.groupproject.justeat.feature.customer.CustomerBookTableActivity;
-import com.groupproject.justeat.feature.customer.CustomerDashboardActivity;
-import com.groupproject.justeat.feature.customer.CustomerMyMenuActivity;
-import com.groupproject.justeat.feature.customer.CustomerOrdersActivity;
 
 import java.util.ArrayList;
 import java.util.List;

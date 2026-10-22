@@ -7,3 +7,15 @@ local.properties
 app/google-services.json
 .DS_Store
 
+# Local design state, emulator output and credentials must not be published.
+.superdesign/
+*.log
+**/google-services.json
+**/local.properties
+.env
+.env.*
+*.jks
+*.keystore
+*service-account*.json
+*serviceAccount*.json
+

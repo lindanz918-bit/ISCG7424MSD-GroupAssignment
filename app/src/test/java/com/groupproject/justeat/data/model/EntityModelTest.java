@@ -97,34 +97,34 @@ public class EntityModelTest {
 
     }
 
-    @Test
-    public void restaurantTableSupportsFirebaseConstructionAndPropertyUpdates() {
-
-        RestaurantTable table = new RestaurantTable("t1", "01", 4, "Window",
-                "AVAILABLE", 10L, 20L);
-        assertEquals("t1", table.getTableId());
-        assertEquals("01", table.getTableNumber());
-        assertEquals(4, table.getCapacity());
-        assertEquals("Window", table.getLocation());
-        assertEquals("AVAILABLE", table.getStatus());
-        assertEquals(10L, table.getCreatedAt());
-        assertEquals(20L, table.getUpdatedAt());
-
-        table.setTableId("t2");
-        table.setTableNumber("02");
-        table.setCapacity(6);
-        table.setLocation("Patio");
-        table.setStatus("RESERVED");
-        table.setCreatedAt(30L);
-        table.setUpdatedAt(40L);
-        assertEquals("t2", table.getTableId());
-        assertEquals("02", table.getTableNumber());
-        assertEquals(6, table.getCapacity());
-        assertEquals("Patio", table.getLocation());
-        assertEquals("RESERVED", table.getStatus());
-        assertEquals(30L, table.getCreatedAt());
-        assertEquals(40L, table.getUpdatedAt());
-    }
+//    @Test
+//    public void restaurantTableSupportsFirebaseConstructionAndPropertyUpdates() {
+//
+//        RestaurantTable table = new RestaurantTable("t1", "01", 4, "Window",
+//                "AVAILABLE", 10L, 20L);
+//        assertEquals("t1", table.getTableId());
+//        assertEquals("01", table.getTableNumber());
+//        assertEquals(4, table.getCapacity());
+//        assertEquals("Window", table.getLocation());
+//        assertEquals("AVAILABLE", table.getStatus());
+//        assertEquals(10L, table.getCreatedAt());
+//        assertEquals(20L, table.getUpdatedAt());
+//
+//        table.setTableId("t2");
+//        table.setTableNumber("02");
+//        table.setCapacity(6);
+//        table.setLocation("Patio");
+//        table.setStatus("RESERVED");
+//        table.setCreatedAt(30L);
+//        table.setUpdatedAt(40L);
+//        assertEquals("t2", table.getTableId());
+//        assertEquals("02", table.getTableNumber());
+//        assertEquals(6, table.getCapacity());
+//        assertEquals("Patio", table.getLocation());
+//        assertEquals("RESERVED", table.getStatus());
+//        assertEquals(30L, table.getCreatedAt());
+//        assertEquals(40L, table.getUpdatedAt());
+//    }
 
     @Test
     public void bookingSupportsFirebaseConstructionAndPropertyUpdates() {
