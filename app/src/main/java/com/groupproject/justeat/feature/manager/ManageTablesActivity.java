@@ -3,10 +3,14 @@ package com.groupproject.justeat.feature.manager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.NumberPicker;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -134,7 +138,12 @@ public class ManageTablesActivity  extends BaseActivity<ActivityManageTablesBind
 
                             RestaurantTable table =
                                     child.getValue(RestaurantTable.class);
-
+                            if (table != null) {
+                                Log.d("TableStatus", "Table: "
+                                        + table.getTableNumber()
+                                        + " Status: "
+                                        + table.getStatus());
+                            }
                             String id = child.getKey();
 
                             if (table != null && id != null) {
@@ -172,13 +181,44 @@ public class ManageTablesActivity  extends BaseActivity<ActivityManageTablesBind
         txtNumber.setHint("Table Number");
         txtNumber.setText(table.getTableNumber());
 
-        EditText txtCapacity = new EditText(this);
-        txtCapacity.setHint("Capacity");
-        txtCapacity.setInputType(InputType.TYPE_CLASS_NUMBER);
-        txtCapacity.setText(String.valueOf(table.getCapacity()));
+        NumberPicker numberPickerCapacity = new NumberPicker(this);
+        numberPickerCapacity.setMinValue(1);
+        numberPickerCapacity.setMaxValue(20);
+        numberPickerCapacity.setValue(table.getCapacity());
+
+
+
+//        RadioGroup radioGroupStatus = new RadioGroup(this);
+//        radioGroupStatus.setOrientation(RadioGroup.HORIZONTAL);
+//
+//        RadioButton radioAvailable = new RadioButton(this);
+//        radioAvailable.setText("Available");
+//        radioAvailable.setTextSize(15);
+//
+//        RadioButton radioUnavailable = new RadioButton(this);
+//        radioUnavailable.setText("O");
+//        radioUnavailable.setTextSize(15);
+//
+//        radioAvailable.setId(View.generateViewId());
+//        radioUnavailable.setId(View.generateViewId());
+//
+//        radioGroupStatus.addView(radioAvailable);
+//        radioGroupStatus.addView(radioUnavailable);
+//
+//// 显示餐桌当前的状态
+//        if ("Available".equals(table.getStatus())) {
+//            radioAvailable.setChecked(true);
+//        } else {
+//            radioUnavailable.setChecked(true);
+//        }//准备更改edit table控件，为nud
+
+
+
+
 
         layout.addView(txtNumber);
-        layout.addView(txtCapacity);
+        layout.addView(numberPickerCapacity);
+//        layout.addView(txtStatus);
 
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle("Edit Table")
@@ -192,13 +232,11 @@ public class ManageTablesActivity  extends BaseActivity<ActivityManageTablesBind
             dialog.getButton(AlertDialog.BUTTON_POSITIVE)
                     .setOnClickListener(v -> {
 
-                        String number =
-                                txtNumber.getText().toString().trim();
+                        String number =    txtNumber.getText().toString().trim();
 
-                        String capacityText =
-                                txtCapacity.getText().toString().trim();
+                        int capacityText =   numberPickerCapacity.getValue();
 
-                        if (number.isEmpty() || capacityText.isEmpty()) {
+                        if (number.isEmpty()) {
                             Toast.makeText(
                                     this,
                                     "Please enter all table details",
@@ -207,31 +245,31 @@ public class ManageTablesActivity  extends BaseActivity<ActivityManageTablesBind
                             return;
                         }
 
-                        int capacity;
+//                        int capacity;
+//
+//                        try {
+//                            capacity = Integer.parseInt(capacityText);
+//                        } catch (NumberFormatException e) {
+//                            Toast.makeText(
+//                                    this,
+//                                    "Invalid capacity",
+//                                    Toast.LENGTH_SHORT
+//                            ).show();
+//                            return;
+//                        }
 
-                        try {
-                            capacity = Integer.parseInt(capacityText);
-                        } catch (NumberFormatException e) {
-                            Toast.makeText(
-                                    this,
-                                    "Invalid capacity",
-                                    Toast.LENGTH_SHORT
-                            ).show();
-                            return;
-                        }
-
-                        if (capacity <= 0) {
-                            Toast.makeText(
-                                    this,
-                                    "Capacity must be greater than 0",
-                                    Toast.LENGTH_SHORT
-                            ).show();
-                            return;
-                        }
+//                        if (capacity <= 0) {
+//                            Toast.makeText(
+//                                    this,
+//                                    "Capacity must be greater than 0",
+//                                    Toast.LENGTH_SHORT
+//                            ).show();
+//                            return;
+//                        }
 
                         Map<String, Object> updates = new HashMap<>();
                         updates.put("tableNumber", number);
-                        updates.put("capacity", capacity);
+                        updates.put("capacity", capacityText);
 
                         tablesReference.child(id).updateChildren(updates)
                                 .addOnSuccessListener(result -> {

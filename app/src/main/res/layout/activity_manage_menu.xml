@@ -10,108 +10,127 @@
     android:padding="16dp"
     tools:context=".feature.manager.ManageMenuActivity">
 
-    <TextView
+<!--    <TextView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Add Meal"-->
+<!--        android:textStyle="bold"-->
+<!--        android:gravity="center"-->
+<!--        android:textSize="28sp"-->
+<!--        android:layout_marginBottom="25dp"-->
+<!--        />-->
+
+
+<!--    <TextView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Image URL:"-->
+<!--        android:textSize="18sp"-->
+<!--        android:layout_marginTop="10dp" />-->
+
+<!--    <EditText-->
+<!--        android:id="@+id/txt_imageUrl"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:hint="Enter image URL"-->
+<!--        android:inputType="textUri" />-->
+
+<!--    <TextView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Meal Name:"-->
+<!--        android:textSize="18sp"-->
+<!--        android:layout_marginTop="10dp" />-->
+
+<!--    <EditText-->
+<!--        android:id="@+id/txt_mealname"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:hint="Meal Name" />-->
+
+
+
+
+<!--    &lt;!&ndash;    <EditText&ndash;&gt;-->
+<!--    &lt;!&ndash;        android:id="@+id/txt_eventcategory"&ndash;&gt;-->
+<!--    &lt;!&ndash;        android:layout_width="match_parent"&ndash;&gt;-->
+<!--    &lt;!&ndash;        android:layout_height="wrap_content"&ndash;&gt;-->
+<!--    &lt;!&ndash;        android:hint="Category"&ndash;&gt;-->
+<!--    &lt;!&ndash;        android:layout_marginTop="10dp" />&ndash;&gt;-->
+<!--    <TextView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Price:"-->
+<!--        android:textSize="18sp"-->
+<!--        android:layout_marginTop="10dp" />-->
+
+<!--    <EditText-->
+<!--        android:id="@+id/txt_price"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:hint="Price" />-->
+
+
+
+
+
+
+<!--    <TextView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Spiciness:"-->
+<!--        android:textSize="18sp"-->
+<!--        android:layout_marginTop="10dp" />-->
+
+<!--    <EditText-->
+<!--        android:id="@+id/txt_Spiciness"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:hint="Spiciness Level" />-->
+
+
+
+
+<!--    <TextView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Description:"-->
+<!--        android:textSize="18sp"-->
+<!--        android:layout_marginTop="10dp" />-->
+
+<!--    <EditText-->
+<!--        android:id="@+id/txt_description"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:hint="Description" />-->
+
+
+
+
+
+<!--    <Button-->
+<!--        android:id="@+id/btn_addMeal"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Add Event"-->
+<!--        android:layout_marginTop="25dp" />-->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvMeals"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Add Meal"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:textSize="28sp"
-        android:layout_marginBottom="25dp"
-        />
-
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Image URL:"
-        android:textSize="18sp"
-        android:layout_marginTop="10dp" />
-
-    <EditText
-        android:id="@+id/txt_imageUrl"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter image URL"
-        android:inputType="textUri" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Meal Name:"
-        android:textSize="18sp"
-        android:layout_marginTop="10dp" />
-
-    <EditText
-        android:id="@+id/txt_mealname"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Meal Name" />
-
-
-
-
-    <!--    <EditText-->
-    <!--        android:id="@+id/txt_eventcategory"-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:hint="Category"-->
-    <!--        android:layout_marginTop="10dp" />-->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Price:"
-        android:textSize="18sp"
-        android:layout_marginTop="10dp" />
-
-    <EditText
-        android:id="@+id/txt_price"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Price" />
-
-
-
-
-
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Spiciness:"
-        android:textSize="18sp"
-        android:layout_marginTop="10dp" />
-
-    <EditText
-        android:id="@+id/txt_Spiciness"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Spiciness Level" />
-
-
-
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Description:"
-        android:textSize="18sp"
-        android:layout_marginTop="10dp" />
-
-    <EditText
-        android:id="@+id/txt_description"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Description" />
-
-
-
-
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:scrollbars="vertical" />
 
     <Button
-        android:id="@+id/btn_addMeal"
+        android:id="@+id/btnAdd"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Add Event"
-        android:layout_marginTop="25dp" />
+        android:layout_height="52dp"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        android:text="Add Meal"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:textAllCaps="false" />
+
 </LinearLayout>
