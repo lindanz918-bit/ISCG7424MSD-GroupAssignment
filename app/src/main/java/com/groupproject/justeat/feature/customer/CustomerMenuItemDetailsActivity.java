@@ -2,6 +2,7 @@ package com.groupproject.justeat.feature.customer;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.Toast;
 
@@ -55,9 +56,12 @@ public class CustomerMenuItemDetailsActivity extends BaseActivity<ActivityCustom
 
         getBinding().btnBook.setOnClickListener(v -> {
             saveMenuItemToFirebase();
-            Intent intent = new Intent(this, CustomerMyMenuActivity.class);
-            startActivity(intent);
-            overridePendingTransition(0, 0);
+            android.widget.Toast.makeText(
+                    this,
+                    "Added to My Menu! You can continue browsing or check it later.",
+                    android.widget.Toast.LENGTH_SHORT
+            ).show();
+            finish();
         });
 
         getBinding().bottomNavigation.setOnItemSelectedListener(item -> {
@@ -127,12 +131,12 @@ public class CustomerMenuItemDetailsActivity extends BaseActivity<ActivityCustom
         MenuItem item = new MenuItem(menuItemId, mealName, imageUrl, spiciness, price, description);
         getBinding().btnBook.setEnabled(false);
         userMenuRef.child(menuItemId).setValue(item).addOnSuccessListener(aVoid -> {
-                    Toast.makeText(this, "Menu item saved successfully", Toast.LENGTH_SHORT).show();
+                    Log.d("Firebase", "Menu item saved successfully");
                     getBinding().btnBook.setEnabled(true);
                     finish();
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Failed to save menu item", Toast.LENGTH_SHORT).show();
+                    Log.d("firebase", "Error saving menu item", e);
                     getBinding().btnBook.setEnabled(true);
                 });
     }

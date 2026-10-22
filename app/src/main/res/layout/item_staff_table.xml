@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="16dp" app:cardCornerRadius="18dp" app:cardElevation="1dp" app:strokeColor="@color/staff_border" app:strokeWidth="1dp" app:cardBackgroundColor="@color/staff_surface">
+  <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+    <TextView android:id="@+id/tv_staff_table_number" style="@style/StaffCardTitle"/>
+    <TextView android:id="@+id/tv_staff_table_status" style="@style/StaffBadge" android:layout_marginTop="8dp"/>
+    <TextView android:id="@+id/tv_staff_table_capacity" style="@style/StaffBody" android:layout_marginTop="12dp"/>
+    <TextView android:id="@+id/tv_staff_table_location" style="@style/StaffBody" android:layout_marginTop="16dp" android:padding="12dp" android:background="@drawable/staff_soft_panel"/>
+    <com.google.android.material.button.MaterialButton android:id="@+id/btn_staff_table_toggle" style="@style/StaffButton.Outline" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text=""/>
+    <com.google.android.material.button.MaterialButton android:id="@+id/btn_staff_table_occupancy" style="@style/StaffButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text=""/>
+  </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+<resources>
+  <!-- Staff-only tokens: never applied to Customer, Owner or Admin screens. -->
+  <color name="staff_primary">#174E41</color>
+  <color name="staff_background">#F7F8F3</color>
+  <color name="staff_surface">#FFFFFF</color>
+  <color name="staff_text">#1E302A</color>
+  <color name="staff_muted">#66756C</color>
+  <color name="staff_border">#E3E8E2</color>
+  <color name="staff_soft">#E7F0EB</color>
+  <color name="staff_pending">#9A5A0A</color>
+  <color name="staff_pending_surface">#FFF1D6</color>
+  <color name="staff_error">#B63C36</color>
+  <color name="staff_error_surface">#FBECE9</color>
+  <style name="Theme.JustEat.Staff" parent="Theme.JustEat">
+    <item name="colorPrimary">@color/staff_primary</item>
+    <item name="colorPrimaryVariant">@color/staff_primary</item>
+    <item name="colorSecondary">@color/staff_primary</item>
+    <item name="colorError">@color/staff_error</item>
+    <item name="android:colorBackground">@color/staff_background</item>
+    <item name="android:windowBackground">@color/staff_background</item>
+    <item name="android:statusBarColor">@color/staff_background</item>
+    <item name="android:navigationBarColor">@color/staff_background</item>
+    <item name="android:windowLightNavigationBar">true</item>
+    <item name="android:textColorPrimary">@color/staff_text</item>
+    <item name="android:textColorSecondary">@color/staff_muted</item>
+    <item name="materialButtonStyle">@style/StaffButton</item>
+  </style>
+  <style name="StaffTitle">
+    <item name="android:layout_width">match_parent</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:textSize">28sp</item>
+    <item name="android:textStyle">bold</item>
+    <item name="android:textColor">@color/staff_text</item>
+    <item name="android:layout_marginTop">8dp</item>
+  </style>
+  <style name="StaffBody">
+    <item name="android:layout_width">match_parent</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:textSize">16sp</item>
+    <item name="android:textColor">@color/staff_muted</item>
+    <item name="android:lineSpacingExtra">4dp</item>
+  </style>
+  <style name="StaffCardTitle" parent="StaffBody">
+    <item name="android:textSize">18sp</item>
+    <item name="android:textStyle">bold</item>
+    <item name="android:textColor">@color/staff_text</item>
+  </style>
+  <style name="StaffBadge">
+    <item name="android:layout_width">wrap_content</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:textSize">12sp</item>
+    <item name="android:textStyle">bold</item>
+    <item name="android:paddingStart">12dp</item>
+    <item name="android:paddingEnd">12dp</item>
+    <item name="android:paddingTop">6dp</item>
+    <item name="android:paddingBottom">6dp</item>
+    <item name="android:textColor">@color/staff_primary</item>
+    <item name="android:background">@drawable/staff_soft_panel</item>
+  </style>
+  <style name="StaffButton" parent="Widget.MaterialComponents.Button">
+    <item name="android:minHeight">48dp</item>
+    <item name="android:textAllCaps">false</item>
+    <item name="android:letterSpacing">0</item>
+    <item name="android:stateListAnimator">@null</item>
+    <item name="android:textSize">14sp</item>
+    <item name="cornerRadius">12dp</item>
+    <item name="android:insetTop">0dp</item>
+    <item name="android:insetBottom">0dp</item>
+  </style>
+  <style name="StaffButton.Outline" parent="Widget.MaterialComponents.Button.OutlinedButton">
+    <item name="android:minHeight">48dp</item>
+    <item name="android:textAllCaps">false</item>
+    <item name="android:letterSpacing">0</item>
+    <item name="android:stateListAnimator">@null</item>
+    <item name="cornerRadius">12dp</item>
+    <item name="strokeColor">@color/staff_border</item>
+    <item name="android:insetTop">0dp</item>
+    <item name="android:insetBottom">0dp</item>
+  </style>
+  <style name="StaffButton.Text" parent="Widget.MaterialComponents.Button.TextButton">
+    <item name="android:minHeight">48dp</item>
+    <item name="android:textAllCaps">false</item>
+    <item name="android:letterSpacing">0</item>
+    <item name="android:stateListAnimator">@null</item>
+    <item name="cornerRadius">12dp</item>
+  </style>
+  <style name="StaffInput" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+    <item name="android:layout_width">match_parent</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:layout_marginTop">12dp</item>
+    <item name="boxCornerRadiusTopStart">12dp</item>
+    <item name="boxCornerRadiusTopEnd">12dp</item>
+    <item name="boxCornerRadiusBottomStart">12dp</item>
+    <item name="boxCornerRadiusBottomEnd">12dp</item>
+    <item name="boxBackgroundColor">@color/staff_surface</item>
+  </style>
+  <string name="staff_ui_orders">Orders</string>
+  <string name="staff_ui_orders_hint">Review and manage incoming requests</string>
+  <string name="staff_ui_tables">Tables</string>
+  <string name="staff_ui_tables_hint">Manage seating and table availability</string>
+  <string name="staff_ui_profile">My profile</string>
+  <string name="staff_ui_profile_hint">Your details and account security</string>
+  <string name="staff_ui_details_hint">Booking details and meal service</string>
+  <string name="staff_ui_details">Order details</string>
+  <string name="staff_ui_view_details">View details</string>
+  <string name="staff_ui_pending_count">Pending %1$d</string>
+  <string name="staff_ui_active_count">Active %1$d</string>
+  <string name="staff_ui_booking">Table %1$s  &#xB7;  %2$s guests\n%3$s</string>
+  <string name="staff_ui_personal">Personal information</string>
+  <string name="staff_ui_security">Account security</string>
+  <string name="staff_ui_save">Save changes</string>
+</resources>
