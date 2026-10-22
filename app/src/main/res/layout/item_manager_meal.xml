@@ -20,7 +20,8 @@
             android:layout_height="166dp"
             android:contentDescription="Meal image"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_restaurant_brand" />
+            android:src="@drawable/ic_restaurant_brand"
+            />
 
         <LinearLayout
             android:layout_width="0dp"

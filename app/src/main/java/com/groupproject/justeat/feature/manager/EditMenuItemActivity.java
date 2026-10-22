@@ -5,6 +5,7 @@ import static android.content.Intent.getIntent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -61,7 +62,13 @@ public class EditMenuItemActivity  extends BaseActivity<ActivityEditMenuItemBind
         mealRef = FirebaseDatabase.getInstance()
                 .getReference("meals")
                 .child(mealId);
-
+// Back Button
+        getBinding().btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
         // Load original meal data
         loadMeal();
 
@@ -76,6 +83,7 @@ public class EditMenuItemActivity  extends BaseActivity<ActivityEditMenuItemBind
                 }
         );
         // Delete Button
+
 
         getBinding().btnDeleteMeal.setOnClickListener(
                 new View.OnClickListener() {
@@ -168,6 +176,7 @@ public class EditMenuItemActivity  extends BaseActivity<ActivityEditMenuItemBind
                     }
                 }
         );
+
     }
 
     private void saveMeal() {
@@ -260,15 +269,16 @@ public class EditMenuItemActivity  extends BaseActivity<ActivityEditMenuItemBind
                     ).show();
 
                     finish();
-                })
-                .addOnFailureListener(e -> {
-
-                    Toast.makeText(
-                            EditMenuItemActivity.this,
-                            "Failed to delete meal: " + e.getMessage(),
-                            Toast.LENGTH_SHORT
-                    ).show();
                 });
+//                .addOnFailureListener(e -> {
+//
+//                    Toast.makeText(
+//                            EditMenuItemActivity.this,
+//                            "Failed to delete meal: " + e.getMessage(),
+//                            Toast.LENGTH_SHORT
+//                    ).show();
+//                });
+
 
     }
 }

@@ -120,6 +120,13 @@ public class ManageTablesActivity  extends BaseActivity<ActivityManageTablesBind
         });
 
         loadTables();
+        // Back Button
+        getBinding().btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
     }
 
     private void loadTables() {

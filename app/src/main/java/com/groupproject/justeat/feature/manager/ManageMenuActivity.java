@@ -106,7 +106,13 @@ public class ManageMenuActivity
 
         // Load Meals
         loadMeals();
-
+// Back Button
+        getBinding().btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
         getBinding().btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

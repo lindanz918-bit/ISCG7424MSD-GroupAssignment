@@ -39,11 +39,17 @@ public class AddStaffActivity extends BaseActivity<ActivityAddStaffBinding> {
         // Firebase
         firebaseDatabase = FirebaseDatabase.getInstance();
         reference = firebaseDatabase.getReference();
-
+        getBinding().btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
         getBinding().btnAddStaff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
+                String imageUrl =  getBinding().txtImageUrl.getText().toString();
                 String lastName =  getBinding().txtLastName.getText().toString();
 
                 String firstName =      getBinding().txtFirstName.getText().toString();
@@ -53,7 +59,8 @@ public class AddStaffActivity extends BaseActivity<ActivityAddStaffBinding> {
                 String password =  getBinding().txtPassword.getText().toString();
 
 
-                if (lastName.isEmpty()
+                if (imageUrl.isEmpty()
+                        || lastName.isEmpty()
                         || firstName.isEmpty()
                         || email.isEmpty()
                         || password.isEmpty()) {
@@ -72,11 +79,10 @@ public class AddStaffActivity extends BaseActivity<ActivityAddStaffBinding> {
 
                 // Create staff
                 Staff staff = new Staff(
-
+                        imageUrl,
                         firstName,
                         lastName,
                         email
-
                 );
 
                 //Save to Firebase
@@ -92,6 +98,7 @@ public class AddStaffActivity extends BaseActivity<ActivityAddStaffBinding> {
                 ).show();
 
                 //Clear fields
+                getBinding().txtImageUrl.setText("");
                 getBinding().txtLastName.setText("");
                 getBinding().txtFirstName.setText("");
                 getBinding().txtEmail.setText("");
@@ -105,9 +112,13 @@ public class AddStaffActivity extends BaseActivity<ActivityAddStaffBinding> {
 
     private void initView() {
         // Initialize views here
+        getBinding().btnBack.setOnClickListener(v -> {
+            finish();
+            overridePendingTransition(0, 0);
+        });
     }
 
     private void initData() {
-        // Initialize data here
+
     }
 }

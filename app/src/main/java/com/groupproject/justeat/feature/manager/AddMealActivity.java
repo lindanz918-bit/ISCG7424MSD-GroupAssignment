@@ -55,10 +55,17 @@ public class AddMealActivity extends BaseActivity<ActivityAddMealBinding> {
                 }
         );
 
+
         // Firebase
         firebaseDatabase = FirebaseDatabase.getInstance();
         reference = firebaseDatabase.getReference();
-
+// Back Button
+        getBinding().btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
         // Add Meal Button
         getBinding().btnAddMeal.setOnClickListener(new View.OnClickListener() {
             @Override

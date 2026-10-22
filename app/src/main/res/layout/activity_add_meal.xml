@@ -8,17 +8,42 @@
     android:orientation="vertical"
     android:layout_gravity="center"
     tools:context=".feature.manager.AddMealActivity">
-
-    <TextView
-        android:id="@+id/tv_add_meal_title"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:gravity="center"
-        android:text="Add Meal"
-        android:textColor="@color/just_eat_text_primary"
-        android:textSize="20sp"
-        android:textStyle="bold" />
+        android:layout_height="48dp">
+
+        <ImageView
+            android:id="@+id/btn_back"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="start|center_vertical"
+            android:layout_marginStart="12dp"
+            android:padding="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Back"
+            android:src="@drawable/outline_arrow_back_24" />
+
+        <TextView
+            android:id="@+id/tv_header_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Add meal"
+            android:textColor="@color/just_eat_text_primary"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+    </FrameLayout>
+<!--    <TextView-->
+<!--        android:id="@+id/tv_add_meal_title"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="24dp"-->
+<!--        android:gravity="center"-->
+<!--        android:text="Add Meal"-->
+<!--        android:textColor="@color/just_eat_text_primary"-->
+<!--        android:textSize="20sp"-->
+<!--        android:textStyle="bold" />-->
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"

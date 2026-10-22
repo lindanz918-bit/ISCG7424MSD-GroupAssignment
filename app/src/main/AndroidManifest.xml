@@ -96,10 +96,10 @@
         <!-- android:name=".feature.manager.EdiitMealActivity" -->
         <!-- android:exported="false" -->
         <!-- android:windowSoftInputMode="adjustResize" /> -->
-        <activity
-            android:name=".feature.manager.EditMealActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
+<!--        <activity-->
+<!--            android:name=".feature.manager.EditMealActivity"-->
+<!--            android:exported="false"-->
+<!--            android:windowSoftInputMode="adjustResize" />-->
         <activity
             android:name=".feature.manager.EditMenuItemActivity"
             android:exported="false"

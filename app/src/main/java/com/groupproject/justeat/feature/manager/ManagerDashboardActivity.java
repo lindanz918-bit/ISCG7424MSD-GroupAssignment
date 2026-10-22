@@ -13,6 +13,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.cardview.widget.CardView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -70,6 +71,20 @@ public class ManagerDashboardActivity
                 }
         );
 
+        getBinding().svSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (adapter != null) {
+                    adapter.filter(newText);
+                }
+                return true;
+            }
+        });
+
         getBinding(). manageMenuCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -102,7 +117,7 @@ public class ManagerDashboardActivity
 
                 Intent intent = new Intent(
                         getApplicationContext(),
-                        AddStaffActivity.class
+                        ManageStaffActivity.class
                 );
 
                 startActivity(intent);

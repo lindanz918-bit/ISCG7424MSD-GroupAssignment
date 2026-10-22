@@ -8,7 +8,8 @@
     android:layout_marginTop="12dp"
     app:cardBackgroundColor="@color/just_eat_surface"
     app:cardCornerRadius="12dp"
-    app:cardElevation="3dp">
+    app:cardElevation="3dp"
+    >
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
