@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.groupproject.justeat.R;
-import com.groupproject.justeat.data.model.RestaurantTable;
 import com.groupproject.justeat.databinding.ItemStaffTableBinding;
 import com.groupproject.justeat.domain.constant.TableStatus;
 
@@ -17,10 +16,10 @@ import java.util.List;
 /** Staff 餐桌状态卡片。 */
 public class StaffTableAdapter extends RecyclerView.Adapter<StaffTableAdapter.ViewHolder> {
     public interface Listener {
-        void onChange(RestaurantTable table, boolean occupancy);
+        void onChange(StaffTableState table, boolean occupancy);
     }
 
-    private final List<RestaurantTable> tables = new ArrayList<>();
+    private final List<StaffTableState> tables = new ArrayList<>();
     private final Listener listener;
     private java.util.Map<String,String> bookings=java.util.Collections.emptyMap();
     private boolean busy;
@@ -29,7 +28,7 @@ public class StaffTableAdapter extends RecyclerView.Adapter<StaffTableAdapter.Vi
 
     public StaffTableAdapter(Listener listener) { this.listener = listener; }
 
-    public void submitList(List<RestaurantTable> data) {
+    public void submitList(List<StaffTableState> data) {
         tables.clear();
         if (data != null) tables.addAll(data);
         notifyDataSetChanged();
@@ -42,27 +41,26 @@ public class StaffTableAdapter extends RecyclerView.Adapter<StaffTableAdapter.Vi
     }
 
     @Override public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        RestaurantTable table = tables.get(position);
-        String number = table.getTableNumber() == null ? "-" : table.getTableNumber();
-        String status = table.getStatus() == null ? "-" : table.getStatus();
+        StaffTableState table = tables.get(position);
+        String number = table.number.isEmpty() ? "-" : table.number;
+        String status = table.isMigrated() ? (table.enabled ? "ENABLED" : "DISABLED") : "MIGRATION NEEDED";
         holder.binding.tvStaffTableNumber.setText(holder.binding.getRoot().getContext()
                 .getString(R.string.staff_table_number, number));
         holder.binding.tvStaffTableCapacity.setText(holder.binding.getRoot().getContext()
-                .getString(R.string.staff_table_capacity, table.getCapacity()));
-        String booking=bookings.get(number);
+                .getString(R.string.staff_table_capacity, table.capacity) + "\nOn-site: " + (table.isMigrated() ? table.occupancy : "Unknown (legacy: " + table.legacyStatus + ")"));
+        String booking=bookings.get(table.key);
+        String legacy=bookings.get(number);
+        if (!table.key.equals(number) && legacy != null)
+            booking=(booking==null ? "" : booking+"\n")+"Legacy table number — migration needed:\n"+legacy;
         holder.binding.tvStaffTableLocation.setVisibility(booking==null?android.view.View.GONE:android.view.View.VISIBLE);
-        holder.binding.tvStaffTableLocation.setText(booking==null?"":"Active bookings:\n"+booking);
+        holder.binding.tvStaffTableLocation.setText(booking==null?"":"Day reservations (including completed):\n"+booking);
         StaffUi.badge(holder.binding.tvStaffTableStatus,status);
-        boolean editable = TableStatus.AVAILABLE.equalsIgnoreCase(status) || TableStatus.UNAVAILABLE.equalsIgnoreCase(status);
-        holder.binding.btnStaffTableToggle.setEnabled(editable && !busy);
-        holder.binding.btnStaffTableToggle.setText(TableStatus.AVAILABLE.equalsIgnoreCase(status)
-                ? R.string.staff_make_unavailable : R.string.staff_make_available);
+        holder.binding.btnStaffTableToggle.setEnabled(table.isMigrated() && !busy);
+        holder.binding.btnStaffTableToggle.setText(Boolean.TRUE.equals(table.enabled) ? "Disable bookings" : "Enable bookings");
         holder.binding.btnStaffTableToggle.setOnClickListener(v -> listener.onChange(table,false));
-        boolean occupied=TableStatus.OCCUPIED.equalsIgnoreCase(status) || TableStatus.RESERVED.equalsIgnoreCase(status);
-        holder.binding.btnStaffTableOccupancy.setVisibility(occupied || TableStatus.AVAILABLE.equalsIgnoreCase(status)
-            ? android.view.View.VISIBLE : android.view.View.GONE);
-        holder.binding.btnStaffTableOccupancy.setText(occupied?"Release table":"Mark occupied");
-        holder.binding.btnStaffTableOccupancy.setEnabled(!busy);
+        holder.binding.btnStaffTableOccupancy.setVisibility(android.view.View.VISIBLE);
+        holder.binding.btnStaffTableOccupancy.setText("OCCUPIED".equals(table.occupancy) ? "Release table" : "Mark occupied");
+        holder.binding.btnStaffTableOccupancy.setEnabled(table.isMigrated() && !busy);
         holder.binding.btnStaffTableOccupancy.setOnClickListener(v -> listener.onChange(table,true));
     }
 

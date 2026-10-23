@@ -25,6 +25,8 @@ public class StaffOrderAdapter extends RecyclerView.Adapter<StaffOrderAdapter.Vi
     private final java.util.Map<String,String> names = new java.util.HashMap<>();
     private final java.util.Set<String> requested = new java.util.HashSet<>();
     private boolean busy;
+    private final java.util.Map<String,String> tableNames = new java.util.HashMap<>();
+    private final java.util.Set<String> tableRequests = new java.util.HashSet<>();
     public void setBusy(boolean value) { busy=value; notifyDataSetChanged(); }
 
     public StaffOrderAdapter(Listener listener) {
@@ -57,12 +59,19 @@ public class StaffOrderAdapter extends RecyclerView.Adapter<StaffOrderAdapter.Vi
                 });
         }
         String tableId = order.getTableId() == null ? "-" : order.getTableId();
+        if (StaffBookingPolicy.validKey(tableId) && tableRequests.add(tableId)) {
+            com.google.firebase.database.FirebaseDatabase.getInstance().getReference("tables").child(tableId)
+                .child("tableNumber").get().addOnSuccessListener(s -> {
+                    String name=s.getValue(String.class);
+                    if(name!=null) { tableNames.put(tableId,name); notifyDataSetChanged(); }
+                });
+        }
         String status = order.getStatus() == null ? "-" : order.getStatus();
         holder.binding.tvStaffOrderId.setText(holder.binding.getRoot().getContext()
                 .getString(R.string.staff_order_id, orderId));
         holder.binding.tvStaffOrderCustomer.setText(names.getOrDefault(customerId,customerId));
         holder.binding.tvStaffOrderTable.setText(holder.binding.getRoot().getContext()
-                .getString(R.string.staff_ui_booking, tableId, order.getGuestCount(),
+                .getString(R.string.staff_ui_booking, tableNames.getOrDefault(tableId,tableId), order.getGuestCount(),
                     order.getBookingDate()==null ? "Date not provided" : order.getBookingDate()));
         holder.binding.getRoot().setOnClickListener(v -> v.getContext().startActivity(
                 new android.content.Intent(v.getContext(), StaffOrderDetailsActivity.class)

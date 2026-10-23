@@ -7,7 +7,6 @@ import android.widget.Toast;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.groupproject.justeat.data.model.RestaurantTable;
 import com.groupproject.justeat.databinding.ActivityStaffTablesBinding;
 
 /** Restaurant Staff 餐桌可用/不可用管理页面。 */
@@ -30,9 +29,13 @@ public class StaffTableFragment extends androidx.fragment.app.Fragment {
         super.onViewCreated(view, savedState);
         viewModel = new ViewModelProvider(this).get(StaffTableViewModel.class);
         adapter = new StaffTableAdapter((table,occupancy) -> {
-            if(!occupancy) viewModel.toggleAvailability(table);
+            if(!occupancy) activeDialog = new androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                .setMessage(Boolean.TRUE.equals(table.enabled)
+                    ? "Disable new bookings? Existing reservations are kept." : "Enable new bookings for this table?")
+                .setNegativeButton("Cancel",null)
+                .setPositiveButton("Confirm",(dialog,which) -> viewModel.toggleAvailability(table)).show();
             else activeDialog = new androidx.appcompat.app.AlertDialog.Builder(requireContext())
-                .setMessage("AVAILABLE".equalsIgnoreCase(table.getStatus())?"Mark this table occupied?":"Release this table for new guests? Existing orders will not be changed.")
+                .setMessage("AVAILABLE".equalsIgnoreCase(table.occupancy)?"Mark this table occupied?":"Release this table for new guests? Existing orders will not be changed.")
                 .setNegativeButton("Cancel",null)
                 .setPositiveButton("Confirm",(dialog,which) -> viewModel.toggleOccupancy(table)).show();
         });
@@ -42,15 +45,15 @@ public class StaffTableFragment extends androidx.fragment.app.Fragment {
         getBinding().btnStaffTablesBack.setOnClickListener(v -> returnHome());
         viewModel.getTables().observe(getViewLifecycleOwner(), data -> {
             adapter.submitList(data);
-            int available=0, unavailable=0, occupied=0, reserved=0;
-            if(data!=null) for(RestaurantTable table:data) {
-                if("AVAILABLE".equalsIgnoreCase(table.getStatus())) available++;
-                else if("UNAVAILABLE".equalsIgnoreCase(table.getStatus())) unavailable++;
-                else if("OCCUPIED".equalsIgnoreCase(table.getStatus())) occupied++;
-                else if("RESERVED".equalsIgnoreCase(table.getStatus())) reserved++;
+            int enabled=0, disabled=0, occupied=0, migration=0;
+            if(data!=null) for(StaffTableState table:data) {
+                if (!table.isMigrated()) { migration++; continue; }
+                if (table.enabled) enabled++; else disabled++;
+                if ("OCCUPIED".equals(table.occupancy)) occupied++;
             }
-            getBinding().tvStaffTableSummary.setText("Available: "+available+"   Unavailable: "+unavailable
-                +"\nOccupied: "+occupied+"   Reserved: "+reserved);
+            getBinding().tvStaffTableSummary.setText("Bookings enabled: "+enabled+"   Disabled: "+disabled
+                +"\nOccupied now: "+occupied+"   Migration needed: "+migration
+                +"\nOn-site state does not change date reservations.");
             getBinding().layoutStaffTablesEmpty.setVisibility(
                     data == null || data.isEmpty() ? android.view.View.VISIBLE : android.view.View.GONE);
         });

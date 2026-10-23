@@ -23,7 +23,12 @@ public class StaffOrderViewModel extends BaseViewModel {
                     List<Order> data = new ArrayList<>();
                     try {
                         for (DataSnapshot child : snapshot.getChildren()) {
-                            Order order = child.getValue(Order.class);
+                            // Staff-only parsing accepts both legacy string and new numeric guestCount.
+                            Order order = new Order(child.getKey(), StaffTableState.text(child,"customerId"),
+                                StaffTableState.text(child,"guestCount"), StaffTableState.text(child,"bookingDate"),
+                                StaffTableState.text(child,"tableId"), StaffTableState.text(child,"status"),
+                                child.child("createdAt").getValue() instanceof Number
+                                    ? ((Number)child.child("createdAt").getValue()).longValue() : 0L);
                             if (order != null) { order.setOrderId(child.getKey()); data.add(order); }
                         }
                         data.sort((a,b) -> Long.compare(b.getCreatedAt(), a.getCreatedAt()));
@@ -39,22 +44,12 @@ public class StaffOrderViewModel extends BaseViewModel {
     public void applyStatus(Order order, String target) {
         if (order == null || Boolean.TRUE.equals(getLoading().getValue())) return;
         setLoading(true);
-        StaffAccess.check(() -> FirebaseDatabase.getInstance().getReference("Orders")
-            .child(order.getOrderId()).child("status").runTransaction(new Transaction.Handler() {
-                public Transaction.Result doTransaction(MutableData data) {
-                    String current = data.getValue(String.class);
-                    if (current == null) return Transaction.success(data);
-                    if (!StaffOrderActionPolicy.canApply(current, target)) return Transaction.abort();
-                    data.setValue(target);
-                    return Transaction.success(data);
-                }
-                public void onComplete(DatabaseError error, boolean committed, DataSnapshot snapshot) {
-                    setLoading(false);
-                    if (error != null || !committed || snapshot == null || !target.equals(snapshot.getValue(String.class)))
-                        setErrorMessage("Order changed or update failed. Refresh and try again.");
-                }
-            }), this::fail);
+        StaffBookingUpdates.changeStatus(order.getOrderId(), target, error -> {
+            setLoading(false);
+            if (error != null) setErrorMessage(error);
+        });
     }
+
     private void fail(String message) { setLoading(false); setErrorMessage(message); }
     public void consumeError() { setErrorMessage(null); }
     protected void onCleared() {

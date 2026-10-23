@@ -18,6 +18,7 @@ public class StaffOrderDetailsActivity extends BaseActivity<ActivityStaffDetails
     private boolean busy;
     private String customerName;
     private String customerUid;
+    private String tableName, tableKey;
     protected ActivityStaffDetailsBinding inflateBinding(LayoutInflater inflater) { return ActivityStaffDetailsBinding.inflate(inflater); }
     public void onCreate(Bundle state) {
         setTheme(com.groupproject.justeat.R.style.Theme_JustEat_Staff);
@@ -36,13 +37,21 @@ public class StaffOrderDetailsActivity extends BaseActivity<ActivityStaffDetails
     private ValueEventListener listen(DatabaseReference ref, boolean isOrder) {
         ValueEventListener listener = new ValueEventListener() {
             public void onDataChange(DataSnapshot s) {
-                if (isOrder) { order=s; loadCustomer(); } else items=s;
+                if (isOrder) { order=s; loadCustomer(); loadTable(); } else items=s;
                 render();
             }
             public void onCancelled(DatabaseError e) { error(e.getMessage()); }
         };
         ref.addValueEventListener(listener);
         return listener;
+    }
+    private void loadTable() {
+        String key=value(order,"tableId");
+        if (!StaffBookingPolicy.validKey(key) || key.equals(tableKey)) return;
+        tableKey=key; tableName=null;
+        root.child("tables").child(key).child("tableNumber").get().addOnSuccessListener(s -> {
+            if (key.equals(tableKey)) { tableName=s.getValue(String.class); render(); }
+        });
     }
     private void loadCustomer() {
         String uid=value(order,"customerId");
@@ -86,7 +95,7 @@ public class StaffOrderDetailsActivity extends BaseActivity<ActivityStaffDetails
         LinearLayout.LayoutParams badgeParams=new LinearLayout.LayoutParams(-2,-2);
         badgeParams.bottomMargin=StaffUi.dp(this,16); summary.addView(badge,badgeParams);
         StaffUi.text(summary,customerName==null?value(order,"customerId"):customerName,18,true);
-        StaffUi.text(summary,"Table "+value(order,"tableId")+"  ·  "+value(order,"guestCount")+" guests",16,false);
+        StaffUi.text(summary,"Table "+(tableName == null ? value(order,"tableId") : tableName)+"  ·  "+value(order,"guestCount")+" guests",16,false);
         StaffUi.text(summary,value(order,"bookingDate")+"\nTime: "+
             (value(order,"bookingTime").isEmpty()?"Not provided in booking":value(order,"bookingTime")),14,false);
         StaffUi.text(content,"Meals",20,true);
@@ -136,24 +145,14 @@ public class StaffOrderDetailsActivity extends BaseActivity<ActivityStaffDetails
     }
     private void changeStatus(String target) {
         busy=true; render();
-        StaffAccess.check(() -> root.child("OrderItems").child(id).get().addOnSuccessListener(latest -> {
-            // Status and served-item flags share one transaction: cancellation cannot race serving.
-            root.child("Orders").child(id).runTransaction(new Transaction.Handler() {
-                public Transaction.Result doTransaction(MutableData d) {
-                    if (d.getValue()==null) return Transaction.success(d);
-                    String current=d.child("status").getValue(String.class);
-                    if (!StaffOrderActionPolicy.isActive(current)) return Transaction.abort();
-                    if ("COMPLETED".equals(target)) for (DataSnapshot item : latest.getChildren())
-                        if (!Boolean.TRUE.equals(d.child("servedItems").child(item.getKey()).getValue(Boolean.class))) return Transaction.abort();
-                    d.child("status").setValue(target); return Transaction.success(d);
-                }
-                public void onComplete(DatabaseError e, boolean committed, DataSnapshot s) {
-                    busy=false; render();
-                    if (e!=null || !committed || s==null || !target.equals(s.child("status").getValue(String.class))) error("Order changed, meals unserved, or update denied.");
-                }
-            }, false);
-        }).addOnFailureListener(e -> error(e.getMessage())), this::error);
+        StaffBookingUpdates.changeStatus(id, target, message -> {
+            if (isFinishing() || isDestroyed()) return;
+            busy=false;
+            if (message != null) error(message);
+            else render();
+        });
     }
+
     private void error(String message) {
         if(isFinishing() || isDestroyed()) return;
         busy=false; Toast.makeText(this,message,Toast.LENGTH_LONG).show();

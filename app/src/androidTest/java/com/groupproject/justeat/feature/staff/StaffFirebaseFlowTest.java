@@ -65,14 +65,16 @@ public class StaffFirebaseFlowTest {
         JSONObject staff=new JSONObject().put("userId",uid).put("firstName","Alex").put("lastName","Staff")
             .put("email","staff@example.test").put("phone","0211234567").put("role","STAFF").put("status","ACTIVE");
         JSONObject guest=new JSONObject().put("firstName","Taylor").put("lastName","Guest").put("role","CUSTOMER").put("status","ACTIVE");
-        JSONObject order=new JSONObject().put("orderId","qa-order").put("customerId","qa-guest").put("guestCount","2")
-            .put("tableId","T1").put("bookingDate","22/10/2026").put("createdAt",1).put("status",status);
+        JSONObject order=new JSONObject().put("orderId","qa-order").put("customerId","qa-guest").put("guestCount",2)
+            .put("tableId","qa-table-key").put("bookingDate","2026-10-24").put("createdAt",1).put("status",status);
         JSONObject meal=new JSONObject().put("mealName","Grilled salmon").put("price","24.00").put("menuItemId","qa-meal");
-        JSONObject table=new JSONObject().put("tableNumber","T1").put("capacity",4).put("status","AVAILABLE");
+        JSONObject table=new JSONObject().put("tableNumber","T1").put("capacity",4).put("status","AVAILABLE").put("isEnabled",true).put("occupancyStatus","AVAILABLE");
         JSONObject root=new JSONObject().put("users",new JSONObject().put(uid,staff).put("qa-guest",guest))
             .put("Orders",new JSONObject().put("qa-order",order))
             .put("OrderItems",new JSONObject().put("qa-order",new JSONObject().put("0",meal)))
-            .put("tables",new JSONObject().put("qa-table-key",table));
+            .put("tables",new JSONObject().put("qa-table-key",table))
+            .put("tableReservations",new JSONObject().put("2026-10-24",
+                new JSONObject().put("qa-table-key",new JSONObject().put("orderId","qa-order"))));
         admin("",root.toString());
     }
     private void admin(String path,String json) throws Exception {
@@ -106,6 +108,73 @@ public class StaffFirebaseFlowTest {
         assertNotNull("Screenshot surface available for "+name,image);
         try(FileOutputStream out=new FileOutputStream(new File(folder,name+".png"))) { assertTrue(image.compress(Bitmap.CompressFormat.PNG,100,out)); }
     }
+
+    private String changeBooking(String target) throws Exception {
+        java.util.concurrent.CountDownLatch finished=new java.util.concurrent.CountDownLatch(1);
+        java.util.concurrent.atomic.AtomicReference<String> error=new java.util.concurrent.atomic.AtomicReference<>();
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(() ->
+            StaffBookingUpdates.changeStatus("qa-order",target,message -> { error.set(message); finished.countDown(); }));
+        assertTrue("Booking operation completes",finished.await(15,TimeUnit.SECONDS));
+        return error.get();
+    }
+    private Object read(String path) throws Exception {
+        return Tasks.await(db.getReference(path).get(),10,TimeUnit.SECONDS).getValue();
+    }
+    @Test public void staffDailyReservations() throws Exception {
+        configureDemo();
+        String slot="tableReservations/2026-10-24/qa-table-key";
+        seed("PENDING");
+        assertNull(changeBooking("ACCEPTED"));
+        assertEquals("qa-order",read(slot+"/orderId"));
+        assertNull(changeBooking("CANCELLED"));
+        assertNull(read(slot));
+        seed("PENDING");
+        assertNull(changeBooking("REJECTED"));
+        assertNull(read(slot));
+        seed("ACCEPTED");
+        assertNotNull(changeBooking("COMPLETED")); // Unserved meal.
+        admin("Orders/qa-order/servedItems/0","true");
+        assertNull(changeBooking("COMPLETED"));
+        assertEquals("qa-order",read(slot+"/orderId"));
+
+        // Neither a standalone release nor a status-only cancellation may break the invariant.
+        seed("ACCEPTED");
+        try { Tasks.await(db.getReference(slot).removeValue(),10,TimeUnit.SECONDS); fail("Slot-only release must fail"); }
+        catch(java.util.concurrent.ExecutionException expected) {}
+        try { Tasks.await(db.getReference("Orders/qa-order/status").setValue("CANCELLED"),10,TimeUnit.SECONDS); fail("Status-only cancel must fail"); }
+        catch(java.util.concurrent.ExecutionException expected) {}
+        assertEquals("ACCEPTED",read("Orders/qa-order/status"));
+        assertEquals("qa-order",read(slot+"/orderId"));
+
+        // Simulate a stale client after another order has taken the slot.
+        admin(slot+"/orderId","\"different-order\"");
+        assertNotNull(changeBooking("CANCELLED"));
+        java.util.Map<String,Object> stale=new java.util.HashMap<>();
+        stale.put("Orders/qa-order/status","CANCELLED"); stale.put(slot,null);
+        try { Tasks.await(db.getReference().updateChildren(stale),10,TimeUnit.SECONDS); fail("Stale update must fail atomically"); }
+        catch(java.util.concurrent.ExecutionException expected) {}
+        assertEquals("different-order",read(slot+"/orderId"));
+        assertEquals("ACCEPTED",read("Orders/qa-order/status"));
+        admin(slot,"null");
+        assertNotNull(changeBooking("CANCELLED"));
+        seed("PENDING");
+        admin("Orders/qa-order/bookingDate","\"24/10/2026\"");
+        assertNotNull(changeBooking("ACCEPTED"));
+        seed("PENDING");
+        admin("Orders/qa-order/tableId","\"T1\"");
+        assertNotNull(changeBooking("ACCEPTED"));
+
+        // Legacy table stays readable but cannot accidentally alter bookings or occupancy.
+        admin("tables/qa-table-key/isEnabled","null");
+        admin("tables/qa-table-key/occupancyStatus","null");
+        try(ActivityScenario<StaffTableActivity> screen=ActivityScenario.launch(StaffTableActivity.class)) {
+            settle();
+            onView(withId(R.id.btn_staff_table_toggle)).check(matches(org.hamcrest.Matchers.not(isEnabled())));
+            onView(withId(R.id.btn_staff_table_occupancy)).check(matches(org.hamcrest.Matchers.not(isEnabled())));
+        }
+        auth.signOut();
+    }
+
     @Test public void staffBottomNavigation() throws Exception {
         configureDemo(); seed("PENDING");
         try(ActivityScenario<StaffDashBoardActivity> screen=ActivityScenario.launch(StaffDashBoardActivity.class)) {
@@ -188,13 +257,19 @@ public class StaffFirebaseFlowTest {
         seed("ACCEPTED");
         try(ActivityScenario<StaffTableActivity> screen=ActivityScenario.launch(StaffTableActivity.class)) {
             settle(); screenshot("06-tables-booking");
-            onView(withId(R.id.btn_staff_table_toggle)).perform(click()); waitValue("tables/qa-table-key/status","UNAVAILABLE");
+            onView(withId(R.id.btn_staff_table_toggle)).perform(click()); onView(withText("Confirm")).perform(click()); waitValue("tables/qa-table-key/isEnabled",false);
+            assertEquals("AVAILABLE",read("tables/qa-table-key/occupancyStatus"));
+            assertEquals("qa-order",read("tableReservations/2026-10-24/qa-table-key/orderId"));
             screenshot("07-unavailable"); screen.recreate(); settle();
-            onView(withId(R.id.btn_staff_table_toggle)).perform(click()); waitValue("tables/qa-table-key/status","AVAILABLE");
+            onView(withId(R.id.btn_staff_table_toggle)).perform(click()); onView(withText("Confirm")).perform(click()); waitValue("tables/qa-table-key/isEnabled",true);
             settle(); onView(withId(R.id.btn_staff_table_occupancy)).perform(click()); onView(withText("Confirm")).perform(click());
-            waitValue("tables/qa-table-key/status","OCCUPIED"); screenshot("07b-occupied");
+            waitValue("tables/qa-table-key/occupancyStatus","OCCUPIED"); screenshot("07b-occupied");
             onView(withId(R.id.btn_staff_table_occupancy)).perform(click()); onView(withText("Confirm")).perform(click());
-            waitValue("tables/qa-table-key/status","AVAILABLE");
+            waitValue("tables/qa-table-key/occupancyStatus","AVAILABLE");
+            assertEquals("qa-order",read("tableReservations/2026-10-24/qa-table-key/orderId"));
+            assertEquals("ACCEPTED",read("Orders/qa-order/status"));
+            assertEquals("AVAILABLE",read("tables/qa-table-key/status")); // Legacy field is untouched.
+            assertTrue(read("tables/qa-table-key/updatedAt") instanceof Number);
         }
         try(ActivityScenario<StaffOrderActivity> screen=ActivityScenario.launch(StaffOrderActivity.class)) {
             settle(); onView(withId(R.id.btn_staff_cancel)).perform(click()); onView(withText("Confirm")).perform(click());
@@ -245,7 +320,7 @@ public class StaffFirebaseFlowTest {
         }
         admin("users/"+uid+"/status","\"INACTIVE\"");
         try {
-            Tasks.await(db.getReference("tables/qa-table-key/status").setValue("UNAVAILABLE"),10,TimeUnit.SECONDS);
+            Tasks.await(db.getReference("tables/qa-table-key/isEnabled").setValue(false),10,TimeUnit.SECONDS);
             fail("Inactive Staff must not be able to update tables");
         } catch(java.util.concurrent.ExecutionException expected) { /* Expected server rejection. */ }
         admin("users/"+uid+"/status","\"ACTIVE\"");
