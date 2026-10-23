@@ -36,7 +36,7 @@ public class AddStaffActivity extends BaseActivity<ActivityAddStaffBinding> {
         initView();
         initData();
 
-        // Firebase
+        //Firebase
         firebaseDatabase = FirebaseDatabase.getInstance();
         reference = firebaseDatabase.getReference();
         getBinding().btnBack.setOnClickListener(new View.OnClickListener() {
@@ -74,10 +74,10 @@ public class AddStaffActivity extends BaseActivity<ActivityAddStaffBinding> {
                     return;
                 }
 
-                // Generate ID
+                //Generate ID
                 String id = reference.push().getKey();
 
-                // Create staff
+                //Create staff
                 Staff staff = new Staff(
                         imageUrl,
                         firstName,

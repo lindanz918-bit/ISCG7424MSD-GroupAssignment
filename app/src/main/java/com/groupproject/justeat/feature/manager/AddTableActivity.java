@@ -6,16 +6,20 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.groupproject.justeat.base.BaseActivity;
 import com.groupproject.justeat.data.model.MenuItem;
 import com.groupproject.justeat.data.model.RestaurantTable;
 import com.groupproject.justeat.databinding.ActivityAddTableBinding;
+import com.google.firebase.database.ValueEventListener;
 
 
 public class AddTableActivity extends BaseActivity<ActivityAddTableBinding> {
@@ -63,7 +67,7 @@ public class AddTableActivity extends BaseActivity<ActivityAddTableBinding> {
         firebaseDatabase = FirebaseDatabase.getInstance();
         reference = firebaseDatabase.getReference();
 
-        // Back Button
+
         getBinding().btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -76,7 +80,7 @@ public class AddTableActivity extends BaseActivity<ActivityAddTableBinding> {
             public void onClick(View view) {
 
 
-                String tableNumber = getBinding().txtTableNumber.getText().toString();
+                String tableNumber = getBinding().txtTableNumber.getText().toString().trim();
 
                 int capacity = getBinding().numberPickerCapacity.getValue();
                 String statusText = "Available";
@@ -87,6 +91,10 @@ public class AddTableActivity extends BaseActivity<ActivityAddTableBinding> {
                     statusText = "Occupied";
                 }
 //                int capacity = Integer.parseInt(capacityText);
+                String finalStatusText = statusText;
+
+
+
 
                 if (tableNumber.isEmpty()) {
 
@@ -100,29 +108,64 @@ public class AddTableActivity extends BaseActivity<ActivityAddTableBinding> {
                 }
 
 
-                // Generate ID
+
                 String id = reference.push().getKey();
 
 
+                DatabaseReference tablesRef = reference.child("tables");
 
-            RestaurantTable table = new RestaurantTable(
-                    tableNumber,
-                    capacity,
-                    statusText
-            );
 
-            //Save to Firebase
-             reference.child("tables").child(id).setValue(table);
-                Toast.makeText(
-            AddTableActivity.this,
-                    "Table added successfully",
-            Toast.LENGTH_LONG
-                 ).show();
+                tablesRef.orderByChild("tableNumber").equalTo(tableNumber).get()
+                        .addOnSuccessListener(snapshot -> {
+
+                            if (snapshot.exists()) {
+                                Toast.makeText(AddTableActivity.this,
+                                        "Table number already exists",
+                                        Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+
+                            RestaurantTable table = new RestaurantTable(
+                                    tableNumber, capacity, finalStatusText
+                            );
+
+                            tablesRef.push().setValue(table)
+                                    .addOnSuccessListener(unused -> {
+
+                                        Toast.makeText(AddTableActivity.this,
+                                                "Table added successfully",
+                                                Toast.LENGTH_SHORT).show();
+
+                                        getBinding().txtTableNumber.setText("");
+                                        getBinding().numberPickerCapacity.setValue(1);
+                                        getBinding().radioAvailable.setChecked(true);
+                                    });
+//
+                        });
+
+
+//
+
+
+
+//            RestaurantTable table = new RestaurantTable(
+//                    tableNumber,
+//                    capacity,
+//                    statusText
+//            );
+//
+//            //Save to Firebase
+//             reference.child("tables").child(id).setValue(table);
+//                Toast.makeText(
+//            AddTableActivity.this,
+//                    "Table added successfully",
+//            Toast.LENGTH_LONG
+//                 ).show();
 
             //Clear fields
-            getBinding().txtTableNumber.setText("");
-            getBinding().numberPickerCapacity.setValue(1);
-                getBinding().radioAvailable.setChecked(true);
+//            getBinding().txtTableNumber.setText("");
+//            getBinding().numberPickerCapacity.setValue(1);
+//                getBinding().radioAvailable.setChecked(true);
             }
 
 

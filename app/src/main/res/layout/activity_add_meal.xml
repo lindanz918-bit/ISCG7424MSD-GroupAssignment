@@ -59,7 +59,7 @@
             android:paddingTop="24dp"
             android:paddingBottom="24dp">
 
-            <!-- Image URL -->
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -93,7 +93,6 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Meal Name -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -128,7 +127,6 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Price -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -163,7 +161,7 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Spiciness -->
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -173,32 +171,14 @@
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilSpiciness"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                app:boxCornerRadiusBottomEnd="12dp"
-                app:boxCornerRadiusBottomStart="12dp"
-                app:boxCornerRadiusTopEnd="12dp"
-                app:boxCornerRadiusTopStart="12dp"
-                app:hintEnabled="false">
+            <NumberPicker
+                android:id="@+id/numberPickerSpiciness"
+                android:layout_width="wrap_content"
+                android:layout_height="137dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="20dp" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/txt_Spiciness"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Enter spiciness level"
-                    android:inputType="text"
-                    android:imeOptions="actionNext"
-                    android:paddingVertical="12dp"
-                    android:textColor="@color/just_eat_text_primary"
-                    android:textSize="15sp" />
 
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <!-- Description -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -238,7 +218,6 @@
 
     </androidx.core.widget.NestedScrollView>
 
-    <!-- Add Meal Button -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_addMeal"
         android:layout_width="match_parent"

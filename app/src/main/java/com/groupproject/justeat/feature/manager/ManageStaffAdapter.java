@@ -107,23 +107,7 @@ public class ManageStaffAdapter
             holder.tvStaffPassword.setVisibility(View.GONE);
         }
 
-        // Edit Staff
-//        holder.imgEditStaff.setOnClickListener(
-//                new View.OnClickListener() {
-//
-//                    @Override
-//                    public void onClick(View v) {
-//
-//                        int position = holder.getAdapterPosition();
-//
-//                        if (position != RecyclerView.NO_POSITION
-//                                && listener != null) {
-//
-//                            listener.onItemClick(position);
-//                        }
-//                    }
-//                }
-//        );
+
     }
 
 

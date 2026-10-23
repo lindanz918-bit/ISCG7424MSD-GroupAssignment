@@ -47,17 +47,18 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnAddTable"
-        android:layout_width="match_parent"
+        android:layout_width="280dp"
         android:layout_height="52dp"
+        android:layout_gravity="center_horizontal"
         android:text="Add New Table"
         android:textAllCaps="false"
         android:textColor="@color/just_eat_surface"
         android:textSize="15sp"
         android:textStyle="bold"
         android:layout_marginTop="15dp"
-        android:layout_marginBottom="100dp"
+        android:layout_marginBottom="10dp"
         app:backgroundTint="@color/just_eat_primary"
-        app:cornerRadius="10dp" />
+        app:cornerRadius="15dp" />
 
 
 

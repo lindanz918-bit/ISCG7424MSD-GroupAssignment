@@ -106,7 +106,7 @@ public class ManageMenuActivity
 
         // Load Meals
         loadMeals();
-// Back Button
+
         getBinding().btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -155,12 +155,6 @@ public class ManageMenuActivity
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-
-                        Toast.makeText(
-                                ManageMenuActivity.this,
-                                "Failed to load meals: " + error.getMessage(),
-                                Toast.LENGTH_LONG
-                        ).show();
                     }
                 }
         );
