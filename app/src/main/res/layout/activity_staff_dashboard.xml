@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="match_parent" android:fitsSystemWindows="true"
+    android:background="@color/staff_background">
+    <LinearLayout android:id="@+id/staffWorkspace" android:layout_width="match_parent" android:layout_height="match_parent"
+        android:orientation="vertical" android:visibility="gone">
+        <androidx.fragment.app.FragmentContainerView android:id="@+id/staffFragmentContainer"
+            android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"/>
+        <com.google.android.material.bottomnavigation.BottomNavigationView android:id="@+id/staffNavigation"
+            android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="64dp"
+            android:background="@color/staff_surface" app:menu="@menu/staff_navigation"
+            app:labelVisibilityMode="labeled" app:itemHorizontalTranslationEnabled="false"
+            app:itemIconTint="@color/staff_navigation_tint" app:itemTextColor="@color/staff_navigation_tint"
+            app:elevation="4dp"/>
+    </LinearLayout>
+    <ProgressBar android:id="@+id/staffAuthProgress" android:layout_width="wrap_content"
+        android:layout_height="wrap_content" android:layout_gravity="center"
+        android:contentDescription="@string/staff_checking_session"/>
+</FrameLayout>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="staff_nav_home">Home</string>
+    <string name="staff_nav_orders">Orders</string>
+    <string name="staff_nav_tables">Tables</string>
+    <string name="staff_nav_profile">Profile</string>
+    <string name="staff_workspace_title">Your workspace</string>
+    <string name="staff_open_orders">Open orders →</string>
+    <string name="staff_signed_in_as">Signed in as</string>
+    <string name="staff_sign_out">Sign out</string>
+    <string name="staff_checking_session">Checking Staff access</string>
+</resources>

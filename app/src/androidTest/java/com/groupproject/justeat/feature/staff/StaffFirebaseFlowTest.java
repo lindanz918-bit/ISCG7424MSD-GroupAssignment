@@ -43,6 +43,8 @@ public class StaffFirebaseFlowTest {
     private FirebaseDatabase db;
     private String uid;
     private void configureDemo() throws Exception {
+        boolean configured = "demo-justeat-staff".equals(FirebaseApp.getInstance().getOptions().getProjectId());
+        if (!configured) {
         FirebaseApp.getInstance().delete();
         FirebaseApp.initializeApp(context,new FirebaseOptions.Builder()
             .setApplicationId("1:123456:android:staffqa").setApiKey("fake-api-key")
@@ -50,6 +52,10 @@ public class StaffFirebaseFlowTest {
             .setDatabaseUrl("http://10.0.2.2:9000?ns=demo-justeat-staff-default-rtdb").build());
         auth=FirebaseAuth.getInstance(); auth.useEmulator("10.0.2.2",9099);
         db=FirebaseDatabase.getInstance(); db.useEmulator("10.0.2.2",9000);
+        } else {
+            auth=FirebaseAuth.getInstance();
+            db=FirebaseDatabase.getInstance();
+        }
         try { Tasks.await(auth.createUserWithEmailAndPassword("staff@example.test","StaffTest123!"),15,TimeUnit.SECONDS); }
         catch(Exception ignored) { Tasks.await(auth.signInWithEmailAndPassword("staff@example.test","StaffTest123!"),15,TimeUnit.SECONDS); }
         uid=auth.getUid(); assertNotNull(uid);
@@ -100,6 +106,49 @@ public class StaffFirebaseFlowTest {
         assertNotNull("Screenshot surface available for "+name,image);
         try(FileOutputStream out=new FileOutputStream(new File(folder,name+".png"))) { assertTrue(image.compress(Bitmap.CompressFormat.PNG,100,out)); }
     }
+    @Test public void staffBottomNavigation() throws Exception {
+        configureDemo(); seed("PENDING");
+        try(ActivityScenario<StaffDashBoardActivity> screen=ActivityScenario.launch(StaffDashBoardActivity.class)) {
+            settle();
+            onView(withId(R.id.staffNavigation)).check(matches(isDisplayed()));
+            screenshot("nav-01-home");
+            onView(withId(R.id.staffHomeOrders)).perform(click()); settle();
+            onView(withId(R.id.rv_staff_orders)).check(matches(isDisplayed()));
+            screenshot("nav-02-orders");
+            onView(withId(R.id.btn_staff_order_details)).perform(click()); settle();
+            onView(withText("Complete order")).check(matches(isDisplayed()));
+            androidx.test.espresso.Espresso.pressBack(); settle();
+            onView(withId(R.id.rv_staff_orders)).check(matches(isDisplayed()));
+            onView(withId(R.id.btn_staff_accept)).perform(click());
+            waitValue("Orders/qa-order/status","ACCEPTED");
+            onView(withId(R.id.staff_nav_tables)).perform(click()); settle();
+            onView(withId(R.id.rv_staff_tables)).check(matches(isDisplayed()));
+            screenshot("nav-03-tables");
+            onView(withId(R.id.staff_nav_profile)).perform(click()); settle();
+            screenshot("nav-04-profile");
+            onView(withId(R.id.et_staff_first_name)).perform(replaceText("Unsaved draft"),closeSoftKeyboard());
+            onView(withId(R.id.staff_nav_orders)).perform(click());
+            onView(withId(R.id.staff_nav_profile)).perform(click());
+            onView(withId(R.id.et_staff_first_name)).check(matches(withText("Unsaved draft")));
+            screen.recreate(); settle();
+            onView(withId(R.id.et_staff_first_name)).check(matches(withText("Unsaved draft")));
+            screen.onActivity(activity -> assertEquals(4, activity.getSupportFragmentManager().getFragments().size()));
+            androidx.test.espresso.Espresso.pressBack(); settle();
+            onView(withId(R.id.staffHomeOrders)).check(matches(isDisplayed()));
+            onView(withId(R.id.staffSignOut)).perform(scrollTo(),click()); settle();
+            assertNull(auth.getCurrentUser());
+        }
+        // A non-active or wrong-role account must never see the workspace.
+        for(String field : new String[]{"status","role"}) {
+            Tasks.await(auth.signInWithEmailAndPassword("staff@example.test","StaffTest123!"),15,TimeUnit.SECONDS);
+            seed("PENDING");
+            admin("users/"+uid+"/"+field, field.equals("status") ? "\"INACTIVE\"" : "\"CUSTOMER\"");
+            try(ActivityScenario<StaffDashBoardActivity> screen=ActivityScenario.launch(StaffDashBoardActivity.class)) {
+                settle(); assertNull(auth.getCurrentUser());
+            }
+        }
+    }
+
     @Test public void staffEndToEnd() throws Exception {
         // Optional real-account check is strictly read-only, including profile. Password is an ephemeral runner argument.
         android.os.Bundle args=InstrumentationRegistry.getArguments();
