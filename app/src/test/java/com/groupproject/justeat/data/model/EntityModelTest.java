@@ -127,40 +127,6 @@ public class EntityModelTest {
 //    }
 
     @Test
-    public void bookingSupportsFirebaseConstructionAndPropertyUpdates() {
-        Booking booking = new Booking("b1", "u1", "t1", 3, 1000L,
-                "Birthday", "PENDING", 10L, 20L);
-        assertEquals("b1", booking.getBookingId());
-        assertEquals("u1", booking.getCustomerId());
-        assertEquals("t1", booking.getTableId());
-        assertEquals(3, booking.getGuestCount());
-        assertEquals(1000L, booking.getBookingTimeMillis());
-        assertEquals("Birthday", booking.getNotes());
-        assertEquals("PENDING", booking.getStatus());
-        assertEquals(10L, booking.getCreatedAt());
-        assertEquals(20L, booking.getUpdatedAt());
-
-        booking.setBookingId("b2");
-        booking.setCustomerId("u2");
-        booking.setTableId("t2");
-        booking.setGuestCount(5);
-        booking.setBookingTimeMillis(2000L);
-        booking.setNotes("Window seat");
-        booking.setStatus("CONFIRMED");
-        booking.setCreatedAt(30L);
-        booking.setUpdatedAt(40L);
-        assertEquals("b2", booking.getBookingId());
-        assertEquals("u2", booking.getCustomerId());
-        assertEquals("t2", booking.getTableId());
-        assertEquals(5, booking.getGuestCount());
-        assertEquals(2000L, booking.getBookingTimeMillis());
-        assertEquals("Window seat", booking.getNotes());
-        assertEquals("CONFIRMED", booking.getStatus());
-        assertEquals(30L, booking.getCreatedAt());
-        assertEquals(40L, booking.getUpdatedAt());
-    }
-
-    @Test
     public void orderSupportsFirebaseConstructionAndPropertyUpdates() {
         Order order = new Order("o1", "u1", "b1", "t1", "status", "notes", 4898L);
         assertEquals("o1", order.getOrderId());

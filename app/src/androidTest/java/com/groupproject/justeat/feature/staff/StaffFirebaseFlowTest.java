@@ -30,7 +30,8 @@ import static org.junit.Assert.*;
 
 /**
  * Real Android UI + Auth + RTDB integration; fixture writes are restricted to a demo emulator.
- * Start tools/staff-emulator/firebase.json with project demo-justeat-staff (auth,database),
+ * Restore the removed local emulator fixtures before running this suite.
+ * Start the restored firebase.json with project demo-justeat-staff (auth,database),
  * build assembleDebug and assembleDebugAndroidTest, install both APKs on a dedicated AVD,
  * then run this class with androidx.test.runner.AndroidJUnitRunner.
  * Screenshots: target app external-files/staff-qa. No production credentials are stored here.
