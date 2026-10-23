@@ -251,12 +251,6 @@
                     android:textColor="@color/just_eat_text_primary"
                     android:textSize="15sp" />
 
-<!--                <Switch-->
-<!--                    android:id="@+id/switch1"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_weight="1"-->
-<!--                    android:text="Switch" />-->
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -285,5 +279,5 @@
         android:textSize="15sp"
         android:textStyle="bold"
         app:backgroundTint="@color/just_eat_primary"
-        app:cornerRadius="10dp" />
+        app:cornerRadius="15dp" />
 </LinearLayout>

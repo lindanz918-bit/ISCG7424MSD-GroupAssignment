@@ -43,7 +43,25 @@ public class EditMenuItemActivity  extends BaseActivity<ActivityEditMenuItemBind
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Get Meal ID
+        ViewCompat.setOnApplyWindowInsetsListener(
+                getBinding().getRoot(), (v, insets) -> {
+
+                    Insets systemBars = insets.getInsets(
+                            WindowInsetsCompat.Type.systemBars()
+                                    | WindowInsetsCompat.Type.displayCutout()
+                    );
+
+                    v.setPadding(
+                            systemBars.left,
+                            systemBars.top,
+                            systemBars.right,
+                            systemBars.bottom
+                    );
+
+                    return insets;
+                }
+        );
+
         String mealId = getIntent().getStringExtra("mealId");
 
         if (mealId == null || mealId.isEmpty()) {
@@ -58,10 +76,15 @@ public class EditMenuItemActivity  extends BaseActivity<ActivityEditMenuItemBind
             return;
         }
 
-        // Firebase
+
         mealRef = FirebaseDatabase.getInstance()
                 .getReference("meals")
                 .child(mealId);
+
+
+        getBinding().numberPickerSpiciness.setMinValue(0);
+        getBinding().numberPickerSpiciness.setMaxValue(5);
+        getBinding().numberPickerSpiciness.setValue(0);
 // Back Button
         getBinding().btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,10 +92,10 @@ public class EditMenuItemActivity  extends BaseActivity<ActivityEditMenuItemBind
                 finish();
             }
         });
-        // Load original meal data
+
         loadMeal();
 
-        // Save Button
+
         getBinding().btnSaveMeal.setOnClickListener(
                 new View.OnClickListener() {
 
@@ -113,6 +136,10 @@ public class EditMenuItemActivity  extends BaseActivity<ActivityEditMenuItemBind
                 new ValueEventListener() {
 
                     @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                    }
+
+                    @Override
                     public void onDataChange(
                             @NonNull DataSnapshot snapshot) {
 
@@ -129,11 +156,19 @@ public class EditMenuItemActivity  extends BaseActivity<ActivityEditMenuItemBind
                                     meal.getPrice()
                             );
 
-                            getBinding().txtSpiciness.setText(
-                                    meal.getSpiciness() != null
-                                            ? String.valueOf(meal.getSpiciness())
-                                            : ""
-                            );
+                            //Load current Spiciness from Firebase
+                            try {
+                                int spiciness = Integer.parseInt(
+                                        String.valueOf(meal.getSpiciness())
+                                );
+
+                                spiciness = Math.max(0, Math.min(5, spiciness));
+
+                                getBinding().numberPickerSpiciness.setValue(spiciness);
+
+                            } catch (NumberFormatException e) {
+                                getBinding().numberPickerSpiciness.setValue(1);
+                            }
 
                             getBinding().txtDescription.setText(
                                     meal.getDescription()
@@ -142,7 +177,7 @@ public class EditMenuItemActivity  extends BaseActivity<ActivityEditMenuItemBind
                             getBinding().txtImageUrl.setText(
                                     meal.getImageUrl()
                             );
-// Load Meal Image
+
                             Glide.with(EditMenuItemActivity.this)
                                     .load(meal.getImageUrl())
                                     .placeholder(R.drawable.ic_restaurant_brand)
@@ -164,16 +199,7 @@ public class EditMenuItemActivity  extends BaseActivity<ActivityEditMenuItemBind
                         }
                     }
 
-                    @Override
-                    public void onCancelled(
-                            @NonNull DatabaseError error) {
 
-                        Toast.makeText(
-                                EditMenuItemActivity.this,
-                                "Failed to load meal",
-                                Toast.LENGTH_SHORT
-                        ).show();
-                    }
                 }
         );
 
@@ -187,8 +213,9 @@ public class EditMenuItemActivity  extends BaseActivity<ActivityEditMenuItemBind
         String price = getBinding().txtPrice
                 .getText().toString().trim();
 
-        String spiciness = getBinding().txtSpiciness
-                .getText().toString().trim();
+        String spiciness = String.valueOf(
+                getBinding().numberPickerSpiciness.getValue()
+        );
 
         String description = getBinding().txtDescription
                 .getText().toString().trim();
@@ -197,8 +224,7 @@ public class EditMenuItemActivity  extends BaseActivity<ActivityEditMenuItemBind
                 .getText().toString().trim();
 
         if (mealName.isEmpty()
-                || price.isEmpty()
-                || spiciness.isEmpty()) {
+                || price.isEmpty()) {
 
             Toast.makeText(
                     this,
@@ -215,26 +241,8 @@ public class EditMenuItemActivity  extends BaseActivity<ActivityEditMenuItemBind
         updates.put("price", price);
         updates.put("description", description);
         updates.put("imageUrl", imageUrl);
+        updates.put("spiciness", spiciness);
 
-        if (spicinessIsNumber) {
-
-            try {
-                updates.put("spiciness",
-                        Integer.parseInt(spiciness));
-            } catch (NumberFormatException e) {
-
-                Toast.makeText(
-                        this,
-                        "Please enter a valid spiciness number",
-                        Toast.LENGTH_SHORT
-                ).show();
-
-                return;
-            }
-
-        } else {
-            updates.put("spiciness", spiciness);
-        }
 
         mealRef.updateChildren(updates)
                 .addOnSuccessListener(aVoid -> {
@@ -247,17 +255,9 @@ public class EditMenuItemActivity  extends BaseActivity<ActivityEditMenuItemBind
 
                     finish();
                 });
-//                .addOnFailureListener(e -> {
-//
-//                    Toast.makeText(
-//                            EditMenuItemActivity.this,
-//                            "Failed to update meal: " + e.getMessage(),
-//                            Toast.LENGTH_SHORT
-//                    ).show();
-//                });
+
     }
 
-    // Delete Meal from Firebase
     private void deleteMeal() {
         mealRef.removeValue()
                 .addOnSuccessListener(aVoid -> {
@@ -270,14 +270,7 @@ public class EditMenuItemActivity  extends BaseActivity<ActivityEditMenuItemBind
 
                     finish();
                 });
-//                .addOnFailureListener(e -> {
-//
-//                    Toast.makeText(
-//                            EditMenuItemActivity.this,
-//                            "Failed to delete meal: " + e.getMessage(),
-//                            Toast.LENGTH_SHORT
-//                    ).show();
-//                });
+
 
 
     }

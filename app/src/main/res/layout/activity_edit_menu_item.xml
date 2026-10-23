@@ -57,7 +57,7 @@
             android:paddingHorizontal="24dp"
             android:paddingTop="24dp"
             android:paddingBottom="24dp">
-        <!-- Meal Image -->
+
         <ImageView
             android:id="@+id/imgMealPreview"
             android:layout_width="match_parent"
@@ -67,7 +67,6 @@
             android:src="@drawable/ic_restaurant_brand"
             android:contentDescription="Meal Image" />
 
-        <!-- Image URL -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -102,13 +101,13 @@
         </com.google.android.material.textfield.TextInputLayout>
 
 
-            <!-- Meal Name -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Meal Name"
                 android:textColor="@color/just_eat_text_secondary"
                 android:textSize="12sp"
+                android:layout_marginTop="16dp"
                 android:textStyle="bold" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -136,7 +135,6 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Price -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -171,7 +169,6 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Spiciness -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -181,32 +178,13 @@
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilSpiciness"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                app:boxCornerRadiusBottomEnd="12dp"
-                app:boxCornerRadiusBottomStart="12dp"
-                app:boxCornerRadiusTopEnd="12dp"
-                app:boxCornerRadiusTopStart="12dp"
-                app:hintEnabled="false">
+            <NumberPicker
+                android:id="@+id/numberPickerSpiciness"
+                android:layout_width="wrap_content"
+                android:layout_height="137dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="20dp" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/txtSpiciness"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Enter spiciness level"
-                    android:inputType="text"
-                    android:imeOptions="actionNext"
-                    android:paddingVertical="12dp"
-                    android:textColor="@color/just_eat_text_primary"
-                    android:textSize="15sp" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <!-- Description -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -242,7 +220,7 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Image URL -->
+
 
 
 
@@ -251,33 +229,45 @@
 
     </androidx.core.widget.NestedScrollView>
 
-    <!-- Save Changes -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnSaveMeal"
-        android:layout_width="match_parent"
-        android:layout_height="52dp"
-        android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="16dp"
-        android:text="Save Changes"
-        android:textAllCaps="false"
-        android:textColor="@color/just_eat_surface"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        app:backgroundTint="@color/just_eat_primary"
-        app:cornerRadius="10dp" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnDeleteMeal"
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="52dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:layout_marginHorizontal="24dp"
-        android:layout_marginBottom="16dp"
-        android:text="Delete Meal"
-        android:textAllCaps="false"
-        android:textColor="@android:color/white"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        app:backgroundTint="#C62828"
-        app:cornerRadius="10dp" />
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="12dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnDeleteMeal"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="5dp"
+            android:text="Delete Meal"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:backgroundTint="#E7848D"
+            app:cornerRadius="15dp"
+           />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSaveMeal"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:layout_weight="1"
+            android:layout_marginStart="5dp"
+            android:text="Save Changes"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:backgroundTint="#0B6CE7"
+            app:cornerRadius="15dp"
+           />
+
+    </LinearLayout>
 </LinearLayout>

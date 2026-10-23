@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -184,9 +185,23 @@ public class ManageTablesActivity  extends BaseActivity<ActivityManageTablesBind
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.setPadding(50, 20, 50, 0);
 
+        // Table Number Label
+        TextView tvTableNumber = new TextView(this);
+        tvTableNumber.setText("Table Number:");
+        tvTableNumber.setTextSize(16);
+        tvTableNumber.setPadding(0, 12, 0, 8);
+
+
+
         EditText txtNumber = new EditText(this);
         txtNumber.setHint("Table Number");
         txtNumber.setText(table.getTableNumber());
+
+        // Capacity Label
+        TextView tvCapacity = new TextView(this);
+        tvCapacity.setText("Capacity:");
+        tvCapacity.setTextSize(16);
+        tvCapacity.setPadding(0, 20, 0, 8);
 
         NumberPicker numberPickerCapacity = new NumberPicker(this);
         numberPickerCapacity.setMinValue(1);
@@ -195,37 +210,12 @@ public class ManageTablesActivity  extends BaseActivity<ActivityManageTablesBind
 
 
 
-//        RadioGroup radioGroupStatus = new RadioGroup(this);
-//        radioGroupStatus.setOrientation(RadioGroup.HORIZONTAL);
-//
-//        RadioButton radioAvailable = new RadioButton(this);
-//        radioAvailable.setText("Available");
-//        radioAvailable.setTextSize(15);
-//
-//        RadioButton radioUnavailable = new RadioButton(this);
-//        radioUnavailable.setText("O");
-//        radioUnavailable.setTextSize(15);
-//
-//        radioAvailable.setId(View.generateViewId());
-//        radioUnavailable.setId(View.generateViewId());
-//
-//        radioGroupStatus.addView(radioAvailable);
-//        radioGroupStatus.addView(radioUnavailable);
-//
-//// 显示餐桌当前的状态
-//        if ("Available".equals(table.getStatus())) {
-//            radioAvailable.setChecked(true);
-//        } else {
-//            radioUnavailable.setChecked(true);
-//        }//准备更改edit table控件，为nud
 
 
-
-
-
+        layout.addView(tvTableNumber);
         layout.addView(txtNumber);
+        layout.addView(tvCapacity);
         layout.addView(numberPickerCapacity);
-//        layout.addView(txtStatus);
 
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle("Edit Table")
@@ -234,14 +224,26 @@ public class ManageTablesActivity  extends BaseActivity<ActivityManageTablesBind
                 .setPositiveButton("Save", null)
                 .create();
 
+
         dialog.setOnShowListener(unused -> {
 
             dialog.getButton(AlertDialog.BUTTON_POSITIVE)
                     .setOnClickListener(v -> {
 
                         String number =    txtNumber.getText().toString().trim();
-
+//                        TextView tvTableNumber = new TextView(this);
+//                        tvTableNumber.setText("Table Number:");
+//                        tvTableNumber.setTextSize(16);
+//                        tvTableNumber.setPadding(0, 12, 0, 8);
+//                        layout.addView(tvTableNumber);
+//
                         int capacityText =   numberPickerCapacity.getValue();
+//                        TextView tvCapacity = new TextView(this);
+//                        tvCapacity.setText("Capacity:");
+//                        tvCapacity.setTextSize(16);
+//                        tvCapacity.setPadding(0, 20, 0, 8);
+//                        layout.addView(tvCapacity);
+//                        layout.addView(numberPickerCapacity);
 
                         if (number.isEmpty()) {
                             Toast.makeText(
@@ -252,27 +254,6 @@ public class ManageTablesActivity  extends BaseActivity<ActivityManageTablesBind
                             return;
                         }
 
-//                        int capacity;
-//
-//                        try {
-//                            capacity = Integer.parseInt(capacityText);
-//                        } catch (NumberFormatException e) {
-//                            Toast.makeText(
-//                                    this,
-//                                    "Invalid capacity",
-//                                    Toast.LENGTH_SHORT
-//                            ).show();
-//                            return;
-//                        }
-
-//                        if (capacity <= 0) {
-//                            Toast.makeText(
-//                                    this,
-//                                    "Capacity must be greater than 0",
-//                                    Toast.LENGTH_SHORT
-//                            ).show();
-//                            return;
-//                        }
 
                         Map<String, Object> updates = new HashMap<>();
                         updates.put("tableNumber", number);
@@ -318,14 +299,8 @@ public class ManageTablesActivity  extends BaseActivity<ActivityManageTablesBind
                                         "Table deleted successfully",
                                         Toast.LENGTH_SHORT
                                 ).show();
-                            })
-                            .addOnFailureListener(error -> {
-                                Toast.makeText(
-                                        this,
-                                        "Delete failed: " + error.getMessage(),
-                                        Toast.LENGTH_LONG
-                                ).show();
                             });
+//
                 })
                 .show();
     }

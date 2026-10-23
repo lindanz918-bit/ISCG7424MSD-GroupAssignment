@@ -56,17 +56,21 @@ public class AddMealActivity extends BaseActivity<ActivityAddMealBinding> {
         );
 
 
-        // Firebase
         firebaseDatabase = FirebaseDatabase.getInstance();
         reference = firebaseDatabase.getReference();
-// Back Button
+
+        getBinding().numberPickerSpiciness.setMinValue(0);
+        getBinding().numberPickerSpiciness.setMaxValue(5);
+        getBinding().numberPickerSpiciness.setValue(0);
+
+//Back Button
         getBinding().btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finish();
             }
         });
-        // Add Meal Button
+//Add Meal Button
         getBinding().btnAddMeal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -77,14 +81,15 @@ public class AddMealActivity extends BaseActivity<ActivityAddMealBinding> {
 
                 String price =    getBinding().txtPrice.getText().toString();
 
-                String spiciness =  getBinding().txtSpiciness.getText().toString();
+                String spiciness = String.valueOf(
+                        getBinding().numberPickerSpiciness.getValue()
+                );
 
                 String description =       getBinding().txtDescription.getText().toString();
 
                 if (imageUrl.isEmpty()
                         || mealName.isEmpty()
                         || price.isEmpty()
-                        || spiciness.isEmpty()
                         || description.isEmpty()) {
 
                     Toast.makeText(
@@ -96,10 +101,10 @@ public class AddMealActivity extends BaseActivity<ActivityAddMealBinding> {
                     return;
                 }
 
-                // Generate ID
+//Generate ID
                 String id = reference.push().getKey();
 
-                // Create MenuItem
+                //Create MenuItem
                 MenuItem menuItem = new MenuItem(
                         id,
                         mealName,
@@ -125,7 +130,7 @@ public class AddMealActivity extends BaseActivity<ActivityAddMealBinding> {
                 getBinding().txtImageUrl.setText("");
                 getBinding().txtMealname.setText("");
                 getBinding().txtPrice.setText("");
-                getBinding().txtSpiciness.setText("");
+                getBinding().numberPickerSpiciness.setValue(1);
                 getBinding().txtDescription.setText("");
             }
         });

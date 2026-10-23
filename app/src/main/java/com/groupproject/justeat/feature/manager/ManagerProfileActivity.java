@@ -25,6 +25,9 @@ import com.groupproject.justeat.data.model.User;
 import com.groupproject.justeat.databinding.ActivityManagerProfileActivityBinding;
 import com.groupproject.justeat.feature.login.LoginActivity;
 
+import com.groupproject.justeat.ui.dialog.ChangePasswordDialog;
+import android.view.View;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,6 +54,35 @@ public class ManagerProfileActivity extends BaseActivity<ActivityManagerProfileA
 
         initView();
         initData();
+// Change Password
+        getBinding().btnChangePassword.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        ChangePasswordDialog dialog =
+                                ChangePasswordDialog.newInstance();
+
+                        dialog.show(
+                                getSupportFragmentManager(),
+                                ChangePasswordDialog.TAG
+                        );
+                    }
+                }
+        );
+
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (currentUser == null) {
+            Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        usersRef = FirebaseDatabase.getInstance()
+                .getReference("users")
+                .child(currentUser.getUid());
+
+        loadPhone();
 
         getBinding().bottomNavigation.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
@@ -71,9 +103,7 @@ public class ManagerProfileActivity extends BaseActivity<ActivityManagerProfileA
     private void initView() {
         // Initialize your views here
 //        getBinding().btnResetPassword.setOnClickListener(v -> {
-//         方式 A：弹出密码重置 Dialog
-//         方式 B：跳转到 ChangePasswordActivity
-//         方式 C：通过 Firebase 触发密码重置邮件 (sendPasswordResetEmail)
+//
 //        });
 
         getBinding().btnSave.setOnClickListener(v -> {
@@ -89,30 +119,39 @@ public class ManagerProfileActivity extends BaseActivity<ActivityManagerProfileA
 //        getBinding().bottomNavigation.setOnItemSelectedListener(item -> {
 //            int itemId = item.getItemId();
 //
-//            if (itemId == R.id.nav_home) {
-//                startActivity(new Intent(this, ManageMenuActivity.class));
-//                overridePendingTransition(0, 0);
-//                return true;
-//            } else if (itemId == R.id.nav_manageMenu) {
-//                startActivity(new Intent(this, ManageMenuActivity.class));
-//                overridePendingTransition(0, 0);
-//                return true;
-//            } else if (itemId == R.id.nav_manageTable) {
-//                startActivity(new Intent(this, ManageTablesActivity.class));
-//                overridePendingTransition(0, 0);
-//                return true;
-//            } else if (itemId == R.id.nav_manageStaff) {
-//                startActivity(new Intent(this, ManagStaffAcitivity.class));
-//                overridePendingTransition(0, 0);
-//                return true;
-//            } else if (itemId == R.id.nav_profile) {
-//                return true;
+//
 //            }
 //            return false;
 //        });
 //
 //        getBinding().bottomNavigation.setSelectedItemId(R.id.nav_profile);
 
+    }
+    private void loadPhone() {
+
+        usersRef.child("phone").addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                        String phone = snapshot.getValue(String.class);
+
+                        if (phone != null) {
+                            getBinding().etPhone.setText(phone);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                        Toast.makeText(
+                                ManagerProfileActivity.this,
+                                "Failed to load phone",
+                                Toast.LENGTH_SHORT
+                        ).show();
+                    }
+                }
+        );
     }
     private void initData() {
         setupFirebase();
