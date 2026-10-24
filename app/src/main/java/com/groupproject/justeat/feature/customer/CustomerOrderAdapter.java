@@ -10,12 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.groupproject.justeat.data.model.Order;
 import com.groupproject.justeat.databinding.ItemCustomerOrderBinding;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -30,7 +25,6 @@ public class CustomerOrderAdapter extends RecyclerView.Adapter<CustomerOrderAdap
     }
     public interface onItemClickListener {
         void onViewMenuClick(Order order, int position);
-        void onDeleteClick(Order order, int position);
         void onCancelClick(Order order, int position);
     }
 
@@ -65,27 +59,18 @@ public class CustomerOrderAdapter extends RecyclerView.Adapter<CustomerOrderAdap
                 ? tableNumbers.get(order.getTableId()) : order.getTableId();
         holder.binding.tvOrderGuests.setText(order.getGuestCount() + " Guests (Table " + number + ")");
 
-        boolean isPast = isDateBeforeToday(order.getBookingDate());
-        String status = order.getStatus() != null ? order.getStatus().toUpperCase() : "";
-
-        boolean terminal = "CANCELLED".equals(status) || "REJECTED".equals(status) || "COMPLETED".equals(status);
-        holder.binding.btnDeleteOrder.setEnabled(isPast || terminal || "PENDING".equals(status));
-        if (isPast || terminal) {
-            holder.binding.btnDeleteOrder.setText("Hide");
-
-            holder.binding.btnDeleteOrder.setOnClickListener(v -> {
-                if (listener != null) {
-                    listener.onDeleteClick(order, position);
+        boolean cancellable = CustomerBookingFields.canCancel(order.getStatus());
+        holder.binding.btnDeleteOrder.setText("Cancel");
+        holder.binding.btnDeleteOrder.setEnabled(cancellable);
+        holder.binding.btnDeleteOrder.setVisibility(cancellable ? android.view.View.VISIBLE : android.view.View.GONE);
+        holder.binding.btnDeleteOrder.setOnClickListener(v -> {
+            if (listener != null && CustomerBookingFields.canCancel(order.getStatus())) {
+                int currentPosition = holder.getAdapterPosition();
+                if (currentPosition != RecyclerView.NO_POSITION) {
+                    listener.onCancelClick(order, currentPosition);
                 }
-            });
-        } else {
-            holder.binding.btnDeleteOrder.setText("Cancel");
-            holder.binding.btnDeleteOrder.setOnClickListener(v -> {
-                if (listener != null) {
-                    listener.onCancelClick(order, position);
-                }
-            });
-        }
+            }
+        });
 
         holder.binding.btnViewMenu.setOnClickListener(v -> {
             if (listener != null) {
@@ -94,11 +79,6 @@ public class CustomerOrderAdapter extends RecyclerView.Adapter<CustomerOrderAdap
         });
 
 
-    }
-
-    private boolean isDateBeforeToday(String dateStr) {
-        String date = CustomerBookingFields.canonicalDate(dateStr);
-        return date != null && date.compareTo(CustomerBookingFields.format("yyyy-MM-dd").format(new Date())) < 0;
     }
 
     @Override

@@ -71,28 +71,11 @@ public class CustomerOrdersActivity extends BaseActivity<ActivityCustomerOrdersB
             }
 
             @Override
-            public void onDeleteClick(Order order, int position) {
-                new com.google.android.material.dialog.MaterialAlertDialogBuilder(CustomerOrdersActivity.this)
-                        .setTitle("Hide Order")
-                        .setMessage("Hide this order on this device? The booking record will be kept.")
-                        .setPositiveButton("Hide", (dialog, which) -> {
-                            String uid = FirebaseAuth.getInstance().getUid();
-                            if (uid == null) return;
-                            getSharedPreferences("hidden_customer_orders", MODE_PRIVATE).edit()
-                                    .putBoolean(uid + ":" + order.getOrderId(), true).apply();
-                            orderList.remove(order);
-                            adapter.notifyDataSetChanged();
-                            getBinding().layoutEmptyState.setVisibility(orderList.isEmpty() ? android.view.View.VISIBLE : android.view.View.GONE);
-                        })
-                        .setNegativeButton("Cancel", null)
-                        .show();
-            }
-
-            @Override
             public void onCancelClick(Order order, int position) {
                 new com.google.android.material.dialog.MaterialAlertDialogBuilder(CustomerOrdersActivity.this)
                         .setTitle("Cancel Order")
-                        .setMessage("Are you sure you want to cancel order #" + order.getOrderId() + "?")
+                        .setMessage("Cancel order #" + order.getOrderId()
+                                + " and release its table reservation for that date? The order record will be kept.")
                         .setPositiveButton("Yes", (dialog, which) -> {
                             cancelBooking(order.getOrderId());
                         })
@@ -145,8 +128,8 @@ public class CustomerOrdersActivity extends BaseActivity<ActivityCustomerOrdersB
                     Object value = childSnapshot.getValue();
                     if (!(value instanceof Map)) continue;
                     Order order = CustomerBookingFields.read(childSnapshot.getKey(), (Map<?, ?>) value);
-                    if (uid.equals(order.getCustomerId()) && !getSharedPreferences(
-                            "hidden_customer_orders", MODE_PRIVATE).getBoolean(uid + ":" + order.getOrderId(), false))
+                    // 不再读取旧隐藏标记：之前隐藏的订单也正常显示，仍只展示当前用户的数据。
+                    if (uid.equals(order.getCustomerId()))
                         orderList.add(order);
                 }
                 Log.d("FirebaseDebug", "Total orders in list: " + orderList.size());
@@ -179,39 +162,16 @@ public class CustomerOrdersActivity extends BaseActivity<ActivityCustomerOrdersB
     private void cancelBooking(String id) {
         String uid = FirebaseAuth.getInstance().getUid();
         if (uid == null || !CustomerBookingFields.validKey(id) || !cancelling.add(id)) return;
-        DatabaseReference root = FirebaseDatabase.getInstance().getReference();
-        ordersRef.child(id).get().addOnSuccessListener(snapshot -> {
-            Object value = snapshot.getValue();
-            if (!(value instanceof Map)) { cancelFailed(id, "Order is unavailable."); return; }
-            Map<?, ?> order = (Map<?, ?>) value;
-            String date = CustomerBookingFields.text(order.get("bookingDate"));
-            String table = CustomerBookingFields.text(order.get("tableId"));
-            if (!uid.equals(order.get("customerId")) || !"PENDING".equals(order.get("status"))
-                    || !date.equals(CustomerBookingFields.canonicalDate(date))
-                    || !CustomerBookingFields.validKey(table)) {
-                cancelFailed(id, "Only pending bookings using the new format can be cancelled. Please contact staff.");
-                return;
-            }
-            root.child("tableReservations").child(date).child(table).get().addOnSuccessListener(slot -> {
-                try {
-                    if (!uid.equals(FirebaseAuth.getInstance().getUid())) {
-                        cancelFailed(id, "Please sign in again."); return;
-                    }
-                    Map<String, Object> updates = CustomerBookingFields.cancel(id, uid, order,
-                            CustomerBookingFields.text(slot.child("orderId").getValue()));
-                    // 规则必须在提交时再次验证状态及名额归属，不能只依赖上面的预读取。
-                    root.updateChildren(updates).addOnSuccessListener(unused -> {
-                        cancelling.remove(id);
-                        showMessage("Booking cancelled.");
-                    }).addOnFailureListener(e -> cancelFailed(id, "Cancellation failed. Please refresh."));
-                } catch (IllegalArgumentException e) { cancelFailed(id, e.getMessage()); }
-            }).addOnFailureListener(e -> cancelFailed(id, "Cannot verify reservation."));
-        }).addOnFailureListener(e -> cancelFailed(id, "Cannot load booking."));
-    }
-
-    private void cancelFailed(String id, String message) {
-        cancelling.remove(id);
-        showMessage(message);
+        CustomerBookingCancellation.cancel(id, (error, orderCancelled) -> {
+            cancelling.remove(id);
+            if (isFinishing() || isDestroyed()) return;
+            if (error == null) { showMessage("Booking cancelled."); return; }
+            if (!orderCancelled) { showMessage(error); return; }
+            new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                    .setTitle("Reservation release incomplete").setMessage(error)
+                    .setPositiveButton("Retry", (dialog, which) -> cancelBooking(id))
+                    .setNegativeButton("Close", null).show();
+        });
     }
 
     private void showMessage(String message) {

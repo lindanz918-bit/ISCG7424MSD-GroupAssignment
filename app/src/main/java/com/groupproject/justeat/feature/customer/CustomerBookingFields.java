@@ -80,18 +80,31 @@ final class CustomerBookingFields {
 
     static String text(Object value) { return value == null ? "" : String.valueOf(value); }
 
-    static Map<String, Object> cancel(String id, String uid, Map<?, ?> order, String slotOwner) {
-        String date = text(order.get("bookingDate"));
-        String table = text(order.get("tableId"));
-        if (!validKey(id) || !validKey(table) || !validKey(uid)
-                || !uid.equals(order.get("customerId")) || !"PENDING".equals(order.get("status"))
-                || !date.equals(canonicalDate(date)) || !id.equals(slotOwner)) {
-            throw new IllegalArgumentException("Only your pending, migrated booking can be cancelled.");
+    /** 已结束的订单不能取消，尤其 COMPLETED 必须保留当天名额。 */
+    static boolean canCancel(String status) {
+        return "PENDING".equals(status) || "ACCEPTED".equals(status)
+                || "PREPARING".equals(status) || "READY".equals(status);
+    }
+
+    /** 用于订单事务：保留所有旧字段，不迁移日期、桌号或人数，不丢失上菜记录。 */
+    static Map<String, Object> cancelledOrder(String id, String uid, Map<?, ?> order) {
+        String status = text(order.get("status"));
+        if (!validKey(id) || !validKey(uid) || !uid.equals(order.get("customerId"))
+                || (!canCancel(status) && !"CANCELLED".equals(status))
+                || canonicalDate(text(order.get("bookingDate"))) == null) {
+            throw new IllegalArgumentException("This order cannot be cancelled. Check its status and booking date.");
         }
-        Map<String, Object> updates = new HashMap<>();
-        updates.put("Orders/" + id + "/status", "CANCELLED");
-        updates.put("Orders/" + id + "/updatedAt", ServerValue.TIMESTAMP);
-        updates.put("tableReservations/" + date + "/" + table, null);
-        return updates;
+        Map<String, Object> result = new HashMap<>();
+        for (Map.Entry<?, ?> field : order.entrySet()) result.put((String) field.getKey(), field.getValue());
+        if (!"CANCELLED".equals(status)) {
+            result.put("status", "CANCELLED");
+            result.put("updatedAt", ServerValue.TIMESTAMP);
+        }
+        return result;
+    }
+
+    /** 只按名额所有者判断；旧显示桌号不能用于猜测或删除另一订单的名额。 */
+    static boolean ownsSlot(String id, Object slot) {
+        return validKey(id) && slot instanceof Map && id.equals(((Map<?, ?>) slot).get("orderId"));
     }
 }
