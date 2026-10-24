@@ -21,15 +21,32 @@ import com.groupproject.justeat.data.model.RestaurantTable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.IdentityHashMap;
+import java.util.Map;
+import android.widget.Toast;
 
 public class CustomerTableSelectorDialog extends BottomSheetDialogFragment {
     private RecyclerView recyclerView;
     private CustomerTableAdapter tableAdapter;
     private List<RestaurantTable> tableList;
     private DatabaseReference databaseReference;
+    private DatabaseReference reservationsReference;
+    private ValueEventListener tablesListener, reservationsListener;
+    private DataSnapshot tablesSnapshot, reservationsSnapshot;
+    private final Map<RestaurantTable, String> tableKeys = new IdentityHashMap<>();
+    private final Map<RestaurantTable, Boolean> availability = new IdentityHashMap<>();
+
+    public static CustomerTableSelectorDialog newInstance(String date, int guests) {
+        CustomerTableSelectorDialog dialog = new CustomerTableSelectorDialog();
+        Bundle args = new Bundle();
+        args.putString("date", date);
+        args.putInt("guests", guests);
+        dialog.setArguments(args);
+        return dialog;
+    }
 
     public interface OnTableSelectedListener {
-        void onTableSelected(String tableName);
+        void onTableSelected(String tableKey, String tableName);
     }
 
     private OnTableSelectedListener listener;
@@ -48,9 +65,9 @@ public class CustomerTableSelectorDialog extends BottomSheetDialogFragment {
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
 
         tableList = new ArrayList<>();
-        tableAdapter = new CustomerTableAdapter(tableList, table -> {
+        tableAdapter = new CustomerTableAdapter(tableList, availability, table -> {
             if (listener != null) {
-                listener.onTableSelected(table.getTableNumber());
+                listener.onTableSelected(tableKeys.get(table), table.getTableNumber());
             }
             dismiss();
         });
@@ -62,25 +79,72 @@ public class CustomerTableSelectorDialog extends BottomSheetDialogFragment {
     }
 
     private void fetchTablesFromFirebase() {
+        Bundle args = getArguments();
+        String date = args == null ? null : args.getString("date");
+        if (date == null || !date.equals(CustomerBookingFields.canonicalDate(date))) return;
         databaseReference = FirebaseDatabase.getInstance().getReference("tables");
-        databaseReference.addValueEventListener(new ValueEventListener() {
+        reservationsReference = FirebaseDatabase.getInstance().getReference("tableReservations").child(date);
+        tablesListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                tableList.clear();
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    RestaurantTable table = dataSnapshot.getValue(RestaurantTable.class);
-                    if (table != null) {
-                        tableList.add(table);
-                    }
-                }
-                tableAdapter.notifyDataSetChanged();
+                tablesSnapshot = snapshot;
+                renderTables();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                // error process
+                showReadError();
             }
-        });
+        };
+        reservationsListener = new ValueEventListener() {
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                reservationsSnapshot = snapshot;
+                renderTables();
+            }
+            public void onCancelled(@NonNull DatabaseError error) { showReadError(); }
+        };
+        databaseReference.addValueEventListener(tablesListener);
+        reservationsReference.addValueEventListener(reservationsListener);
     }
 
+    private void renderTables() {
+        if (getView() == null || tablesSnapshot == null || reservationsSnapshot == null) return;
+        tableList.clear();
+        tableKeys.clear();
+        availability.clear();
+        int guests = requireArguments().getInt("guests");
+        for (DataSnapshot child : tablesSnapshot.getChildren()) {
+            Object capacity = child.child("capacity").getValue();
+            boolean available = CustomerBookingFields.available(child.child("isEnabled").getValue(),
+                    capacity, guests, reservationsSnapshot.child(child.getKey()).exists());
+            // 可订性仅用于页面展示，独立于餐桌的现场状态，不写回数据库。
+            RestaurantTable table = new RestaurantTable(
+                    CustomerBookingFields.text(child.child("tableNumber").getValue()),
+                    capacity instanceof Number ? ((Number) capacity).intValue() : 0,
+                    CustomerBookingFields.text(child.child("occupancyStatus").getValue()));
+            tableList.add(table);
+            tableKeys.put(table, child.getKey());
+            availability.put(table, available);
+        }
+        tableAdapter.notifyDataSetChanged();
+    }
+
+    private void showReadError() {
+        tablesSnapshot = null;
+        reservationsSnapshot = null;
+        tableList.clear();
+        tableKeys.clear();
+        availability.clear();
+        tableAdapter.notifyDataSetChanged();
+        if (getContext() != null) Toast.makeText(getContext(),
+                "Cannot load table availability. Please reopen.", Toast.LENGTH_LONG).show();
+    }
+
+    @Override public void onDestroyView() {
+        if (databaseReference != null && tablesListener != null) databaseReference.removeEventListener(tablesListener);
+        if (reservationsReference != null && reservationsListener != null) reservationsReference.removeEventListener(reservationsListener);
+        tablesSnapshot = null;
+        reservationsSnapshot = null;
+        super.onDestroyView();
+    }
 }

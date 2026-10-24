@@ -6,7 +6,7 @@ import com.google.firebase.database.DataSnapshot;
  * key 是数据库身份；number 只是展示编号。缺少新字段时只读，不能猜测旧 RESERVED 的含义。
  */
 public final class StaffTableState {
-    public final String key, number, occupancy, legacyStatus;
+    public final String key, number, occupancy;
     public final int capacity;
     public final Boolean enabled;
     public StaffTableState(DataSnapshot data) {
@@ -17,7 +17,6 @@ public final class StaffTableState {
         Object flag = data.child("isEnabled").getValue();
         enabled = flag instanceof Boolean ? (Boolean) flag : null;
         occupancy = text(data, "occupancyStatus");
-        legacyStatus = text(data, "status");
     }
     public boolean isMigrated() {
         return enabled != null && ("AVAILABLE".equals(occupancy) || "OCCUPIED".equals(occupancy));

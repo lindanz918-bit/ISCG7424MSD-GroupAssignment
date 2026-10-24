@@ -16,10 +16,18 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.HashMap;
 
 public class CustomerOrderAdapter extends RecyclerView.Adapter<CustomerOrderAdapter.ViewHolder> {
     private List<Order> orderList;
     private onItemClickListener listener;
+    private Map<String, String> tableNumbers = new HashMap<>();
+
+    public void setTableNumbers(Map<String, String> numbers) {
+        tableNumbers = numbers;
+        notifyDataSetChanged();
+    }
     public interface onItemClickListener {
         void onViewMenuClick(Order order, int position);
         void onDeleteClick(Order order, int position);
@@ -49,14 +57,21 @@ public class CustomerOrderAdapter extends RecyclerView.Adapter<CustomerOrderAdap
 
         holder.binding.tvOrderId.setText("#" + order.getOrderId());
         holder.binding.tvOrderStatus.setText(order.getStatus());
-        holder.binding.tvOrderDate.setText(order.getBookingDate());
-        holder.binding.tvOrderGuests.setText(order.getGuestCount() + " Guests (Table " + order.getTableId() + ")");
+        String canonical = CustomerBookingFields.canonicalDate(order.getBookingDate());
+        String displayDate = canonical == null ? order.getBookingDate()
+                : canonical.substring(8, 10) + "/" + canonical.substring(5, 7) + "/" + canonical.substring(0, 4);
+        holder.binding.tvOrderDate.setText(displayDate);
+        String number = tableNumbers.containsKey(order.getTableId())
+                ? tableNumbers.get(order.getTableId()) : order.getTableId();
+        holder.binding.tvOrderGuests.setText(order.getGuestCount() + " Guests (Table " + number + ")");
 
         boolean isPast = isDateBeforeToday(order.getBookingDate());
         String status = order.getStatus() != null ? order.getStatus().toUpperCase() : "";
 
-        if (isPast || "CANCELLED".equals(status)) {
-            holder.binding.btnDeleteOrder.setText("Delete");
+        boolean terminal = "CANCELLED".equals(status) || "REJECTED".equals(status) || "COMPLETED".equals(status);
+        holder.binding.btnDeleteOrder.setEnabled(isPast || terminal || "PENDING".equals(status));
+        if (isPast || terminal) {
+            holder.binding.btnDeleteOrder.setText("Hide");
 
             holder.binding.btnDeleteOrder.setOnClickListener(v -> {
                 if (listener != null) {
@@ -82,30 +97,8 @@ public class CustomerOrderAdapter extends RecyclerView.Adapter<CustomerOrderAdap
     }
 
     private boolean isDateBeforeToday(String dateStr) {
-        if (dateStr == null || dateStr.isEmpty()) return false;
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-            Date orderDate = sdf.parse(dateStr);
-            if (orderDate == null) return false;
-
-            Calendar calOrder = Calendar.getInstance();
-            calOrder.setTime(orderDate);
-            calOrder.set(Calendar.HOUR_OF_DAY, 0);
-            calOrder.set(Calendar.MINUTE, 0);
-            calOrder.set(Calendar.SECOND, 0);
-            calOrder.set(Calendar.MILLISECOND, 0);
-
-            Calendar calToday = Calendar.getInstance();
-            calToday.set(Calendar.HOUR_OF_DAY, 0);
-            calToday.set(Calendar.MINUTE, 0);
-            calToday.set(Calendar.SECOND, 0);
-            calToday.set(Calendar.MILLISECOND, 0);
-
-            return calOrder.before(calToday);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return false;
-        }
+        String date = CustomerBookingFields.canonicalDate(dateStr);
+        return date != null && date.compareTo(CustomerBookingFields.format("yyyy-MM-dd").format(new Date())) < 0;
     }
 
     @Override

@@ -150,7 +150,7 @@ public class ManageTablesActivity  extends BaseActivity<ActivityManageTablesBind
                                 Log.d("TableStatus", "Table: "
                                         + table.getTableNumber()
                                         + " Status: "
-                                        + table.getStatus());
+                                        + table.getOccupancyStatus());
                             }
                             String id = child.getKey();
 
@@ -258,6 +258,8 @@ public class ManageTablesActivity  extends BaseActivity<ActivityManageTablesBind
                         Map<String, Object> updates = new HashMap<>();
                         updates.put("tableNumber", number);
                         updates.put("capacity", capacityText);
+                        // 字段级更新保留 Staff 的 isEnabled 和 occupancyStatus，不覆盖整张桌。
+                        updates.put("updatedAt", com.google.firebase.database.ServerValue.TIMESTAMP);
 
                         tablesReference.child(id).updateChildren(updates)
                                 .addOnSuccessListener(result -> {

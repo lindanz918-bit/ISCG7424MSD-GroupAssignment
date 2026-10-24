@@ -47,7 +47,7 @@ public class StaffTableAdapter extends RecyclerView.Adapter<StaffTableAdapter.Vi
         holder.binding.tvStaffTableNumber.setText(holder.binding.getRoot().getContext()
                 .getString(R.string.staff_table_number, number));
         holder.binding.tvStaffTableCapacity.setText(holder.binding.getRoot().getContext()
-                .getString(R.string.staff_table_capacity, table.capacity) + "\nOn-site: " + (table.isMigrated() ? table.occupancy : "Unknown (legacy: " + table.legacyStatus + ")"));
+                .getString(R.string.staff_table_capacity, table.capacity) + "\nOn-site: " + (table.isMigrated() ? table.occupancy : "Unknown (missing table fields)"));
         String booking=bookings.get(table.key);
         String legacy=bookings.get(number);
         if (!table.key.equals(number) && legacy != null)

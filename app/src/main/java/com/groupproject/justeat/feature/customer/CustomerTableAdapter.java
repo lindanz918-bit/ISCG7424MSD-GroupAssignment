@@ -13,17 +13,21 @@ import com.groupproject.justeat.R;
 import com.groupproject.justeat.data.model.RestaurantTable;
 
 import java.util.List;
+import java.util.Map;
 
 public class CustomerTableAdapter extends RecyclerView.Adapter<CustomerTableAdapter.TableViewHolder> {
     private List<RestaurantTable> tableList;
     private OnTableClickListener listener;
+    private final Map<RestaurantTable, Boolean> availability;
 
     public interface OnTableClickListener {
         void onTableClick(RestaurantTable table);
     }
 
-    public CustomerTableAdapter(List<RestaurantTable> tableList, OnTableClickListener listener) {
+    public CustomerTableAdapter(List<RestaurantTable> tableList,
+                                Map<RestaurantTable, Boolean> availability, OnTableClickListener listener) {
         this.tableList = tableList;
+        this.availability = availability;
         this.listener = listener;
     }
 
@@ -40,9 +44,10 @@ public class CustomerTableAdapter extends RecyclerView.Adapter<CustomerTableAdap
         RestaurantTable table = tableList.get(position);
         holder.tvTableNumber.setText(table.getTableNumber());
         holder.tvCapacity.setText("Capacity: " + table.getCapacity() + " Guests");
-        holder.tvStatus.setText(table.getStatus());
+        boolean available = Boolean.TRUE.equals(availability.get(table));
+        holder.tvStatus.setText(available ? "Available" : "Unavailable");
 
-        if ("Available".equalsIgnoreCase(table.getStatus())) {
+        if (available) {
             holder.tvStatus.setTextColor(Color.parseColor("#2E7D32"));
             holder.itemView.setEnabled(true);
             holder.itemView.setAlpha(1.0f);
@@ -52,7 +57,7 @@ public class CustomerTableAdapter extends RecyclerView.Adapter<CustomerTableAdap
             holder.itemView.setAlpha(0.6f);
         }
         holder.itemView.setOnClickListener(v -> {
-            if (listener != null && "Available".equalsIgnoreCase(table.getStatus())) {
+            if (listener != null && Boolean.TRUE.equals(availability.get(table))) {
                 listener.onTableClick(table);
             }
         });
