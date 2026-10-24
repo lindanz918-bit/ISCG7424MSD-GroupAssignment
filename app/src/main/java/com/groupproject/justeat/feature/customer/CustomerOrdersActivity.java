@@ -33,6 +33,12 @@ import java.util.Set;
 import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
+import com.google.firebase.database.ServerValue;
+import java.text.SimpleDateFormat;
+import java.text.ParsePosition;
+import java.util.Locale;
 
 public class CustomerOrdersActivity extends BaseActivity<ActivityCustomerOrdersBinding> {
     private CustomerOrderAdapter adapter;
@@ -68,6 +74,26 @@ public class CustomerOrdersActivity extends BaseActivity<ActivityCustomerOrdersB
             public void onViewMenuClick(Order order, int position) {
                 CustomerOrderMenuDetailsDialog dialog = CustomerOrderMenuDetailsDialog.newInstance(order.getOrderId());
                 dialog.show(getSupportFragmentManager(), CustomerOrderMenuDetailsDialog.TAG);
+            }
+
+            @Override
+            public void onDeleteClick(Order order, int position) {
+                new com.google.android.material.dialog.MaterialAlertDialogBuilder(CustomerOrdersActivity.this)
+                        .setTitle("Delete Order")
+                        .setMessage("Hide this order from My Orders on this device? This does not cancel the order or release its table reservation.")
+                        .setPositiveButton("Delete", (dialog, which) -> {
+                            String uid = FirebaseAuth.getInstance().getUid();
+                            if (uid == null || !uid.equals(order.getCustomerId())) return;
+                            // 只保存本机当前账号的隐藏标记，不修改 Firebase 订单或预约。
+                            getSharedPreferences("customer_deleted_orders", MODE_PRIVATE).edit()
+                                    .putBoolean(uid + ":" + order.getOrderId(), true).apply();
+                            orderList.remove(order);
+                            adapter.notifyDataSetChanged();
+                            getBinding().layoutEmptyState.setVisibility(orderList.isEmpty()
+                                    ? android.view.View.VISIBLE : android.view.View.GONE);
+                        })
+                        .setNegativeButton("Back", null)
+                        .show();
             }
 
             @Override
@@ -127,9 +153,19 @@ public class CustomerOrdersActivity extends BaseActivity<ActivityCustomerOrdersB
                 for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
                     Object value = childSnapshot.getValue();
                     if (!(value instanceof Map)) continue;
-                    Order order = CustomerBookingFields.read(childSnapshot.getKey(), (Map<?, ?>) value);
-                    // 不再读取旧隐藏标记：之前隐藏的订单也正常显示，仍只展示当前用户的数据。
-                    if (uid.equals(order.getCustomerId()))
+                    Order order = new Order();
+                    order.setOrderId(childSnapshot.getKey());
+                    order.setCustomerId(childSnapshot.child("customerId").getValue(String.class));
+                    order.setBookingDate(childSnapshot.child("bookingDate").getValue(String.class));
+                    order.setTableId(childSnapshot.child("tableId").getValue(String.class));
+                    order.setStatus(childSnapshot.child("status").getValue(String.class));
+                    Object guests = childSnapshot.child("guestCount").getValue();
+                    order.setGuestCount(guests instanceof Number ? guests.toString() : "");
+                    Object createdAt = childSnapshot.child("createdAt").getValue();
+                    order.setCreatedAt(createdAt instanceof Number ? ((Number) createdAt).longValue() : 0L);
+                    // 仅过滤本次 Delete 的本地标记，之前已恢复的旧隐藏订单不受影响。
+                    if (uid.equals(order.getCustomerId()) && !getSharedPreferences(
+                            "customer_deleted_orders", MODE_PRIVATE).getBoolean(uid + ":" + order.getOrderId(), false))
                         orderList.add(order);
                 }
                 Log.d("FirebaseDebug", "Total orders in list: " + orderList.size());
@@ -151,7 +187,7 @@ public class CustomerOrdersActivity extends BaseActivity<ActivityCustomerOrdersB
                 if (isDestroyed()) return;
                 Map<String, String> numbers = new HashMap<>();
                 for (DataSnapshot table : snapshot.getChildren())
-                    numbers.put(table.getKey(), CustomerBookingFields.text(table.child("tableNumber").getValue()));
+                    numbers.put(table.getKey(), table.child("tableNumber").getValue(String.class));
                 adapter.setTableNumbers(numbers);
             }
             public void onCancelled(@NonNull DatabaseError error) { adapter.setTableNumbers(new HashMap<>()); }
@@ -161,17 +197,103 @@ public class CustomerOrdersActivity extends BaseActivity<ActivityCustomerOrdersB
 
     private void cancelBooking(String id) {
         String uid = FirebaseAuth.getInstance().getUid();
-        if (uid == null || !CustomerBookingFields.validKey(id) || !cancelling.add(id)) return;
-        CustomerBookingCancellation.cancel(id, (error, orderCancelled) -> {
-            cancelling.remove(id);
-            if (isFinishing() || isDestroyed()) return;
-            if (error == null) { showMessage("Booking cancelled."); return; }
-            if (!orderCancelled) { showMessage(error); return; }
-            new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
-                    .setTitle("Reservation release incomplete").setMessage(error)
-                    .setPositiveButton("Retry", (dialog, which) -> cancelBooking(id))
-                    .setNegativeButton("Close", null).show();
-        });
+        if (uid == null || !validKey(id) || !cancelling.add(id)) return;
+        DatabaseReference root = FirebaseDatabase.getInstance().getReference();
+        // 直接在页面中操作 Firebase，事务会在数据发生变化时重新检查。
+        root.child("Orders").child(id).runTransaction(new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(MutableData order) {
+                if (!uid.equals(FirebaseAuth.getInstance().getUid())) return Transaction.abort();
+                // 首次可能只有空缓存，让服务器确认，不创建不存在的订单。
+                if (order.getValue() == null) return Transaction.success(order);
+                if (!(order.getValue() instanceof Map)) return Transaction.abort();
+                Object statusValue = order.child("status").getValue();
+                Object dateValue = order.child("bookingDate").getValue();
+                Object tableValue = order.child("tableId").getValue();
+                if (!(statusValue instanceof String) || !(dateValue instanceof String)
+                        || !(tableValue instanceof String)) return Transaction.abort();
+                String status = (String) statusValue;
+                String date = (String) dateValue;
+                String tableId = (String) tableValue;
+                boolean canCancel = "PENDING".equals(status) || "ACCEPTED".equals(status)
+                        || "PREPARING".equals(status) || "READY".equals(status);
+                if (!uid.equals(order.child("customerId").getValue())
+                        || (!canCancel && !"CANCELLED".equals(status))
+                        || !validKey(tableId) || !validBookingDate(date)) return Transaction.abort();
+                if (!"CANCELLED".equals(status)) {
+                    order.child("status").setValue("CANCELLED");
+                    order.child("updatedAt").setValue(ServerValue.TIMESTAMP);
+                }
+                return Transaction.success(order);
+            }
+
+            @Override
+            public void onComplete(DatabaseError error, boolean committed, DataSnapshot order) {
+                if (error != null || !committed || order == null || !order.exists()) {
+                    finishCancellation(id, "Cannot cancel this order. Please refresh and try again.", false);
+                    return;
+                }
+                String date = order.child("bookingDate").getValue(String.class);
+                String tableId = order.child("tableId").getValue(String.class);
+                DatabaseReference reservation = root.child("tableReservations").child(date).child(tableId);
+                releaseReservation(id, uid, reservation);
+            }
+        }, false);
+    }
+
+    private void releaseReservation(String id, String uid, DatabaseReference reservation) {
+        reservation.runTransaction(new Transaction.Handler() {
+            private boolean signedOut;
+
+            @Override
+            public Transaction.Result doTransaction(MutableData slot) {
+                signedOut = !uid.equals(FirebaseAuth.getInstance().getUid());
+                if (signedOut) return Transaction.abort();
+                if (slot.getValue() == null) return Transaction.success(slot);
+                // 只释放本订单的预约，别人重新占用的名额不能删除。
+                if (!id.equals(slot.child("orderId").getValue())) return Transaction.abort();
+                slot.setValue(null);
+                return Transaction.success(slot);
+            }
+
+            @Override
+            public void onComplete(DatabaseError error, boolean committed, DataSnapshot slot) {
+                String message = error != null || signedOut
+                        ? "Order cancelled, but reservation release failed. Please retry." : null;
+                finishCancellation(id, message, true);
+            }
+        }, false);
+    }
+
+    private void finishCancellation(String id, String error, boolean orderCancelled) {
+        cancelling.remove(id);
+        if (isFinishing() || isDestroyed()) return;
+        if (error == null || !orderCancelled) {
+            showMessage(error == null ? "Booking cancelled." : error);
+            return;
+        }
+        new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                .setTitle("Reservation release incomplete")
+                .setMessage(error)
+                .setPositiveButton("Retry", (dialog, which) -> cancelBooking(id))
+                .setNegativeButton("Close", null)
+                .show();
+    }
+
+    private boolean validKey(String key) {
+        if (key == null || key.isEmpty()) return false;
+        for (char c : key.toCharArray()) {
+            if (".#$[]/".indexOf(c) >= 0 || Character.isISOControl(c)) return false;
+        }
+        return true;
+    }
+
+    private boolean validBookingDate(String date) {
+        if (date == null || !date.matches("[0-9]{4}-[0-9]{2}-[0-9]{2}")) return false;
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.UK);
+        format.setLenient(false);
+        ParsePosition position = new ParsePosition(0);
+        return format.parse(date, position) != null && position.getIndex() == date.length();
     }
 
     private void showMessage(String message) {

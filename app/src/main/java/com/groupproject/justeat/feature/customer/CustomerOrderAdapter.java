@@ -26,6 +26,7 @@ public class CustomerOrderAdapter extends RecyclerView.Adapter<CustomerOrderAdap
     public interface onItemClickListener {
         void onViewMenuClick(Order order, int position);
         void onCancelClick(Order order, int position);
+        void onDeleteClick(Order order, int position);
     }
 
     public CustomerOrderAdapter(List<Order> orderList, onItemClickListener listener) {
@@ -51,24 +52,31 @@ public class CustomerOrderAdapter extends RecyclerView.Adapter<CustomerOrderAdap
 
         holder.binding.tvOrderId.setText("#" + order.getOrderId());
         holder.binding.tvOrderStatus.setText(order.getStatus());
-        String canonical = CustomerBookingFields.canonicalDate(order.getBookingDate());
-        String displayDate = canonical == null ? order.getBookingDate()
+        String canonical = order.getBookingDate();
+        String displayDate = canonical == null || !canonical.matches("[0-9]{4}-[0-9]{2}-[0-9]{2}") ? "—"
                 : canonical.substring(8, 10) + "/" + canonical.substring(5, 7) + "/" + canonical.substring(0, 4);
         holder.binding.tvOrderDate.setText(displayDate);
         String number = tableNumbers.containsKey(order.getTableId())
-                ? tableNumbers.get(order.getTableId()) : order.getTableId();
+                ? tableNumbers.get(order.getTableId()) : "—";
         holder.binding.tvOrderGuests.setText(order.getGuestCount() + " Guests (Table " + number + ")");
 
-        boolean cancellable = CustomerBookingFields.canCancel(order.getStatus());
-        holder.binding.btnDeleteOrder.setText("Cancel");
-        holder.binding.btnDeleteOrder.setEnabled(cancellable);
-        holder.binding.btnDeleteOrder.setVisibility(cancellable ? android.view.View.VISIBLE : android.view.View.GONE);
-        holder.binding.btnDeleteOrder.setOnClickListener(v -> {
-            if (listener != null && CustomerBookingFields.canCancel(order.getStatus())) {
+        boolean cancellable = order.canCancel();
+        holder.binding.btnCancelOrder.setText("Cancel");
+        holder.binding.btnCancelOrder.setEnabled(cancellable);
+        holder.binding.btnCancelOrder.setVisibility(cancellable ? android.view.View.VISIBLE : android.view.View.GONE);
+        holder.binding.btnCancelOrder.setOnClickListener(v -> {
+            if (listener != null && order.canCancel()) {
                 int currentPosition = holder.getAdapterPosition();
                 if (currentPosition != RecyclerView.NO_POSITION) {
                     listener.onCancelClick(order, currentPosition);
                 }
+            }
+        });
+
+        holder.binding.btnDeleteOrder.setOnClickListener(v -> {
+            int currentPosition = holder.getAdapterPosition();
+            if (listener != null && currentPosition != RecyclerView.NO_POSITION) {
+                listener.onDeleteClick(order, currentPosition);
             }
         });
 

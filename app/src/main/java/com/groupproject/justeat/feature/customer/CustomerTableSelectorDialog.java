@@ -81,7 +81,7 @@ public class CustomerTableSelectorDialog extends BottomSheetDialogFragment {
     private void fetchTablesFromFirebase() {
         Bundle args = getArguments();
         String date = args == null ? null : args.getString("date");
-        if (date == null || !date.equals(CustomerBookingFields.canonicalDate(date))) return;
+        if (date == null || !date.matches("[0-9]{4}-[0-9]{2}-[0-9]{2}")) return;
         databaseReference = FirebaseDatabase.getInstance().getReference("tables");
         reservationsReference = FirebaseDatabase.getInstance().getReference("tableReservations").child(date);
         tablesListener = new ValueEventListener() {
@@ -115,13 +115,14 @@ public class CustomerTableSelectorDialog extends BottomSheetDialogFragment {
         int guests = requireArguments().getInt("guests");
         for (DataSnapshot child : tablesSnapshot.getChildren()) {
             Object capacity = child.child("capacity").getValue();
-            boolean available = CustomerBookingFields.available(child.child("isEnabled").getValue(),
-                    capacity, guests, reservationsSnapshot.child(child.getKey()).exists());
+            boolean available = Boolean.TRUE.equals(child.child("isEnabled").getValue())
+                    && capacity instanceof Number && guests > 0 && ((Number) capacity).intValue() >= guests
+                    && !reservationsSnapshot.child(child.getKey()).exists();
             // 可订性仅用于页面展示，独立于餐桌的现场状态，不写回数据库。
             RestaurantTable table = new RestaurantTable(
-                    CustomerBookingFields.text(child.child("tableNumber").getValue()),
+                    child.child("tableNumber").getValue(String.class),
                     capacity instanceof Number ? ((Number) capacity).intValue() : 0,
-                    CustomerBookingFields.text(child.child("occupancyStatus").getValue()));
+                    child.child("occupancyStatus").getValue(String.class));
             tableList.add(table);
             tableKeys.put(table, child.getKey());
             availability.put(table, available);

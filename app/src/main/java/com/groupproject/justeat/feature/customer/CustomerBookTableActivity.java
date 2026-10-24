@@ -34,6 +34,11 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.HashMap;
+import java.util.TimeZone;
+import java.text.SimpleDateFormat;
+import com.google.firebase.database.ServerValue;
+import com.groupproject.justeat.data.model.TableReservation;
 
 public class CustomerBookTableActivity extends BaseActivity<ActivityCustomerBookTableBinding> {
     String selectedGuestCount, selectedDate, selectedTableId;
@@ -84,13 +89,13 @@ public class CustomerBookTableActivity extends BaseActivity<ActivityCustomerBook
         getBinding().etDate.setOnClickListener(v -> showDatePickerDialog());
 
         getBinding().btnSelectTable.setOnClickListener(view -> {
-            String date = CustomerBookingFields.canonicalDate(getBinding().etDate.getText().toString());
+            String date = selectedDate;
             if (date == null) return;
             int guests = Integer.parseInt(getBinding().spinnerGuest.getSelectedItem().toString());
             CustomerTableSelectorDialog tableSelectorDialog =
                     CustomerTableSelectorDialog.newInstance(date, guests);
             tableSelectorDialog.setOnTableSelectedListener((tableKey, tableNumber) -> {
-                if (!date.equals(CustomerBookingFields.canonicalDate(getBinding().etDate.getText().toString()))
+                if (!date.equals(selectedDate)
                         || guests != Integer.parseInt(getBinding().spinnerGuest.getSelectedItem().toString())) return;
                 getBinding().btnSelectTable.setText(tableNumber);
                 selectedTableId = tableKey;
@@ -132,7 +137,7 @@ public class CustomerBookTableActivity extends BaseActivity<ActivityCustomerBook
     }
 
     private void showDatePickerDialog() {
-        Calendar calendar = Calendar.getInstance(CustomerBookingFields.RESTAURANT_ZONE);
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Pacific/Auckland"));
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
@@ -141,6 +146,7 @@ public class CustomerBookTableActivity extends BaseActivity<ActivityCustomerBook
                 this,
                 (view, selectedYear, selectedMonth, selectedDay) -> {
                     String formattedDate = String.format(Locale.UK, "%02d/%02d/%d", selectedDay, selectedMonth + 1, selectedYear);
+                    selectedDate = String.format(Locale.UK, "%04d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay);
                     getBinding().etDate.setText(formattedDate);
                     clearTableSelection();
                 },
@@ -155,12 +161,12 @@ public class CustomerBookTableActivity extends BaseActivity<ActivityCustomerBook
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) return;
 
-        selectedDate = CustomerBookingFields.canonicalDate(getBinding().etDate.getText().toString().trim());
         selectedGuestCount = getBinding().spinnerGuest.getSelectedItem() != null
                 ? getBinding().spinnerGuest.getSelectedItem().toString() : "1";
 
-        if (selectedDate == null || selectedDate.compareTo(
-                CustomerBookingFields.format("yyyy-MM-dd").format(new java.util.Date())) < 0) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.UK);
+        dateFormat.setTimeZone(TimeZone.getTimeZone("Pacific/Auckland"));
+        if (selectedDate == null || selectedDate.compareTo(dateFormat.format(new java.util.Date())) < 0) {
             Toast.makeText(this, "Please select a booking date!", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -204,16 +210,28 @@ public class CustomerBookTableActivity extends BaseActivity<ActivityCustomerBook
                     root.child("tableReservations").child(date).child(tableKey).get()
                         .addOnSuccessListener(slot -> {
                             if (isFinishing() || isDestroyed()) return;
+                            Object capacity = table.child("capacity").getValue();
                             if (!userId.equals(FirebaseAuth.getInstance().getUid())
-                                    || !CustomerBookingFields.available(table.child("isEnabled").getValue(),
-                                    table.child("capacity").getValue(), guests, slot.exists())) {
+                                    || !Boolean.TRUE.equals(table.child("isEnabled").getValue())
+                                    || !(capacity instanceof Number) || ((Number) capacity).intValue() < guests
+                                    || guests <= 0 || slot.exists()) {
                                 bookingFailed("Table is no longer available. Please select again.");
                                 return;
                             }
                             // 预检查只改善提示；服务端规则仍必须防止并发占用同一名额。
-                            Map<String, Object> updates = CustomerBookingFields.create(
-                                    orderId, userId, tableKey, date, guests,
-                                    orderedItems.isEmpty() ? null : orderedItems);
+                            Map<String, Object> order = new HashMap<>();
+                            order.put("orderId", orderId);
+                            order.put("customerId", userId);
+                            order.put("tableId", tableKey);
+                            order.put("bookingDate", date);
+                            order.put("guestCount", guests);
+                            order.put("status", "PENDING");
+                            order.put("createdAt", ServerValue.TIMESTAMP);
+                            order.put("updatedAt", ServerValue.TIMESTAMP);
+                            Map<String, Object> updates = new HashMap<>();
+                            updates.put("Orders/" + orderId, order);
+                            updates.put("tableReservations/" + date + "/" + tableKey, new TableReservation(orderId));
+                            if (!orderedItems.isEmpty()) updates.put("OrderItems/" + orderId, orderedItems);
                             root.updateChildren(updates).addOnSuccessListener(unused -> {
                                 if (isFinishing() || isDestroyed()) return;
                                 Toast.makeText(CustomerBookTableActivity.this,
@@ -234,12 +252,13 @@ public class CustomerBookTableActivity extends BaseActivity<ActivityCustomerBook
     }
 
     private void setDefaultDate() {
-        Calendar calendar = Calendar.getInstance(CustomerBookingFields.RESTAURANT_ZONE);
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Pacific/Auckland"));
         calendar.add(Calendar.DAY_OF_MONTH, 1);
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH) + 1;
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         String defaultDate = String.format(Locale.UK, "%02d/%02d/%d", day, month, year);
+        selectedDate = String.format(Locale.UK, "%04d-%02d-%02d", year, month, day);
         getBinding().etDate.setText(defaultDate);
     }
 

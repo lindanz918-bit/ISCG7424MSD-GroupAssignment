@@ -2,12 +2,32 @@ package com.groupproject.justeat.data.model;
 
 /** 餐桌实体；日期预约名额另存于 tableReservations，不使用旧 status 字段。 */
 public class RestaurantTable {
+    /** Firebase 节点 key，仅在本地关联操作，不重复保存到数据库。 */
+    private String tableId;
+
+    @com.google.firebase.database.Exclude
+    public String getTableId() {
+        return tableId;
+    }
+
+    public void setTableId(String tableId) {
+        this.tableId = tableId;
+    }
+
+    public boolean hasValidState() {
+        return isEnabled != null
+                && ("AVAILABLE".equals(occupancyStatus) || "OCCUPIED".equals(occupancyStatus));
+    }
+
     /** 展示桌号，不是 Firebase 节点 key。 */
     private String tableNumber;
+
     /** 最大容纳人数。 */
     private int capacity;
+
     /** 现场状态：AVAILABLE / OCCUPIED，与未来日期是否可订无关。 */
     private String occupancyStatus;
+
     /** 是否允许新预约；null 表示数据尚未补齐。 */
     private Boolean isEnabled;
 
@@ -20,12 +40,35 @@ public class RestaurantTable {
         this.occupancyStatus = occupancyStatus;
     }
 
-    public String getTableNumber() { return tableNumber; }
-    public void setTableNumber(String tableNumber) { this.tableNumber = tableNumber; }
-    public int getCapacity() { return capacity; }
-    public void setCapacity(int capacity) { this.capacity = capacity; }
-    public String getOccupancyStatus() { return occupancyStatus; }
-    public void setOccupancyStatus(String occupancyStatus) { this.occupancyStatus = occupancyStatus; }
-    public Boolean getIsEnabled() { return isEnabled; }
-    public void setIsEnabled(Boolean enabled) { isEnabled = enabled; }
+    public String getTableNumber() {
+        return tableNumber;
+    }
+
+    public void setTableNumber(String tableNumber) {
+        this.tableNumber = tableNumber;
+    }
+
+    public int getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+    }
+
+    public String getOccupancyStatus() {
+        return occupancyStatus;
+    }
+
+    public void setOccupancyStatus(String occupancyStatus) {
+        this.occupancyStatus = occupancyStatus;
+    }
+
+    public Boolean getIsEnabled() {
+        return isEnabled;
+    }
+
+    public void setIsEnabled(Boolean enabled) {
+        isEnabled = enabled;
+    }
 }
