@@ -26,11 +26,28 @@ import com.groupproject.justeat.ui.dialog.CustomerOrderMenuDetailsDialog;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+import android.widget.Toast;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
+import com.google.firebase.database.ServerValue;
+import java.text.SimpleDateFormat;
+import java.text.ParsePosition;
+import java.util.Locale;
 
 public class CustomerOrdersActivity extends BaseActivity<ActivityCustomerOrdersBinding> {
     private CustomerOrderAdapter adapter;
     List<Order> orderList;
     private DatabaseReference ordersRef;
+    private Query ownOrders;
+    private ValueEventListener ordersListener, tablesListener;
+    private DatabaseReference tablesRef;
+    private final Set<String> cancelling = new HashSet<>();
 
     @Override
     protected ActivityCustomerOrdersBinding inflateBinding(LayoutInflater inflater) {
@@ -40,7 +57,6 @@ public class CustomerOrdersActivity extends BaseActivity<ActivityCustomerOrdersB
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        //setContentView(R.layout.activity_customer_orders);
         ViewCompat.setOnApplyWindowInsetsListener(getBinding().getRoot(), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -58,19 +74,23 @@ public class CustomerOrdersActivity extends BaseActivity<ActivityCustomerOrdersB
                 CustomerOrderMenuDetailsDialog dialog = CustomerOrderMenuDetailsDialog.newInstance(order.getOrderId());
                 dialog.show(getSupportFragmentManager(), CustomerOrderMenuDetailsDialog.TAG);
             }
-
             @Override
             public void onDeleteClick(Order order, int position) {
                 new com.google.android.material.dialog.MaterialAlertDialogBuilder(CustomerOrdersActivity.this)
                         .setTitle("Delete Order")
-                        .setMessage("Are you sure you want to delete order #" + order.getOrderId() + "?")
-                        .setPositiveButton("Delete", (dialog, which) -> {
-                            Order selectedOrder = orderList.get(position);
-                            ordersRef.child(selectedOrder.getOrderId()).removeValue();
-                            orderList.remove(position);
-                            adapter.notifyItemRemoved(position);
+                        .setMessage("Delete this order from My Orders? This action cannot be undone.")
+                        .setPositiveButton("Yes", (dialog, which) -> {
+                            String uid = FirebaseAuth.getInstance().getUid();
+                            if (uid == null || !uid.equals(order.getCustomerId())) return;
+                            // Only hide from the customer side, keep the history data in the database for staff to use.
+                            getSharedPreferences("customer_deleted_orders", MODE_PRIVATE).edit()
+                                    .putBoolean(uid + ":" + order.getOrderId(), true).apply();
+                            orderList.remove(order);
+                            adapter.notifyDataSetChanged();
+                            getBinding().layoutEmptyState.setVisibility(orderList.isEmpty()
+                                    ? android.view.View.VISIBLE : android.view.View.GONE);
                         })
-                        .setNegativeButton("Cancel", null)
+                        .setNegativeButton("No", null)
                         .show();
             }
 
@@ -78,12 +98,10 @@ public class CustomerOrdersActivity extends BaseActivity<ActivityCustomerOrdersB
             public void onCancelClick(Order order, int position) {
                 new com.google.android.material.dialog.MaterialAlertDialogBuilder(CustomerOrdersActivity.this)
                         .setTitle("Cancel Order")
-                        .setMessage("Are you sure you want to cancel order #" + order.getOrderId() + "?")
+                        .setMessage("Cancel order #" + order.getOrderId()
+                                + " ? This action cannot be undone.")
                         .setPositiveButton("Yes", (dialog, which) -> {
-                            Order selectedOrder = orderList.get(position);
-                            selectedOrder.setStatus("CANCELLED");
-                            ordersRef.child(selectedOrder.getOrderId()).setValue(selectedOrder);
-                            adapter.notifyItemRemoved(position);
+                            cancelBooking(order.getOrderId());
                         })
                         .setNegativeButton("No", null)
                         .show();
@@ -117,28 +135,177 @@ public class CustomerOrdersActivity extends BaseActivity<ActivityCustomerOrdersB
 
     }
     private void initData() {
-        ordersRef.addValueEventListener(new ValueEventListener() {
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (uid == null) { finish(); return; }
+        ownOrders = ordersRef.orderByChild("customerId").equalTo(uid);
+        ordersListener = new ValueEventListener() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (isDestroyed()) return;
                 orderList.clear();
-                for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
-                    Order order = childSnapshot.getValue(Order.class);
-                    if (order != null) {
-                        orderList.add(order);
-                        Log.d("FirebaseDebug", "Parsed Order: " + order.getOrderId());
-                    } else {
-                        Log.e("FirebaseDebug", "Failed to parse snapshot: " + childSnapshot.toString());
-                    }
+                if (!uid.equals(FirebaseAuth.getInstance().getUid())) {
+                    adapter.notifyDataSetChanged();
+                    return;
                 }
+                for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+                    Object value = childSnapshot.getValue();
+                    if (!(value instanceof Map)) continue;
+                    Order order = new Order();
+                    order.setOrderId(childSnapshot.getKey());
+                    order.setCustomerId(childSnapshot.child("customerId").getValue(String.class));
+                    order.setBookingDate(childSnapshot.child("bookingDate").getValue(String.class));
+                    order.setTableId(childSnapshot.child("tableId").getValue(String.class));
+                    order.setStatus(childSnapshot.child("status").getValue(String.class));
+                    Object guests = childSnapshot.child("guestCount").getValue();
+                    order.setGuestCount(guests instanceof Number ? guests.toString() : "");
+                    Object createdAt = childSnapshot.child("createdAt").getValue();
+                    order.setCreatedAt(createdAt instanceof Number ? ((Number) createdAt).longValue() : 0L);
+                    // Save the deleted order into device files. data/data/com.groupproject.justeat/shared_prefs
+                    if (uid.equals(order.getCustomerId()) && !getSharedPreferences(
+                            "customer_deleted_orders", MODE_PRIVATE).getBoolean(uid + ":" + order.getOrderId(), false))
+                        orderList.add(order);
+                }
+                //reverse order lists to show the newest order first.
+                orderList.sort((o1, o2) -> Long.compare(o2.getCreatedAt(), o1.getCreatedAt()));
                 Log.d("FirebaseDebug", "Total orders in list: " + orderList.size());
                 getBinding().layoutEmptyState.setVisibility(orderList.isEmpty() ? android.view.View.VISIBLE : android.view.View.GONE);
                 adapter.notifyDataSetChanged();
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("FirebaseError", "Read data from Firebase Error: " + error.getMessage());
+                if (isDestroyed()) return;
+                orderList.clear();
+                adapter.notifyDataSetChanged();
+                showMessage("Cannot load your orders.");
             }
-        });
+        };
+        ownOrders.addValueEventListener(ordersListener);
+        tablesRef = FirebaseDatabase.getInstance().getReference("tables");
+        tablesListener = new ValueEventListener() {
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (isDestroyed()) return;
+                Map<String, String> numbers = new HashMap<>();
+                for (DataSnapshot table : snapshot.getChildren())
+                    numbers.put(table.getKey(), table.child("tableNumber").getValue(String.class));
+                adapter.setTableNumbers(numbers);
+            }
+            public void onCancelled(@NonNull DatabaseError error) { adapter.setTableNumbers(new HashMap<>()); }
+        };
+        tablesRef.addValueEventListener(tablesListener);
+    }
+
+    private void cancelBooking(String id) {
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (uid == null || !validKey(id) || !cancelling.add(id)) return;
+        DatabaseReference root = FirebaseDatabase.getInstance().getReference();
+        //to check whether the order ID is existed in the database.
+        root.child("Orders").child(id).runTransaction(new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(MutableData order) {
+                // do nothing if the order is not existed in the database
+                if (!uid.equals(FirebaseAuth.getInstance().getUid())) return Transaction.abort();
+                if (order.getValue() == null) return Transaction.success(order);
+                if (!(order.getValue() instanceof Map)) return Transaction.abort();
+                Object statusValue = order.child("status").getValue();
+                Object dateValue = order.child("bookingDate").getValue();
+                Object tableValue = order.child("tableId").getValue();
+                if (!(statusValue instanceof String) || !(dateValue instanceof String)
+                        || !(tableValue instanceof String)) return Transaction.abort();
+                String status = (String) statusValue;
+                String date = (String) dateValue;
+                String tableId = (String) tableValue;
+                //only the pending, accepted, preparing, and ready order can be canceled.
+                boolean canCancel = "PENDING".equals(status) || "ACCEPTED".equals(status)
+                        || "PREPARING".equals(status) || "READY".equals(status);
+                //to make sure the customer is the order's owner
+                if (!uid.equals(order.child("customerId").getValue())
+                        || (!canCancel && !"CANCELLED".equals(status))
+                        || !validKey(tableId) || !validBookingDate(date)) return Transaction.abort();
+                //process the cancellation
+                if (!"CANCELLED".equals(status)) {
+                    order.child("status").setValue("CANCELLED");
+                    order.child("updatedAt").setValue(ServerValue.TIMESTAMP);
+                }
+                return Transaction.success(order);
+            }
+
+            @Override
+            public void onComplete(DatabaseError error, boolean committed, DataSnapshot order) {
+                if (error != null || !committed || order == null || !order.exists()) {
+                    finishCancellation(id, "Cannot cancel this order. Please refresh and try again.", false);
+                    return;
+                }
+                String date = order.child("bookingDate").getValue(String.class);
+                String tableId = order.child("tableId").getValue(String.class);
+                DatabaseReference reservation = root.child("tableReservations").child(date).child(tableId);
+                //release table id
+                releaseReservation(id, uid, reservation);
+            }
+        }, false);
+    }
+
+    private void releaseReservation(String id, String uid, DatabaseReference reservation) {
+        reservation.runTransaction(new Transaction.Handler() {
+            private boolean signedOut;
+            @Override
+            public Transaction.Result doTransaction(MutableData slot) {
+                signedOut = !uid.equals(FirebaseAuth.getInstance().getUid());
+                if (signedOut) return Transaction.abort();
+                //the table is not occupied, do nothing.
+                if (slot.getValue() == null) return Transaction.success(slot);
+                // only release the booking of this order, not the reservation of other order.
+                if (!id.equals(slot.child("orderId").getValue())) return Transaction.abort();
+                slot.setValue(null);
+                return Transaction.success(slot);
+            }
+
+            @Override
+            public void onComplete(DatabaseError error, boolean committed, DataSnapshot slot) {
+                String message = error != null || signedOut
+                        ? "Order cancelled, but reservation release failed. Please retry." : null;
+                finishCancellation(id, message, true);
+            }
+        }, false);
+    }
+
+    private void finishCancellation(String id, String error, boolean orderCancelled) {
+        cancelling.remove(id);
+        if (isFinishing() || isDestroyed()) return;
+        if (error == null || !orderCancelled) {
+            showMessage(error == null ? "Booking cancelled." : error);
+            return;
+        }
+        new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                .setTitle("Reservation release incomplete")
+                .setMessage(error)
+                .setPositiveButton("Retry", (dialog, which) -> cancelBooking(id))
+                .setNegativeButton("Close", null)
+                .show();
+    }
+    private boolean validKey(String key) {
+        if (key == null || key.isEmpty()) return false;
+        for (char c : key.toCharArray()) {
+            if (".#$[]/".indexOf(c) >= 0 || Character.isISOControl(c)) return false;
+        }
+        return true;
+    }
+
+    private boolean validBookingDate(String date) {
+        if (date == null || !date.matches("[0-9]{4}-[0-9]{2}-[0-9]{2}")) return false;
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.UK);
+        format.setLenient(false);
+        ParsePosition position = new ParsePosition(0);
+        return format.parse(date, position) != null && position.getIndex() == date.length();
+    }
+
+    private void showMessage(String message) {
+        if (!isDestroyed()) Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+    }
+
+    @Override protected void onDestroy() {
+        if (ownOrders != null && ordersListener != null) ownOrders.removeEventListener(ordersListener);
+        if (tablesRef != null && tablesListener != null) tablesRef.removeEventListener(tablesListener);
+        super.onDestroy();
     }
 }

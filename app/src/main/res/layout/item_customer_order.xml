@@ -126,10 +126,26 @@
             app:strokeColor="@color/just_eat_primary" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_cancel_order"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="38dp"
+            android:minWidth="0dp"
+            android:text="Cancel"
+            android:textAllCaps="false"
+            android:textColor="@color/just_eat_error"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/btn_view_menu"
+            app:layout_constraintEnd_toStartOf="@id/btn_delete_order"
+            app:layout_constraintTop_toTopOf="@id/btn_view_menu" />
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_delete_order"
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="38dp"
+            android:minWidth="0dp"
             android:text="Delete"
             android:textAllCaps="false"
             android:textColor="@color/just_eat_error"

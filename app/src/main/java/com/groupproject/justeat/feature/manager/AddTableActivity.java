@@ -15,6 +15,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.ServerValue;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Locale;
 import com.groupproject.justeat.base.BaseActivity;
 import com.groupproject.justeat.data.model.MenuItem;
 import com.groupproject.justeat.data.model.RestaurantTable;
@@ -125,9 +129,7 @@ public class AddTableActivity extends BaseActivity<ActivityAddTableBinding> {
                                 return;
                             }
 
-                            RestaurantTable table = new RestaurantTable(
-                                    tableNumber, capacity, finalStatusText
-                            );
+                            Map<String, Object> table = newTableFields(tableNumber, capacity, finalStatusText);
 
                             tablesRef.push().setValue(table)
                                     .addOnSuccessListener(unused -> {
@@ -139,7 +141,8 @@ public class AddTableActivity extends BaseActivity<ActivityAddTableBinding> {
                                         getBinding().txtTableNumber.setText("");
                                         getBinding().numberPickerCapacity.setValue(1);
                                         getBinding().radioAvailable.setChecked(true);
-                                    });
+                                    }).addOnFailureListener(error -> Toast.makeText(AddTableActivity.this,
+                                            "Could not save table. Please retry.", Toast.LENGTH_LONG).show());
 //
                         });
 
@@ -170,5 +173,16 @@ public class AddTableActivity extends BaseActivity<ActivityAddTableBinding> {
 
 
         });
+    }
+    /** 现场 Occupied 不等于禁止未来预约；不再写旧 status。 */
+    static Map<String, Object> newTableFields(String number, int capacity, String status) {
+        Map<String, Object> table = new HashMap<>();
+        table.put("tableNumber", number);
+        table.put("capacity", capacity);
+        table.put("isEnabled", true);
+        table.put("occupancyStatus", status.toUpperCase(Locale.ROOT));
+        table.put("createdAt", ServerValue.TIMESTAMP);
+        table.put("updatedAt", ServerValue.TIMESTAMP);
+        return table;
     }
 }

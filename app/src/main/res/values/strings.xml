@@ -24,6 +24,7 @@
     <string name="staff_dashboard">Staff Dashboard</string>
     <string name="dashboard_placeholder">You are signed in. More features are coming soon.</string>
     <string name="logout_action">LOG OUT</string>
+    <string name="saved_menu_is_empty">Your saved menu is empty.\nBrowse the menu to add your favorite meals!</string>
 
     <string name="profile_title">Profile</string>
     <string name="change_avatar">Change Avatar</string>

@@ -1,53 +1,44 @@
 package com.groupproject.justeat.data.model;
 
-/** 餐厅餐桌实体，用于容量设置、位置说明和可用状态管理。 */
+/** 餐桌实体；日期预约名额另存于 tableReservations，不使用旧 status 字段。 */
 public class RestaurantTable {
-    /** 餐桌唯一 ID。 */
-//    private String tableId;
-    /** 显示给用户的桌号。 */
-     private String tableNumber;
+    /** Firebase 节点 key，仅在本地关联操作，不重复保存到数据库。 */
+    private String tableId;
+
+    @com.google.firebase.database.Exclude
+    public String getTableId() {
+        return tableId;
+    }
+
+    public void setTableId(String tableId) {
+        this.tableId = tableId;
+    }
+
+    public boolean hasValidState() {
+        return isEnabled != null
+                && ("AVAILABLE".equals(occupancyStatus) || "OCCUPIED".equals(occupancyStatus));
+    }
+
+    /** 展示桌号，不是 Firebase 节点 key。 */
+    private String tableNumber;
+
     /** 最大容纳人数。 */
     private int capacity;
-    /** 餐桌所在区域，例如 Window 或 Patio。 */
-//    private String location;
-    /** 餐桌状态，值来自 TableStatus。 */
-    private String status;
-//    /** 创建时间，Unix 毫秒时间戳。 */
-//    private long createdAt;
-//    /** 最后更新时间，Unix 毫秒时间戳。 */
-//    private long updatedAt;
 
-    /** Firebase 反序列化需要的公开无参构造方法。 */
-    public RestaurantTable() {
-    }
+    /** 现场状态：AVAILABLE / OCCUPIED，与未来日期是否可订无关。 */
+    private String occupancyStatus;
 
-    /** 创建包含全部餐桌字段的实体。 */
-    public RestaurantTable(
-//                            String tableId,
+    /** 是否允许新预约；null 表示数据尚未补齐。 */
+    private Boolean isEnabled;
 
-                           String tableNumber,
-                           int capacity,
-//                           String location,
-                           String status
-//                           long createdAt,
-//                           long updatedAt
-    ) {
-//        this.tableId = tableId;
+    /** Firebase 反序列化所需。 */
+    public RestaurantTable() {}
+
+    public RestaurantTable(String tableNumber, int capacity, String occupancyStatus) {
         this.tableNumber = tableNumber;
         this.capacity = capacity;
-//        this.location = location;
-        this.status = status;
-//        this.createdAt = createdAt;
-//        this.updatedAt = updatedAt;
+        this.occupancyStatus = occupancyStatus;
     }
-
-//    public String getTableId() {
-//        return tableId;
-//    }
-//
-//    public void setTableId(String tableId) {
-//        this.tableId = tableId;
-//    }
 
     public String getTableNumber() {
         return tableNumber;
@@ -65,36 +56,19 @@ public class RestaurantTable {
         this.capacity = capacity;
     }
 
-//    public String getLocation() {
-//        return location;
-//    }
-//
-//    public void setLocation(String location) {
-//        this.location = location;
-//    }
-//
-    public String getStatus() {
-        return status;
+    public String getOccupancyStatus() {
+        return occupancyStatus;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setOccupancyStatus(String occupancyStatus) {
+        this.occupancyStatus = occupancyStatus;
     }
-//
-//    public long getCreatedAt() {
-//        return createdAt;
-//    }
-//
-//    public void setCreatedAt(long createdAt) {
-//        this.createdAt = createdAt;
-//    }
-//
-//    public long getUpdatedAt() {
-//        return updatedAt;
-//    }
-//
-//    public void setUpdatedAt(long updatedAt) {
-//        this.updatedAt = updatedAt;
-//    }
+
+    public Boolean getIsEnabled() {
+        return isEnabled;
+    }
+
+    public void setIsEnabled(Boolean enabled) {
+        isEnabled = enabled;
+    }
 }
-

@@ -2,6 +2,7 @@ package com.groupproject.justeat.feature.customer;
 
 
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -10,20 +11,23 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.groupproject.justeat.data.model.Order;
 import com.groupproject.justeat.databinding.ItemCustomerOrderBinding;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
+import java.util.Map;
+import java.util.HashMap;
 
 public class CustomerOrderAdapter extends RecyclerView.Adapter<CustomerOrderAdapter.ViewHolder> {
     private List<Order> orderList;
     private onItemClickListener listener;
+    private Map<String, String> tableNumbers = new HashMap<>();
+
+    public void setTableNumbers(Map<String, String> numbers) {
+        tableNumbers = numbers;
+        notifyDataSetChanged();
+    }
     public interface onItemClickListener {
         void onViewMenuClick(Order order, int position);
-        void onDeleteClick(Order order, int position);
         void onCancelClick(Order order, int position);
+        void onDeleteClick(Order order, int position);
     }
 
     public CustomerOrderAdapter(List<Order> orderList, onItemClickListener listener) {
@@ -49,63 +53,45 @@ public class CustomerOrderAdapter extends RecyclerView.Adapter<CustomerOrderAdap
 
         holder.binding.tvOrderId.setText("#" + order.getOrderId());
         holder.binding.tvOrderStatus.setText(order.getStatus());
-        holder.binding.tvOrderDate.setText(order.getBookingDate());
-        holder.binding.tvOrderGuests.setText(order.getGuestCount() + " Guests (Table " + order.getTableId() + ")");
+        String canonical = order.getBookingDate();
+        String displayDate = canonical == null || !canonical.matches("[0-9]{4}-[0-9]{2}-[0-9]{2}") ? "—"
+                : canonical.substring(8, 10) + "/" + canonical.substring(5, 7) + "/" + canonical.substring(0, 4);
+        holder.binding.tvOrderDate.setText(displayDate);
+        String number = tableNumbers.containsKey(order.getTableId())
+                ? tableNumbers.get(order.getTableId()) : "—";
+        holder.binding.tvOrderGuests.setText(order.getGuestCount() + " Guests (Table " + number + ")");
 
-        boolean isPast = isDateBeforeToday(order.getBookingDate());
-        String status = order.getStatus() != null ? order.getStatus().toUpperCase() : "";
+        boolean cancellable = order.canCancel();
+//        holder.binding.btnCancelOrder.setText("Cancel");
+//        holder.binding.btnCancelOrder.setEnabled(cancellable);
 
-        if (isPast || "CANCELLED".equals(status)) {
-            holder.binding.btnDeleteOrder.setText("Delete");
+        holder.binding.btnCancelOrder.setVisibility(cancellable ? android.view.View.VISIBLE : android.view.View.GONE);
+        holder.binding.btnDeleteOrder.setVisibility((!cancellable) ? android.view.View.VISIBLE : android.view.View.GONE);
 
-            holder.binding.btnDeleteOrder.setOnClickListener(v -> {
-                if (listener != null) {
-                    listener.onDeleteClick(order, position);
+        holder.binding.btnCancelOrder.setOnClickListener(v -> {
+            if (listener != null && order.canCancel()) {
+                int currentPosition = holder.getAdapterPosition();
+                if (currentPosition != RecyclerView.NO_POSITION) {
+                    listener.onCancelClick(order, currentPosition);
                 }
-            });
-        } else {
-            holder.binding.btnDeleteOrder.setText("Cancel");
-            holder.binding.btnDeleteOrder.setOnClickListener(v -> {
-                if (listener != null) {
-                    listener.onCancelClick(order, position);
-                }
-            });
-        }
-
-        holder.binding.btnViewMenu.setOnClickListener(v -> {
-            if (listener != null) {
-                listener.onViewMenuClick(order, position);
             }
         });
 
+        holder.binding.btnDeleteOrder.setOnClickListener(v -> {
+            int currentPosition = holder.getAdapterPosition();
+            if (listener != null && currentPosition != RecyclerView.NO_POSITION) {
+                listener.onDeleteClick(order, currentPosition);
+            }
+        });
 
-    }
-
-    private boolean isDateBeforeToday(String dateStr) {
-        if (dateStr == null || dateStr.isEmpty()) return false;
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-            Date orderDate = sdf.parse(dateStr);
-            if (orderDate == null) return false;
-
-            Calendar calOrder = Calendar.getInstance();
-            calOrder.setTime(orderDate);
-            calOrder.set(Calendar.HOUR_OF_DAY, 0);
-            calOrder.set(Calendar.MINUTE, 0);
-            calOrder.set(Calendar.SECOND, 0);
-            calOrder.set(Calendar.MILLISECOND, 0);
-
-            Calendar calToday = Calendar.getInstance();
-            calToday.set(Calendar.HOUR_OF_DAY, 0);
-            calToday.set(Calendar.MINUTE, 0);
-            calToday.set(Calendar.SECOND, 0);
-            calToday.set(Calendar.MILLISECOND, 0);
-
-            return calOrder.before(calToday);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return false;
-        }
+        holder.binding.btnViewMenu.setOnClickListener(v -> {
+            if (listener != null) {
+                int currentPosition = holder.getAdapterPosition();
+                if (currentPosition != RecyclerView.NO_POSITION) {
+                    listener.onViewMenuClick(order, currentPosition);
+                }
+            }
+        });
     }
 
     @Override
