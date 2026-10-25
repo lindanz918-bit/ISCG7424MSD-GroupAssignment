@@ -67,7 +67,7 @@ public class AddStaffActivity extends BaseActivity<ActivityAddStaffBinding> {
 
                     Toast.makeText(
                             AddStaffActivity.this,
-                            "Please enter all meal details",
+                            "Please enter all staff information",
                             Toast.LENGTH_SHORT
                     ).show();
 
