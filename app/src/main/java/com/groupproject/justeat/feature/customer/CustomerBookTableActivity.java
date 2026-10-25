@@ -4,10 +4,7 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.widget.ArrayAdapter;
 import android.widget.Toast;
-import android.widget.AdapterView;
-import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -184,10 +181,6 @@ public class CustomerBookTableActivity extends BaseActivity<ActivityCustomerBook
                         orderedItems.add(item);
                     }
                 }
-//                if (orderedItems.isEmpty()) {
-//                    Toast.makeText(CustomerBookTableActivity.this, "Your saved menu is empty!", Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
                 String orderId = ordersRef.push().getKey();
                 if (orderId == null) { bookingFailed("Cannot create booking."); return; }
                 DatabaseReference root = FirebaseDatabase.getInstance().getReference();
