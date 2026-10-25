@@ -176,11 +176,11 @@ public class ManagerProfileActivity extends BaseActivity<ActivityManagerProfileA
                     if (avatarUrl != null && !avatarUrl.isEmpty()) {
                         Glide.with(ManagerProfileActivity.this)
                                 .load(avatarUrl)
-                                .placeholder(R.drawable.ic_restaurant_brand)
-                                .error(R.drawable.ic_restaurant_brand)
+                                .placeholder(R.drawable.manager_avatar)
+                                .error(R.drawable.manager_avatar)
                                 .into(getBinding().imgAvatar);
                     } else {
-                        getBinding().imgAvatar.setImageResource(R.drawable.ic_restaurant_brand);
+                        getBinding().imgAvatar.setImageResource(R.drawable.manager_avatar);
                     }
                 }
             }

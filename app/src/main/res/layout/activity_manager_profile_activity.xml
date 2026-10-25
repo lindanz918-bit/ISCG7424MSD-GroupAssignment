@@ -44,24 +44,24 @@
                 android:layout_height="72dp"
                 android:contentDescription="@string/brand_image_description"
                 android:scaleType="centerCrop"
-                android:src="@drawable/ic_restaurant_brand"
+                android:src="@drawable/manager_avatar"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full" />
 
-            <TextView
-                android:id="@+id/tv_change_avatar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="@string/change_avatar"
-                android:textColor="@color/just_eat_primary"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/img_avatar" />
+<!--            <TextView-->
+<!--                android:id="@+id/tv_change_avatar"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="12dp"-->
+<!--                android:text="@string/change_avatar"-->
+<!--                android:textColor="@color/just_eat_primary"-->
+<!--                android:textSize="14sp"-->
+<!--                android:textStyle="bold"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintTop_toBottomOf="@id/img_avatar" />-->
 
             <TextView
                 android:id="@+id/tv_label_first_name"
@@ -73,7 +73,8 @@
                 android:textSize="12sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_change_avatar" />
+                app:layout_constraintTop_toBottomOf="@id/img_avatar"
+                />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilFirstName"
