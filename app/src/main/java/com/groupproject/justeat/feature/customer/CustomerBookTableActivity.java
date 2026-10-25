@@ -4,10 +4,7 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.widget.ArrayAdapter;
 import android.widget.Toast;
-import android.widget.AdapterView;
-import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -66,34 +63,23 @@ public class CustomerBookTableActivity extends BaseActivity<ActivityCustomerBook
             finish();
         });
 
-        String[] guestOptions = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"};
-        ArrayAdapter<String> guestAdapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_spinner_item,
-                guestOptions
-        );
-        setDefaultDate();
+        getBinding().numberPickerGuests.setMinValue(1);
+        getBinding().numberPickerGuests.setMaxValue(20);
+        getBinding().numberPickerGuests.setValue(1);
 
-        guestAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        getBinding().spinnerGuest.setAdapter(guestAdapter);
-        getBinding().spinnerGuest.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                clearTableSelection();
-            }
-            public void onNothingSelected(AdapterView<?> parent) { clearTableSelection(); }
-        });
+        setDefaultDate();
 
         getBinding().etDate.setOnClickListener(v -> showDatePickerDialog());
 
         getBinding().btnSelectTable.setOnClickListener(view -> {
             String date = selectedDate;
             if (date == null) return;
-            int guests = Integer.parseInt(getBinding().spinnerGuest.getSelectedItem().toString());
+            int guests = getBinding().numberPickerGuests.getValue();
             CustomerTableSelectorDialog tableSelectorDialog =
                     CustomerTableSelectorDialog.newInstance(date, guests);
             tableSelectorDialog.setOnTableSelectedListener((tableKey, tableNumber) -> {
                 if (!date.equals(selectedDate)
-                        || guests != Integer.parseInt(getBinding().spinnerGuest.getSelectedItem().toString())) return;
+                        || guests != Integer.parseInt(String.valueOf(getBinding().numberPickerGuests.getValue()))) return;
                 getBinding().btnSelectTable.setText(tableNumber);
                 selectedTableId = tableKey;
             });
@@ -158,8 +144,7 @@ public class CustomerBookTableActivity extends BaseActivity<ActivityCustomerBook
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) return;
 
-        selectedGuestCount = getBinding().spinnerGuest.getSelectedItem() != null
-                ? getBinding().spinnerGuest.getSelectedItem().toString() : "1";
+        selectedGuestCount = String.valueOf(getBinding().numberPickerGuests.getValue());
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.UK);
         dateFormat.setTimeZone(TimeZone.getTimeZone("Pacific/Auckland"));
@@ -180,7 +165,7 @@ public class CustomerBookTableActivity extends BaseActivity<ActivityCustomerBook
         bookingInFlight = true;
         getBinding().btnBookConfirm.setEnabled(false);
         getBinding().btnSelectTable.setEnabled(false);
-        getBinding().spinnerGuest.setEnabled(false);
+        getBinding().numberPickerGuests.setEnabled(false);
         getBinding().etDate.setEnabled(false);
         DatabaseReference myMenuRef = FirebaseDatabase.getInstance().getReference("MyMenu").child(userId);
         DatabaseReference ordersRef = FirebaseDatabase.getInstance().getReference("Orders");
@@ -196,10 +181,6 @@ public class CustomerBookTableActivity extends BaseActivity<ActivityCustomerBook
                         orderedItems.add(item);
                     }
                 }
-//                if (orderedItems.isEmpty()) {
-//                    Toast.makeText(CustomerBookTableActivity.this, "Your saved menu is empty!", Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
                 String orderId = ordersRef.push().getKey();
                 if (orderId == null) { bookingFailed("Cannot create booking."); return; }
                 DatabaseReference root = FirebaseDatabase.getInstance().getReference();
@@ -271,7 +252,7 @@ public class CustomerBookTableActivity extends BaseActivity<ActivityCustomerBook
         if (isDestroyed()) return;
         getBinding().btnBookConfirm.setEnabled(true);
         getBinding().btnSelectTable.setEnabled(true);
-        getBinding().spinnerGuest.setEnabled(true);
+        getBinding().numberPickerGuests.setEnabled(true);
         getBinding().etDate.setEnabled(true);
         clearTableSelection();
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
