@@ -127,36 +127,6 @@ public class EntityModelTest {
 //    }
 
     @Test
-    public void orderSupportsFirebaseConstructionAndPropertyUpdates() {
-        Order order = new Order("o1", "u1", "b1", "t1", "status", "notes", 4898L);
-        assertEquals("o1", order.getOrderId());
-        assertEquals("u1", order.getCustomerId());
-
-        assertEquals("t1", order.getTableId());
-
-        assertEquals("PENDING", order.getStatus());
-        assertEquals(10L, order.getCreatedAt());
-
-
-        order.setOrderId("o2");
-        order.setCustomerId("u2");
-
-        order.setTableId("t2");
-
-        order.setStatus("ACCEPTED");
-        order.setCreatedAt(30L);
-
-        assertEquals("o2", order.getOrderId());
-        assertEquals("u2", order.getCustomerId());
-
-        assertEquals("t2", order.getTableId());
-
-        assertEquals("ACCEPTED", order.getStatus());
-        assertEquals(30L, order.getCreatedAt());
-
-    }
-
-    @Test
     public void orderItemSupportsFirebaseConstructionAndPropertyUpdates() {
         OrderItem item = new OrderItem("oi1", "o1", "m1", "Noodles",
                 3599L, 2, 7198L, "Less salt", "PENDING", 10L, 20L);

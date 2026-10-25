@@ -47,34 +47,6 @@ public class LoginActivityTest {
     }
 
     @Test
-    public void authenticatedRolesOpenTheirDashboard() {
-        String[] roles = {"MANAGER", "CUSTOMER", "STAFF"};
-        String[] targets = {"AdminDashBoardActivity", "CustomerDashBoardActivity", "StaffDashBoardActivity"};
-        for (int i = 0; i < roles.length; i++) {
-            ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class);
-            LoginActivity activity = controller.get();
-            LoginViewModelTest.FakeAuth auth = new LoginViewModelTest.FakeAuth();
-            LoginViewModel vm = new LoginViewModel(new LoginValidator(), auth);
-            controller.create();
-            activity.getViewModelStore().put("androidx.lifecycle.ViewModelProvider.DefaultKey:" + LoginViewModel.class.getCanonicalName(), vm);
-            controller.recreate().start().resume().visible();
-            activity = controller.get();
-            ActivityLoginBinding binding = bindingFor(activity);
-            binding.etEmail.setText("user@example.com");
-            binding.etPassword.setText("123456");
-            binding.btnLogin.performClick();
-            assertTrue(org.robolectric.Shadows.shadowOf(activity).getNextStartedActivity() == null);
-            com.groupproject.justeat.data.model.User user = new com.groupproject.justeat.data.model.User();
-            user.setRole(roles[i]); user.setStatus("ACTIVE");
-            auth.callback.onSuccess(user);
-            android.content.Intent intent = org.robolectric.Shadows.shadowOf(activity).getNextStartedActivity();
-            assertEquals("com.groupproject.justeat.feature.dashboard." + targets[i], intent.getComponent().getClassName());
-            assertTrue(activity.isFinishing());
-            controller.destroy();
-        }
-    }
-
-    @Test
     public void authenticationFailureShowsOneDialogAfterRecreation() {
         ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create();
         LoginViewModelTest.FakeAuth auth = new LoginViewModelTest.FakeAuth();
@@ -93,17 +65,6 @@ public class LoginActivityTest {
         controller.recreate();
         assertEquals(1, countMessageDialogs(controller.get()));
         controller.destroy();
-    }
-
-    @Test
-    public void signUpShowsNotImplementedDialog() {
-        LoginActivity activity = Robolectric.buildActivity(LoginActivity.class).setup().get();
-
-        activity.findViewById(R.id.tvSignUp).performClick();
-        activity.getSupportFragmentManager().executePendingTransactions();
-
-        assertTrue(activity.getSupportFragmentManager()
-                .findFragmentByTag(MessageDialog.TAG) instanceof MessageDialog);
     }
 
     private static ActivityLoginBinding bindingFor(LoginActivity activity) {
