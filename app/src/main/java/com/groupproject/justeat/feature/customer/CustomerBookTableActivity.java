@@ -3,7 +3,6 @@ package com.groupproject.justeat.feature.customer;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
@@ -26,7 +25,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.groupproject.justeat.R;
 import com.groupproject.justeat.base.BaseActivity;
 import com.groupproject.justeat.data.model.MenuItem;
-import com.groupproject.justeat.data.model.Order;
 import com.groupproject.justeat.databinding.ActivityCustomerBookTableBinding;
 
 import java.util.ArrayList;
@@ -54,7 +52,6 @@ public class CustomerBookTableActivity extends BaseActivity<ActivityCustomerBook
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        //setContentView(R.layout.activity_customer_book_table);
         ViewCompat.setOnApplyWindowInsetsListener(getBinding().getRoot(), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -206,11 +203,14 @@ public class CustomerBookTableActivity extends BaseActivity<ActivityCustomerBook
                 String orderId = ordersRef.push().getKey();
                 if (orderId == null) { bookingFailed("Cannot create booking."); return; }
                 DatabaseReference root = FirebaseDatabase.getInstance().getReference();
+                //Check whether table is available with database table "tables"
+                //Check whether the date is available with database table "tableReservations".
                 root.child("tables").child(tableKey).get().addOnSuccessListener(table ->
                     root.child("tableReservations").child(date).child(tableKey).get()
                         .addOnSuccessListener(slot -> {
                             if (isFinishing() || isDestroyed()) return;
                             Object capacity = table.child("capacity").getValue();
+                            //check whether the capacity is large enough
                             if (!userId.equals(FirebaseAuth.getInstance().getUid())
                                     || !Boolean.TRUE.equals(table.child("isEnabled").getValue())
                                     || !(capacity instanceof Number) || ((Number) capacity).intValue() < guests
@@ -218,7 +218,6 @@ public class CustomerBookTableActivity extends BaseActivity<ActivityCustomerBook
                                 bookingFailed("Table is no longer available. Please select again.");
                                 return;
                             }
-                            // 预检查只改善提示；服务端规则仍必须防止并发占用同一名额。
                             Map<String, Object> order = new HashMap<>();
                             order.put("orderId", orderId);
                             order.put("customerId", userId);
@@ -229,6 +228,7 @@ public class CustomerBookTableActivity extends BaseActivity<ActivityCustomerBook
                             order.put("createdAt", ServerValue.TIMESTAMP);
                             order.put("updatedAt", ServerValue.TIMESTAMP);
                             Map<String, Object> updates = new HashMap<>();
+                            //update database table "Orders" and "tableReservations" and "OrderItems" when has items
                             updates.put("Orders/" + orderId, order);
                             updates.put("tableReservations/" + date + "/" + tableKey, new TableReservation(orderId));
                             if (!orderedItems.isEmpty()) updates.put("OrderItems/" + orderId, orderedItems);
@@ -250,7 +250,6 @@ public class CustomerBookTableActivity extends BaseActivity<ActivityCustomerBook
             }
         });
     }
-
     private void setDefaultDate() {
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Pacific/Auckland"));
         calendar.add(Calendar.DAY_OF_MONTH, 1);

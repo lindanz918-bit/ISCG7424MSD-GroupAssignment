@@ -135,6 +135,7 @@
             android:textAllCaps="false"
             android:textColor="@color/just_eat_error"
             android:textSize="12sp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@id/btn_view_menu"
             app:layout_constraintEnd_toStartOf="@id/btn_delete_order"
             app:layout_constraintTop_toTopOf="@id/btn_view_menu" />

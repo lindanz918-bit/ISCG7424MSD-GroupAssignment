@@ -8,7 +8,7 @@
     tools:context=".feature.customer.CustomerMyMenuActivity">
 
     <TextView
-        android:id="@+id/tv_title"
+        android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -20,6 +20,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/tvEmptyState"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/saved_menu_is_empty"
+        android:textAlignment="center"
+        android:textSize="16sp"
+        android:textColor="@color/just_eat_text_secondary"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle"
+        app:layout_constraintBottom_toTopOf="@id/layout_button_container"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_my_menu"
         android:layout_width="0dp"
@@ -28,7 +42,7 @@
         app:layout_constraintBottom_toTopOf="@id/layout_button_container"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_title" />
+        app:layout_constraintTop_toBottomOf="@id/tvTitle" />
 
     <LinearLayout
         android:id="@+id/layout_button_container"
@@ -61,7 +75,10 @@
         android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minHeight="64dp"
         android:background="?android:attr/windowBackground"
+        app:labelVisibilityMode="labeled"
+        app:itemHorizontalTranslationEnabled="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

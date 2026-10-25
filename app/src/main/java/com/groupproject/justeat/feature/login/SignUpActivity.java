@@ -104,8 +104,7 @@ public class SignUpActivity extends BaseActivity<ActivitySignUpBinding> {
                 ? null : getString(state.getEmailErrorResId()));
         getBinding().tilPassword.setError(state.getPasswordErrorResId() == 0
                 ? null : getString(state.getPasswordErrorResId()));
-
-        // 自动聚焦到第一个出错的输入框
+        
         if (state.getFirstNameErrorResId() != 0) {
             getBinding().etFirstName.requestFocus();
         } else if (state.getLastNameErrorResId() != 0) {

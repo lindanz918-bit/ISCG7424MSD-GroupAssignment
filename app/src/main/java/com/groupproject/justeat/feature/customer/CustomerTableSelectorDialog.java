@@ -118,7 +118,7 @@ public class CustomerTableSelectorDialog extends BottomSheetDialogFragment {
             boolean available = Boolean.TRUE.equals(child.child("isEnabled").getValue())
                     && capacity instanceof Number && guests > 0 && ((Number) capacity).intValue() >= guests
                     && !reservationsSnapshot.child(child.getKey()).exists();
-            // 可订性仅用于页面展示，独立于餐桌的现场状态，不写回数据库。
+
             RestaurantTable table = new RestaurantTable(
                     child.child("tableNumber").getValue(String.class),
                     capacity instanceof Number ? ((Number) capacity).intValue() : 0,

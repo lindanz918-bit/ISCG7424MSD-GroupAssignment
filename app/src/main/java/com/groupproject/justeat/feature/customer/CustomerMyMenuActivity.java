@@ -3,6 +3,7 @@ package com.groupproject.justeat.feature.customer;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -42,7 +43,6 @@ public class CustomerMyMenuActivity extends BaseActivity<ActivityCustomerMyMenuB
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        //setContentView(R.layout.activity_customer_my_menu);
         ViewCompat.setOnApplyWindowInsetsListener(getBinding().getRoot(), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -79,6 +79,7 @@ public class CustomerMyMenuActivity extends BaseActivity<ActivityCustomerMyMenuB
                         } else {
                             Toast.makeText(CustomerMyMenuActivity.this, "Error: Item ID is missing", Toast.LENGTH_SHORT).show();
                         }
+                        checkEmptyState();
                     })
                     .setNegativeButton("Cancel", null)
                     .show();
@@ -117,7 +118,6 @@ public class CustomerMyMenuActivity extends BaseActivity<ActivityCustomerMyMenuB
         String userId = (currentUser != null) ? currentUser.getUid() : "Guest";
         mDatabase = FirebaseDatabase.getInstance().getReference("MyMenu").child(userId);
     }
-
     private void loadSavedMenuItems() {
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
@@ -130,11 +130,22 @@ public class CustomerMyMenuActivity extends BaseActivity<ActivityCustomerMyMenuB
                      }
                  }
                  adapter.notifyDataSetChanged();
+                 checkEmptyState();
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Toast.makeText(CustomerMyMenuActivity.this, "Failed to load menu items", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void checkEmptyState() {
+        if (menuList.isEmpty()) {
+            getBinding().rvMyMenu.setVisibility(View.GONE);
+            getBinding().tvEmptyState.setVisibility(View.VISIBLE);
+        } else {
+            getBinding().rvMyMenu.setVisibility(View.VISIBLE);
+            getBinding().tvEmptyState.setVisibility(View.GONE);
+        }
     }
 }

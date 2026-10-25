@@ -34,7 +34,6 @@ public class CustomerMenuItemDetailsActivity extends BaseActivity<ActivityCustom
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        //setContentView(R.layout.activity_customer_menu_item_details);
         ViewCompat.setOnApplyWindowInsetsListener(getBinding().getRoot(), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -100,21 +99,17 @@ public class CustomerMenuItemDetailsActivity extends BaseActivity<ActivityCustom
             spiciness = intent.getStringExtra("MENU_ITEM_SPICINESS");
             price = intent.getStringExtra("MENU_ITEM_PRICE");
             description = intent.getStringExtra("MENU_ITEM_DESCRIPTION");
-            // String category = intent.getStringExtra("MENU_ITEM_CATEGORY");
-            // String discount = intent.getStringExtra("MENU_ITEM_DISCOUNT");
 
             // Set the data to the views
             Glide.with(getBinding().imgBanner.getContext())
                     .load(imageUrl)
-                    .placeholder(R.drawable.ic_image_placeholder) // optional placeholder
-                    .error(R.drawable.ic_image_placeholder)      // optional error image
+                    .placeholder(R.drawable.ic_image_placeholder)
+                    .error(R.drawable.ic_image_placeholder)
                     .into(getBinding().imgBanner);
             getBinding().tvName.setText(mealName);
             getBinding().tvSpiciness.setText(spiciness);
             getBinding().tvPrice.setText(price);
             getBinding().tvDescription.setText(description);
-            // getBinding().tvCategory.setText(category);
-            // getBinding().tvDiscount.setText(discount);
         }
     }
     private void saveMenuItemToFirebase(){
