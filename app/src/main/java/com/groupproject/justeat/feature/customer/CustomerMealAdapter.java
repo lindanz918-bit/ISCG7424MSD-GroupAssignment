@@ -59,8 +59,8 @@ public class CustomerMealAdapter extends RecyclerView.Adapter<CustomerMealAdapte
         MenuItem meal = mealList.get(position);
         Glide.with(holder.itemView.getContext())
                 .load(meal.getImageUrl())
-                .placeholder(R.drawable.ic_image_placeholder) // optional placeholder
-                .error(R.drawable.ic_image_placeholder)      // optional error image
+                .placeholder(R.drawable.ic_image_placeholder)
+                .error(R.drawable.ic_image_placeholder)
                 .into(holder.imageView);
         if (meal.getmealName() != null && !meal.getmealName().isEmpty()) {
             holder.tvName.setText(meal.getmealName());
@@ -70,7 +70,6 @@ public class CustomerMealAdapter extends RecyclerView.Adapter<CustomerMealAdapte
         String spicinessText = meal.getSpiciness() != null ? String.valueOf(meal.getSpiciness()) : "N/A";
         holder.tvSpiciness.setText("Spiciness: " + spicinessText);
         holder.tvPrice.setText( meal.getPrice());
-        //holder.tvDescription.setText("Description: " + meal.getDescription());
 
         holder.itemView.setOnClickListener(v -> {
             int adapterPosition = holder.getAdapterPosition();
@@ -86,14 +85,13 @@ public class CustomerMealAdapter extends RecyclerView.Adapter<CustomerMealAdapte
     }
     public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
-        TextView tvName, tvSpiciness, tvPrice, tvDescription;
+        TextView tvName, tvSpiciness, tvPrice;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.img_item);
             tvName = itemView.findViewById(R.id.tv_item_name);
             tvSpiciness = itemView.findViewById(R.id.tv_item_spiciness);
             tvPrice = itemView.findViewById(R.id.tv_item_price);
-            //tvDescription = itemView.findViewById(R.id.tv_item_description);
         }
     }
 }

@@ -2,6 +2,7 @@ package com.groupproject.justeat.feature.customer;
 
 
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -61,9 +62,12 @@ public class CustomerOrderAdapter extends RecyclerView.Adapter<CustomerOrderAdap
         holder.binding.tvOrderGuests.setText(order.getGuestCount() + " Guests (Table " + number + ")");
 
         boolean cancellable = order.canCancel();
-        holder.binding.btnCancelOrder.setText("Cancel");
-        holder.binding.btnCancelOrder.setEnabled(cancellable);
+//        holder.binding.btnCancelOrder.setText("Cancel");
+//        holder.binding.btnCancelOrder.setEnabled(cancellable);
+
         holder.binding.btnCancelOrder.setVisibility(cancellable ? android.view.View.VISIBLE : android.view.View.GONE);
+        holder.binding.btnDeleteOrder.setVisibility((!cancellable) ? android.view.View.VISIBLE : android.view.View.GONE);
+
         holder.binding.btnCancelOrder.setOnClickListener(v -> {
             if (listener != null && order.canCancel()) {
                 int currentPosition = holder.getAdapterPosition();
@@ -82,11 +86,12 @@ public class CustomerOrderAdapter extends RecyclerView.Adapter<CustomerOrderAdap
 
         holder.binding.btnViewMenu.setOnClickListener(v -> {
             if (listener != null) {
-                listener.onViewMenuClick(order, position);
+                int currentPosition = holder.getAdapterPosition();
+                if (currentPosition != RecyclerView.NO_POSITION) {
+                    listener.onViewMenuClick(order, currentPosition);
+                }
             }
         });
-
-
     }
 
     @Override

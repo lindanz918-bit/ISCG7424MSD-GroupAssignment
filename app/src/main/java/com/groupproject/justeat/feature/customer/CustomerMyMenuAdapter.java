@@ -60,7 +60,7 @@ public class CustomerMyMenuAdapter extends RecyclerView.Adapter<CustomerMyMenuAd
         if (deleteListener == null) {
             holder.binding.btnDelete.setVisibility(View.GONE); // Hides the trash can
         } else {
-            // 2. Normal Mode for "My Menu" page
+            // Normal Mode for "My Menu" page
             holder.binding.btnDelete.setVisibility(View.VISIBLE);
             holder.binding.btnDelete.setOnClickListener(v -> {
                 deleteListener.onDeleteClick(item, position);

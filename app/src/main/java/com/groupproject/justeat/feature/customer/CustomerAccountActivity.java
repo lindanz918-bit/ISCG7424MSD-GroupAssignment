@@ -54,7 +54,6 @@ public class CustomerAccountActivity extends BaseActivity<ActivityCustomerAccoun
     }
 
     private void initView() {
-        // Initialize your views here
 
         getBinding().btnChangePassword.setOnClickListener(v -> {
             ChangePasswordDialog dialog = ChangePasswordDialog.newInstance();

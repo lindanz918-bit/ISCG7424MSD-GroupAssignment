@@ -57,7 +57,6 @@ public class CustomerOrdersActivity extends BaseActivity<ActivityCustomerOrdersB
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        //setContentView(R.layout.activity_customer_orders);
         ViewCompat.setOnApplyWindowInsetsListener(getBinding().getRoot(), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -75,16 +74,15 @@ public class CustomerOrdersActivity extends BaseActivity<ActivityCustomerOrdersB
                 CustomerOrderMenuDetailsDialog dialog = CustomerOrderMenuDetailsDialog.newInstance(order.getOrderId());
                 dialog.show(getSupportFragmentManager(), CustomerOrderMenuDetailsDialog.TAG);
             }
-
             @Override
             public void onDeleteClick(Order order, int position) {
                 new com.google.android.material.dialog.MaterialAlertDialogBuilder(CustomerOrdersActivity.this)
                         .setTitle("Delete Order")
-                        .setMessage("Hide this order from My Orders on this device? This does not cancel the order or release its table reservation.")
-                        .setPositiveButton("Delete", (dialog, which) -> {
+                        .setMessage("Delete this order from My Orders? This action cannot be undone.")
+                        .setPositiveButton("Yes", (dialog, which) -> {
                             String uid = FirebaseAuth.getInstance().getUid();
                             if (uid == null || !uid.equals(order.getCustomerId())) return;
-                            // 只保存本机当前账号的隐藏标记，不修改 Firebase 订单或预约。
+                            // Only hide from the customer side, keep the history data in the database for staff to use.
                             getSharedPreferences("customer_deleted_orders", MODE_PRIVATE).edit()
                                     .putBoolean(uid + ":" + order.getOrderId(), true).apply();
                             orderList.remove(order);
@@ -92,7 +90,7 @@ public class CustomerOrdersActivity extends BaseActivity<ActivityCustomerOrdersB
                             getBinding().layoutEmptyState.setVisibility(orderList.isEmpty()
                                     ? android.view.View.VISIBLE : android.view.View.GONE);
                         })
-                        .setNegativeButton("Back", null)
+                        .setNegativeButton("No", null)
                         .show();
             }
 
@@ -101,7 +99,7 @@ public class CustomerOrdersActivity extends BaseActivity<ActivityCustomerOrdersB
                 new com.google.android.material.dialog.MaterialAlertDialogBuilder(CustomerOrdersActivity.this)
                         .setTitle("Cancel Order")
                         .setMessage("Cancel order #" + order.getOrderId()
-                                + " and release its table reservation for that date? The order record will be kept.")
+                                + " ? This action cannot be undone.")
                         .setPositiveButton("Yes", (dialog, which) -> {
                             cancelBooking(order.getOrderId());
                         })
@@ -163,11 +161,13 @@ public class CustomerOrdersActivity extends BaseActivity<ActivityCustomerOrdersB
                     order.setGuestCount(guests instanceof Number ? guests.toString() : "");
                     Object createdAt = childSnapshot.child("createdAt").getValue();
                     order.setCreatedAt(createdAt instanceof Number ? ((Number) createdAt).longValue() : 0L);
-                    // 仅过滤本次 Delete 的本地标记，之前已恢复的旧隐藏订单不受影响。
+                    // Save the deleted order into device files. data/data/com.groupproject.justeat/shared_prefs
                     if (uid.equals(order.getCustomerId()) && !getSharedPreferences(
                             "customer_deleted_orders", MODE_PRIVATE).getBoolean(uid + ":" + order.getOrderId(), false))
                         orderList.add(order);
                 }
+                //reverse order lists to show the newest order first.
+                orderList.sort((o1, o2) -> Long.compare(o2.getCreatedAt(), o1.getCreatedAt()));
                 Log.d("FirebaseDebug", "Total orders in list: " + orderList.size());
                 getBinding().layoutEmptyState.setVisibility(orderList.isEmpty() ? android.view.View.VISIBLE : android.view.View.GONE);
                 adapter.notifyDataSetChanged();
@@ -199,12 +199,12 @@ public class CustomerOrdersActivity extends BaseActivity<ActivityCustomerOrdersB
         String uid = FirebaseAuth.getInstance().getUid();
         if (uid == null || !validKey(id) || !cancelling.add(id)) return;
         DatabaseReference root = FirebaseDatabase.getInstance().getReference();
-        // 直接在页面中操作 Firebase，事务会在数据发生变化时重新检查。
+        //to check whether the order ID is existed in the database.
         root.child("Orders").child(id).runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(MutableData order) {
+                // do nothing if the order is not existed in the database
                 if (!uid.equals(FirebaseAuth.getInstance().getUid())) return Transaction.abort();
-                // 首次可能只有空缓存，让服务器确认，不创建不存在的订单。
                 if (order.getValue() == null) return Transaction.success(order);
                 if (!(order.getValue() instanceof Map)) return Transaction.abort();
                 Object statusValue = order.child("status").getValue();
@@ -215,11 +215,14 @@ public class CustomerOrdersActivity extends BaseActivity<ActivityCustomerOrdersB
                 String status = (String) statusValue;
                 String date = (String) dateValue;
                 String tableId = (String) tableValue;
+                //only the pending, accepted, preparing, and ready order can be canceled.
                 boolean canCancel = "PENDING".equals(status) || "ACCEPTED".equals(status)
                         || "PREPARING".equals(status) || "READY".equals(status);
+                //to make sure the customer is the order's owner
                 if (!uid.equals(order.child("customerId").getValue())
                         || (!canCancel && !"CANCELLED".equals(status))
                         || !validKey(tableId) || !validBookingDate(date)) return Transaction.abort();
+                //process the cancellation
                 if (!"CANCELLED".equals(status)) {
                     order.child("status").setValue("CANCELLED");
                     order.child("updatedAt").setValue(ServerValue.TIMESTAMP);
@@ -236,6 +239,7 @@ public class CustomerOrdersActivity extends BaseActivity<ActivityCustomerOrdersB
                 String date = order.child("bookingDate").getValue(String.class);
                 String tableId = order.child("tableId").getValue(String.class);
                 DatabaseReference reservation = root.child("tableReservations").child(date).child(tableId);
+                //release table id
                 releaseReservation(id, uid, reservation);
             }
         }, false);
@@ -244,13 +248,13 @@ public class CustomerOrdersActivity extends BaseActivity<ActivityCustomerOrdersB
     private void releaseReservation(String id, String uid, DatabaseReference reservation) {
         reservation.runTransaction(new Transaction.Handler() {
             private boolean signedOut;
-
             @Override
             public Transaction.Result doTransaction(MutableData slot) {
                 signedOut = !uid.equals(FirebaseAuth.getInstance().getUid());
                 if (signedOut) return Transaction.abort();
+                //the table is not occupied, do nothing.
                 if (slot.getValue() == null) return Transaction.success(slot);
-                // 只释放本订单的预约，别人重新占用的名额不能删除。
+                // only release the booking of this order, not the reservation of other order.
                 if (!id.equals(slot.child("orderId").getValue())) return Transaction.abort();
                 slot.setValue(null);
                 return Transaction.success(slot);
@@ -279,7 +283,6 @@ public class CustomerOrdersActivity extends BaseActivity<ActivityCustomerOrdersB
                 .setNegativeButton("Close", null)
                 .show();
     }
-
     private boolean validKey(String key) {
         if (key == null || key.isEmpty()) return false;
         for (char c : key.toCharArray()) {

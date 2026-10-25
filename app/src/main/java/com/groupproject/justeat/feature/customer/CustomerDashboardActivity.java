@@ -40,7 +40,6 @@ public class CustomerDashboardActivity extends BaseActivity<ActivityCustomerDash
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        // setContentView(R.layout.activity_customer_dashboard);
         ViewCompat.setOnApplyWindowInsetsListener(getBinding().getRoot(), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -77,8 +76,6 @@ public class CustomerDashboardActivity extends BaseActivity<ActivityCustomerDash
                 intent.putExtra("MENU_ITEM_SPICINESS", selectedMeal.getSpiciness().toString());
                 intent.putExtra("MENU_ITEM_PRICE", selectedMeal.getPrice());
                 intent.putExtra("MENU_ITEM_DESCRIPTION", selectedMeal.getDescription());
-//                intent.putExtra("MENU_ITEM_CATEGORY", selectedMeal.getCategory());
-//                intent.putExtra("MENU_ITEM_DISCOUNT", selectedMeal.getDiscount());
                 startActivity(intent);
                 overridePendingTransition(0, 0);
             }
