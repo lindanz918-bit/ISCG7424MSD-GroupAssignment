@@ -255,9 +255,12 @@ public class CustomerOrdersActivity extends BaseActivity<ActivityCustomerOrdersB
                 }
                 String date = order.child("bookingDate").getValue(String.class);
                 String tableId = order.child("tableId").getValue(String.class);
-                DatabaseReference reservation = root.child("tableReservations").child(date).child(tableId);
-                //release table id
-                releaseReservation(id, uid, reservation);
+                if (date != null && !date.isEmpty() && tableId != null && !tableId.isEmpty()) {
+                    DatabaseReference reservation = root.child("tableReservations").child(date).child(tableId);
+                    releaseReservation(id, uid, reservation);
+                } else {
+                    Log.e("CancelBooking", "Booking date or tableId is null for order: " + id);
+                }
             }
         }, false);
     }
