@@ -82,13 +82,26 @@ public class CustomerOrdersActivity extends BaseActivity<ActivityCustomerOrdersB
                         .setPositiveButton("Yes", (dialog, which) -> {
                             String uid = FirebaseAuth.getInstance().getUid();
                             if (uid == null || !uid.equals(order.getCustomerId())) return;
-                            // Only hide from the customer side, keep the history data in the database for staff to use.
-                            getSharedPreferences("customer_deleted_orders", MODE_PRIVATE).edit()
-                                    .putBoolean(uid + ":" + order.getOrderId(), true).apply();
-                            orderList.remove(order);
-                            adapter.notifyDataSetChanged();
-                            getBinding().layoutEmptyState.setVisibility(orderList.isEmpty()
-                                    ? android.view.View.VISIBLE : android.view.View.GONE);
+                            //make the deleted status in firebase database to true
+                            DatabaseReference orderRef = FirebaseDatabase.getInstance().getReference("Orders").child(order.getOrderId());
+                            orderRef.child("deletedByCustomer").setValue(true).addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    // delete from local order list.
+                                    orderList.remove(order);
+                                    adapter.notifyDataSetChanged();
+                                    getBinding().layoutEmptyState.setVisibility(orderList.isEmpty()
+                                            ? android.view.View.VISIBLE : android.view.View.GONE);
+                                    String date = order.getBookingDate();
+                                    String tableId = order.getTableId();
+                                    // release table
+                                    if (date != null && !date.isEmpty() && tableId != null && !tableId.isEmpty()) {
+                                        DatabaseReference reservation = FirebaseDatabase.getInstance().getReference().child("tableReservations").child(date).child(tableId);
+                                        releaseReservation(order.getOrderId(), uid, reservation);
+                                    }
+                                } else {
+                                    Toast.makeText(CustomerOrdersActivity.this, "Failed to delete order. Please try again.", Toast.LENGTH_SHORT).show();
+                                }
+                            });
                         })
                         .setNegativeButton("No", null)
                         .show();
@@ -130,9 +143,7 @@ public class CustomerOrdersActivity extends BaseActivity<ActivityCustomerOrdersB
             }
             return false;
         });
-
         getBinding().bottomNavigation.setSelectedItemId(R.id.nav_orders);
-
     }
     private void initData() {
         String uid = FirebaseAuth.getInstance().getUid();
@@ -151,6 +162,13 @@ public class CustomerOrdersActivity extends BaseActivity<ActivityCustomerOrdersB
                 for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
                     Object value = childSnapshot.getValue();
                     if (!(value instanceof Map)) continue;
+
+                    // check if the order has been deleted by the customer
+                    Boolean deletedByCustomer = childSnapshot.child("deletedByCustomer").getValue(Boolean.class);
+                    if (deletedByCustomer != null && deletedByCustomer) {
+                        continue; // if it is deleted, then do not show it in the list
+                    }
+
                     Order order = new Order();
                     order.setOrderId(childSnapshot.getKey());
                     order.setCustomerId(childSnapshot.child("customerId").getValue(String.class));
@@ -161,10 +179,10 @@ public class CustomerOrdersActivity extends BaseActivity<ActivityCustomerOrdersB
                     order.setGuestCount(guests instanceof Number ? guests.toString() : "");
                     Object createdAt = childSnapshot.child("createdAt").getValue();
                     order.setCreatedAt(createdAt instanceof Number ? ((Number) createdAt).longValue() : 0L);
-                    // Save the deleted order into device files. data/data/com.groupproject.justeat/shared_prefs
-                    if (uid.equals(order.getCustomerId()) && !getSharedPreferences(
-                            "customer_deleted_orders", MODE_PRIVATE).getBoolean(uid + ":" + order.getOrderId(), false))
+
+                    if (uid.equals(order.getCustomerId())) {
                         orderList.add(order);
+                    }
                 }
                 //reverse order lists to show the newest order first.
                 orderList.sort((o1, o2) -> Long.compare(o2.getCreatedAt(), o1.getCreatedAt()));
@@ -194,12 +212,11 @@ public class CustomerOrdersActivity extends BaseActivity<ActivityCustomerOrdersB
         };
         tablesRef.addValueEventListener(tablesListener);
     }
-
     private void cancelBooking(String id) {
         String uid = FirebaseAuth.getInstance().getUid();
         if (uid == null || !validKey(id) || !cancelling.add(id)) return;
         DatabaseReference root = FirebaseDatabase.getInstance().getReference();
-        //to check whether the order ID is existed in the database.
+        //to check whether the order existed in the database.
         root.child("Orders").child(id).runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(MutableData order) {
@@ -290,7 +307,6 @@ public class CustomerOrdersActivity extends BaseActivity<ActivityCustomerOrdersB
         }
         return true;
     }
-
     private boolean validBookingDate(String date) {
         if (date == null || !date.matches("[0-9]{4}-[0-9]{2}-[0-9]{2}")) return false;
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.UK);
@@ -298,7 +314,6 @@ public class CustomerOrdersActivity extends BaseActivity<ActivityCustomerOrdersB
         ParsePosition position = new ParsePosition(0);
         return format.parse(date, position) != null && position.getIndex() == date.length();
     }
-
     private void showMessage(String message) {
         if (!isDestroyed()) Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }

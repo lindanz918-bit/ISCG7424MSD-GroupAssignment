@@ -99,6 +99,10 @@ public class StaffOrderFragment extends Fragment {
                                                 child.child("bookingDate").getValue(String.class));
                                         order.setStatus(
                                                 child.child("status").getValue(String.class));
+
+                                        Boolean isDeleted = child.child("deletedByCustomer").getValue(Boolean.class);
+                                        order.setDeletedByCustomer(isDeleted != null && isDeleted);
+
                                         Object guests = child.child("guestCount").getValue();
                                         order.setGuestCount(
                                                 guests instanceof Number ? guests.toString() : "");
