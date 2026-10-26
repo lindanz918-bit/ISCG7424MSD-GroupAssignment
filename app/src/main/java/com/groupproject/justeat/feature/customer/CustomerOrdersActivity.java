@@ -293,7 +293,7 @@ public class CustomerOrdersActivity extends BaseActivity<ActivityCustomerOrdersB
         cancelling.remove(id);
         if (isFinishing() || isDestroyed()) return;
         if (error == null || !orderCancelled) {
-            showMessage(error == null ? "Booking cancelled." : error);
+            Log.e("CancelBooking", "Order cancelled: " + id);
             return;
         }
         new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
