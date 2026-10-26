@@ -19,6 +19,7 @@ public class Order {
 
     /** 订单状态，值来自 OrderStatus。 */
     private String status;
+    private boolean deletedByCustomer;
 
     /** 创建时间，Unix 毫秒时间戳。 */
     private long createdAt;
@@ -34,6 +35,7 @@ public class Order {
             String bookingDate,
             String tableId,
             String status,
+            boolean deletedByCustomer,
             long createdAt) {
         this.orderId = orderId;
         this.customerId = customerId;
@@ -41,6 +43,7 @@ public class Order {
         this.bookingDate = bookingDate;
         this.tableId = tableId;
         this.status = status;
+        this.deletedByCustomer = deletedByCustomer;
         this.createdAt = createdAt;
     }
 
@@ -88,6 +91,9 @@ public class Order {
         return "ACCEPTED".equals(status) || "PREPARING".equals(status) || "READY".equals(status);
     }
 
+    public boolean isDeletedByCustomer() {
+        return deletedByCustomer;
+    }
     public static boolean canComplete(String status, boolean allServed) {
         return isActive(status) && allServed;
     }
@@ -119,7 +125,9 @@ public class Order {
     public void setStatus(String status) {
         this.status = status;
     }
-
+    public void setDeletedByCustomer(boolean deletedByCustomer) {
+        this.deletedByCustomer = deletedByCustomer;
+    }
     public long getCreatedAt() {
         return createdAt;
     }

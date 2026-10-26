@@ -61,6 +61,7 @@ public class StaffOrderAdapter extends RecyclerView.Adapter<StaffOrderAdapter.Vi
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Order order = orders.get(position);
         String orderId = order.getOrderId() == null ? "-" : order.getOrderId();
+        boolean isDeletedByCustomer = order.isDeletedByCustomer();
         String customerId = order.getCustomerId() == null ? "-" : order.getCustomerId();
         if (!"-".equals(customerId) && requested.add(customerId)) {
             FirebaseDatabase.getInstance()
@@ -101,8 +102,11 @@ public class StaffOrderAdapter extends RecyclerView.Adapter<StaffOrderAdapter.Vi
                             });
         }
         String status = order.getStatus() == null ? "-" : order.getStatus();
+//        holder.binding.tvStaffOrderId.setText(
+//                holder.binding.getRoot().getContext().getString(R.string.staff_order_id, orderId));
+        String orderIdText = isDeletedByCustomer ? orderId + " (Customer Deleted)" : orderId;
         holder.binding.tvStaffOrderId.setText(
-                holder.binding.getRoot().getContext().getString(R.string.staff_order_id, orderId));
+                holder.binding.getRoot().getContext().getString(R.string.staff_order_id, orderIdText));
         holder.binding.tvStaffOrderCustomer.setText(names.getOrDefault(customerId, customerId));
         holder.binding.tvStaffOrderTable.setText(
                 holder.binding
